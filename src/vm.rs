@@ -10,6 +10,7 @@ pub struct VirtualMachine {
 impl VirtualMachine {
     pub fn load_player(&mut self, player: Player) {
         // Load player code into arena
+        todo!();
     }
 
     pub fn run(&mut self) {
@@ -26,5 +27,12 @@ impl VirtualMachine {
             process.execute_cycle(&self.arena);
         }
         self.cycle_count += 1;
+    }
+
+    fn processes_alive(){
+        todo!();
+    }
+    fn check_lives(){
+        todo!();
     }
 }
