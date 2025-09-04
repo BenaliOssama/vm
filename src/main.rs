@@ -1,8 +1,8 @@
 mod utils;
 
-use vm::*;
 use std::env;
 use utils::*;
+use vm::*;
 
 fn main() {
     println!("For this match the players will be:");
@@ -11,9 +11,13 @@ fn main() {
 
     println!("arguments are : {:?}", args);
     // get players in some vector of players
-    let players = parse_arguments(args);
+    let buffer = parse_arguments(args);
 
-    println!("{} {:?}", green("we got players:"), players);
+    println!("Read {} bytes", buffer.len());
+    println!(
+        "First few bytes {:?}",
+        &buffer[..4]
+    );
     // // make new vm
     // let mut vm = VirtualMachine::new();
 
