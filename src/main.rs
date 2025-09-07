@@ -1,7 +1,9 @@
 mod arena;
+mod process;
 mod utils;
 
-use arena::*;
+pub use arena::*;
+use process::*;
 use std::env;
 use utils::*;
 
@@ -59,10 +61,12 @@ fn main() {
     println!();
 
     let mut arena = Arena::new();
-    println!("empty arena: -> : {:?}", arena);
 
     arena.write(0, program);
     println!("fulll arena: -> : {:?}", arena);
+
+    let mut process1 = Process::new();
+    process1.execute_cycle(&arena);
     // // make new vm
     // let mut vm = VirtualMachine::new();
 
