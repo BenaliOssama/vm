@@ -1,8 +1,9 @@
+mod arena;
 mod utils;
 
+use arena::*;
 use std::env;
 use utils::*;
-use vm::*;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -56,6 +57,12 @@ fn main() {
         print!("{:02x} ", b);
     }
     println!();
+
+    let mut arena = Arena::new();
+    println!("empty arena: -> : {:?}", arena);
+
+    arena.write(0, program);
+    println!("fulll arena: -> : {:?}", arena);
     // // make new vm
     // let mut vm = VirtualMachine::new();
 
