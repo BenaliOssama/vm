@@ -1,6 +1,7 @@
 mod arena;
 mod process;
 mod utils;
+mod instructions;
 
 pub use arena::*;
 use process::*;
@@ -66,7 +67,7 @@ fn main() {
     println!("fulll arena: -> : {:?}", arena);
 
     let mut process1 = Process::new();
-    process1.execute_cycle(&arena);
+    process1.execute_cycle(&mut arena);
     // // make new vm
     // let mut vm = VirtualMachine::new();
 

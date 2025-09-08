@@ -16,6 +16,6 @@ impl Arena {
 
     pub fn read(&self, pos: usize, size: usize) -> &[u8] {
         // Implement circular reading
-        &self.memory[0..1]
+        &self.memory[pos..pos + size]
     }
 }
