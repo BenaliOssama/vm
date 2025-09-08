@@ -1,4 +1,10 @@
-Let's read it through:
+not much done at this point, but you can see what the code does by running 
+```bash
+make run
+```
+
+this is going to provide one file of .cor extention to the rust executable. 
+the .cor file is parsed where i read the header and the program and then i fill in the memory with instruction, at this point i will start working on fetch execute sycle...
 
 The first 4 bytes 00 ea 83 f3 are the program signature (also called the magic), this is a 32 bits integer, represented as four 8 bits slices.
 
