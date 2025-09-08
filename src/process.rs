@@ -30,17 +30,17 @@ impl Process {
         let param = match opcode {
             1 => {
                 //parameters
-                let mut arr : [u8; 4] = raw_bytes.try_into().unwrap();
+                let mut arr: [u8; 4] = raw_bytes.try_into().unwrap();
                 let num = i32::from_be_bytes(arr);
                 Parameter::Direct(num)
-            },
+            }
             _ => panic!("no paramiter"),
         };
         Instruction::new(opcode, parameters)
     }
 
     //Opcode ->
-    pub fn execute_cycle(&mut self,  arena: &mut Arena) {
+    pub fn execute_cycle(&mut self, arena: &mut Arena) {
         // Fetch and execute instruction
         loop {
             /*____________________________fetch__________________________ */
@@ -51,13 +51,15 @@ impl Process {
             thread::sleep(Duration::from_millis(1000));
 
             /*____________________________decode__________________________ */
+            // https://corewar-docs.readthedocs.io/en/latest/redcode/opcodes/?
+            //https://corewar-docs.readthedocs.io/en/latest/redcode/parser/
             // work on decoding an instruction
             // [Opcode] [Pcode?] [Param1] [Param2] [Param3]
             if inst == 1 {
                 let params = arena.read(self.pc, 4);
                 self.pc += 4;
                 let inst = self.decode(inst, params);
-                inst.execute(self,  arena);
+                inst.execute(self, arena);
             } else {
                 println!("Not relevent for now");
             }
