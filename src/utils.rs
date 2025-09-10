@@ -1,6 +1,6 @@
-use crate::parser::Player;
+use crate::player::Player;
 use std::fs::File;
-use std::io::{self, Read};
+use std::io::Read;
 use vm::*;
 
 pub fn parse_arguments(args: Vec<String>) -> Player {
@@ -34,7 +34,6 @@ pub fn parse_arguments(args: Vec<String>) -> Player {
     let name = std::str::from_utf8(&buffer[prev..next]).unwrap(); //.trim();
     let name: String = name.chars().filter(|&c| c != '\0').collect();
 
-
     prev = next + 4; // skip 4 bytes 
     next = prev + 4;
 
@@ -52,7 +51,6 @@ pub fn parse_arguments(args: Vec<String>) -> Player {
     next = prev + size as usize;
 
     let program = &buffer[prev..next];
-
 
     let player = Player::new(
         1,
