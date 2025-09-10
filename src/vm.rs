@@ -46,9 +46,11 @@ impl VirtualMachine {
     fn processes_alive(&self) -> bool {
         true
     }
+    
     fn check_lives() {
         todo!();
     }
+
     fn kill_process() {
         // if vm.current_cycle - process.last_live_cycle > vm.cycle_to_die {
         //     // kill the process
