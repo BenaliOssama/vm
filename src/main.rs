@@ -1,12 +1,16 @@
 mod arena;
+mod instructions;
+mod parser;
 mod process;
 mod utils;
-mod instructions;
 
 pub use arena::*;
+use parser::*;
 use process::*;
 use std::env;
 use utils::*;
+
+use crate::parser::Player;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -22,7 +26,9 @@ fn main() {
     prev = next;
     next = next + 128;
 
-    let name = std::str::from_utf8(&buffer[prev..next]).unwrap();
+    let name = std::str::from_utf8(&buffer[prev..next]).unwrap(); //.trim();
+    let name: String = name.chars().filter(|&c| c != '\0').collect();
+
     // Print as uppercase hex
     for b in magic {
         print!("{:02x} ", b);
@@ -40,7 +46,8 @@ fn main() {
     prev = next; // skip 4 bytes 
     next = prev + 2048;
 
-    let disc = std::str::from_utf8(&buffer[prev..next]).unwrap();
+    let disc = std::str::from_utf8(&buffer[prev..next]).unwrap().trim();
+    let disc: String = disc.chars().filter(|&c| c != '\0').collect();
     // Print as uppercase hex
     for b in magic {
         print!("{:02x} ", b);
@@ -61,10 +68,21 @@ fn main() {
     }
     println!();
 
+    println!("the name size is {}", name.len());
+    let player = Player::new(
+        1,
+        name.to_string(),
+        disc.to_string(),
+        program.to_vec(),
+        size,
+        0,
+    );
+
+    println!("{player}");
     let mut arena = Arena::new();
 
     arena.write(0, program);
-    println!("fulll arena: -> : {:?}", arena);
+    //println!("fulll arena: -> : {:?}", arena);
 
     let mut process1 = Process::new();
     process1.execute_cycle(&mut arena);
