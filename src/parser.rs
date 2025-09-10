@@ -39,16 +39,26 @@ impl Display for Player {
         table.add_header("id");
         table.add_header("name");
         table.add_header("comment");
+        table.add_header("start address");
+        table.add_header("size");
+        table.add_header("code");
         // add rows
+        let hex_string = self
+            .code
+            .iter()
+            .map(|b| format!("{:02x}", b)) // format each byte as two-digit hex
+            .collect::<Vec<String>>()
+            .join(" ");
         table.add_row(&vec![
             self.id.to_string(),
             self.name.clone(),
             self.comment.clone(),
+            self.start_address.to_string(),
+            self.size.to_string(),
+            hex_string,
         ]);
         println!("{table}");
-        // make a table
-        // add headers code , size start_address,
-        // add rows
+        
         Ok(())
     }
 }
