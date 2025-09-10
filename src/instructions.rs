@@ -7,9 +7,7 @@ pub enum Parameter {
     Indirect(i32),
 }
 impl Parameter {
-    pub fn new(){
-
-    }
+    pub fn new() {}
 }
 pub struct Instruction {
     opcode: u8,
@@ -17,9 +15,8 @@ pub struct Instruction {
 }
 
 impl Instruction {
-
-    pub fn new(opcode: u8, parameters: Vec<Parameter>) -> Self{
-        Self { opcode , parameters }
+    pub fn new(opcode: u8, parameters: Vec<Parameter>) -> Self {
+        Self { opcode, parameters }
     }
 
     pub fn execute(&self, process: &mut Process, arena: &mut Arena) {
@@ -33,6 +30,7 @@ impl Instruction {
 
     fn live(&self, process: &mut Process, arena: &mut Arena) {
         // Implement live instruction
+        process.last_live_cycle += 1;
         println!("heeeey!!! i'm alive :)");
     }
     // ... other instruction implementations

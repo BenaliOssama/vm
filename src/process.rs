@@ -1,22 +1,23 @@
+use crate::arena::*;
 use crate::instructions::*;
-use crate::{arena::*, instructions};
-use std::os::linux::raw;
-use std::{process, thread, time::Duration};
+use std::{thread, time::Duration};
 
 // process.rs
 pub struct Process {
     pub pc: usize, // Program Counter
-                   // pub registers: [i32; 8],
-                   // pub carry: bool,
-                   // pub alive: bool,
-                   // ... other fields
+    pub registers: [i32; 16],
+    // pub carry: bool,
+    pub last_live_cycle: i32,
+    // pub alive: bool,
+    // ... other fields
 }
 
 impl Process {
     pub fn new() -> Self {
         Self {
             pc: 0,
-            // registers: [0; 8],
+            registers: [0; 16],
+            last_live_cycle: -1,
             // carry: false,
             // alive: true,
         }
@@ -52,7 +53,7 @@ impl Process {
 
             /*____________________________decode__________________________ */
             // https://corewar-docs.readthedocs.io/en/latest/redcode/opcodes/?
-            //https://corewar-docs.readthedocs.io/en/latest/redcode/parser/
+            // https://corewar-docs.readthedocs.io/en/latest/redcode/parser/
             // work on decoding an instruction
             // [Opcode] [Pcode?] [Param1] [Param2] [Param3]
             if inst == 1 {
