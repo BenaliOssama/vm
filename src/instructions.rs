@@ -33,6 +33,7 @@ impl Instruction {
     fn live(&self, process: &mut Process, arena: &mut Arena) {
         // Implement live instruction
         process.last_live_cycle += 1;
+        process.carry = false;
         println!("heeeey!!! i'm alive :)");
     }
     // ... other instruction implementations

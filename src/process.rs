@@ -15,7 +15,7 @@ enum State {
 pub struct Process {
     pub pc: usize, // Program Counter
     pub registers: [i32; 16],
-    // pub carry: bool,
+    pub carry: bool,
     pub last_live_cycle: i32,
     pub current_instruction: Option<Instruction>,
     pub remaining_cycles: i32,
@@ -29,8 +29,7 @@ impl Process {
             last_live_cycle: -1,
             remaining_cycles: 0,
             current_instruction: None,
-            // carry: false,
-            // alive: true,
+            carry: false,
         }
     }
     fn state(&self) -> State {
