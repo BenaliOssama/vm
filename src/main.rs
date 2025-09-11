@@ -1,4 +1,5 @@
 mod arena;
+mod counter;
 mod instructions;
 mod player;
 mod process;

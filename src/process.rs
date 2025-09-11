@@ -1,5 +1,7 @@
 use crate::arena::*;
+use crate::counter::PC;
 use crate::instructions::*;
+
 use std::{thread, time::Duration};
 
 // process.rs
@@ -13,7 +15,7 @@ enum State {
 }
 #[derive(Clone)]
 pub struct Process {
-    pub pc: usize, // Program Counter
+    pub pc: PC, // Program Counter
     pub registers: [i32; 16],
     pub carry: bool,
     pub last_live_cycle: i32,
@@ -24,7 +26,7 @@ pub struct Process {
 impl Process {
     pub fn new() -> Self {
         Self {
-            pc: 0,
+            pc: PC::new(),
             registers: [0; 16],
             last_live_cycle: -1,
             remaining_cycles: 0,
@@ -59,12 +61,12 @@ impl Process {
     }
 
     fn fetch_decode(&mut self, arena: &mut Arena) {
-        let inst = arena.read(self.pc, 1)[0];
-        println!("address {} instruction : {:?}", self.pc, inst);
-        self.pc += 1;
+        let inst = arena.read(self.pc.get(), 1)[0];
+        println!("address {} instruction : {:?}", self.pc.get(), inst);
+        self.pc.add();
         if inst == 1 {
-            let params = arena.read(self.pc, 4);
-            self.pc += 4;
+            let params = arena.read(self.pc.get(), 4);
+            self.pc.set(self.pc.get() + 4);
             let inst = self.decode(inst, params);
             self.current_instruction = Some(inst);
         } else {
