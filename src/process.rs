@@ -7,9 +7,9 @@ use std::{thread, time::Duration};
 // https://www.geeksforgeeks.org/operating-systems/process-control-block-in-os/
 // running, waiting, or ready to execute.
 enum State {
-    waiting,
-    ready,
-    free,
+    Waiting,
+    Ready,
+    NoInstruction,
 }
 #[derive(Clone)]
 pub struct Process {
@@ -33,13 +33,13 @@ impl Process {
             // alive: true,
         }
     }
-    fn state(self) -> State {
+    fn state(&self) -> State {
         if self.current_instruction.is_some() && self.remaining_cycles == 0 {
-            return State::ready;
+            return State::Ready;
         } else if self.current_instruction.is_some() && self.remaining_cycles != 0 {
-            return State::waiting;
+            return State::Waiting;
         } else {
-            return State::free;
+            return State::NoInstruction;
         }
     }
 
@@ -79,21 +79,19 @@ impl Process {
     // work on decoding an instruction
     // [Opcode] [Pcode?] [Param1] [Param2] [Param3]
     pub fn execute_cycle(&mut self, arena: &mut Arena) {
-        match self.clone().state() {
-            State::waiting => {
+        match self.state() {
+            State::Waiting => {
                 println!("waiting...");
                 self.remaining_cycles -= 1;
             }
-            State::ready => {
+            State::Ready => {
                 println!("executing...");
                 self.current_instruction
-                    .clone()
+                    .take()
                     .unwrap()
                     .execute(self, arena);
-                self.current_instruction = None;
-                self.fetch_decode(arena);
             }
-            State::free => {
+            State::NoInstruction => {
                 println!("free...");
                 self.fetch_decode(arena);
             }
