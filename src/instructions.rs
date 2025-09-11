@@ -1,6 +1,7 @@
 use crate::arena::*;
 use crate::process::*;
 // instruction.rs
+#[derive(Clone)]
 pub enum Parameter {
     Register(usize),
     Direct(i32),
@@ -9,6 +10,7 @@ pub enum Parameter {
 impl Parameter {
     pub fn new() {}
 }
+#[derive(Clone)]
 pub struct Instruction {
     opcode: u8,
     parameters: Vec<Parameter>,
