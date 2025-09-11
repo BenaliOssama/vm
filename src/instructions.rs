@@ -7,9 +7,7 @@ pub enum Parameter {
     Direct(i32),
     Indirect(i32),
 }
-impl Parameter {
-    pub fn new() {}
-}
+
 #[derive(Clone)]
 pub struct Instruction {
     opcode: u8,
