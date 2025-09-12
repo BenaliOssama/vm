@@ -5,6 +5,8 @@ mod player;
 mod process;
 mod utils;
 mod vm;
+mod config;
+
 
 pub use arena::*;
 use process::*;
