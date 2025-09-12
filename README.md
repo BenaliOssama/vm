@@ -7,7 +7,7 @@ The goal is to build a **Virtual Machine** and an **Assembler** for the Corewar 
 * The **Assembler** takes assembly code (`.s`) and turns it into binary programs (`.cor`).
 * The **Virtual Machine** loads those `.cor` files into a shared circular memory (the arena) and runs them cycle by cycle.
 
-> Note: I’m only working on the **VM** — the assembler is being implemented by a peer.
+> Note: I’m only working on the **VM** — the assembler is being implemented by a peer [Assembler](https://github.com/brahem01/corewar/tree/main/assembler).
 
 ---
 
