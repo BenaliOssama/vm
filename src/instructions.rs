@@ -30,9 +30,15 @@ impl Instruction {
 
     fn live(&self, process: &mut Process, arena: &mut Arena) {
         // Implement live instruction
-        process.last_live_cycle += 1;
         process.carry = false;
+
+        process.live_status.executed = true;
+        // pay more attention to this line it could cause run time error
+        let Parameter::Direct(player_id) = self.parameters[0] else {
+            unreachable!()
+        };
+        process.live_status.player_id = player_id;
+
         println!("heeeey!!! i'm alive :)");
     }
-    // ... other instruction implementations
 }

@@ -14,13 +14,19 @@ enum State {
     NoInstruction,
 }
 #[derive(Clone)]
+pub struct LiveStatus {
+    pub executed: bool,
+    pub player_id: i32, // negative of the player ID as per Core War convention
+}
+
+#[derive(Clone)]
 pub struct Process {
     pub pc: PC, // Program Counter
     pub registers: [i32; 16],
     pub carry: bool,
-    pub last_live_cycle: i32,
     pub current_instruction: Option<Instruction>,
     pub remaining_cycles: i32,
+    pub live_status: LiveStatus,
 }
 
 impl Process {
@@ -28,10 +34,13 @@ impl Process {
         Self {
             pc: PC::new(),
             registers: [0; 16],
-            last_live_cycle: -1,
             remaining_cycles: 0,
             current_instruction: None,
             carry: false,
+            live_status: LiveStatus {
+                executed: false,
+                player_id: 0,
+            },
         }
     }
     fn state(&self) -> State {
@@ -43,7 +52,6 @@ impl Process {
             return State::NoInstruction;
         }
     }
-
     fn decode(&mut self, opcode: u8, raw_bytes: &[u8]) -> Instruction {
         let parameters = vec![]; // later: parse based on opcode/pcode
 

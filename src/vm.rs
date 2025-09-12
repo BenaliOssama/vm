@@ -8,7 +8,6 @@ pub struct VirtualMachine {
     pub cycle_count: u64,
     pub cycles_to_die: i32,
     pub live_players: Vec<Player>,
-    // ... other fields
 }
 
 impl VirtualMachine {
@@ -23,16 +22,16 @@ impl VirtualMachine {
     }
 
     pub fn load_player(&mut self, player: Player) {
-        // Load player code into arena
         self.arena.write(0, &player.code);
     }
 
     pub fn run(&mut self) {
         while self.processes_alive() {
             self.cycle();
-            //     if self.cycle_count % self.cycles_to_die as u64 == 0 {
-            //         self.check_lives();
-            //     }
+            self.cycle_count += 1;
+            if self.cycle_count % self.cycles_to_die as u64 == 0 {
+                self.check_lives();
+            }
         }
     }
 
@@ -46,9 +45,16 @@ impl VirtualMachine {
     fn processes_alive(&self) -> bool {
         true
     }
-    
-    fn check_lives() {
-        todo!();
+
+    fn check_lives(&self) {
+        // [ ] check lives
+        for process in &self.processes {
+            if process.live_status.executed {
+                // [ ] add to live players after check
+                //
+            }
+            // [ ] then reset process live
+        }
     }
 
     fn kill_process() {
