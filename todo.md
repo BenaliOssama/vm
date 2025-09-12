@@ -1,6 +1,6 @@
 # Note
 
-* [ ] The provided VM has an extra flag `-v` which you can use to print the state of the VM at every cycle, this should greatly help you during development and debugging.
+The provided VM has an extra flag `-v` which you can use to print the state of the VM at every cycle, this should greatly help you during development and debugging.
 
 ---
 
@@ -170,6 +170,7 @@ cycle [X]: The winner is player [X]: [NAME]!
 
 # Additional notes
 
+* [ ] use the constants instead of hardcoded values
 * [ ] Make use of the instruction file.
 * [ ] Work on multiple processes simultaneously (support 2+ files).
 * [ ] Read about how modern CPUs do the fetch-execute cycle: [https://corewar-docs.readthedocs.io/en/latest/redcode/parser/](https://corewar-docs.readthedocs.io/en/latest/redcode/parser/)
