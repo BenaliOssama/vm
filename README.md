@@ -1,16 +1,58 @@
-not much done at this point, but you can see what the code does by running 
-```bash
+# Corewar VM (Rust)
+
+I’m working on this project: [Corewar description](https://github.com/01-edu/public/tree/master/subjects/corewar).
+
+The goal is to build a **Virtual Machine** and an **Assembler** for the Corewar game.
+
+* The **Assembler** takes assembly code (`.s`) and turns it into binary programs (`.cor`).
+* The **Virtual Machine** loads those `.cor` files into a shared circular memory (the arena) and runs them cycle by cycle.
+
+> Note: I’m only working on the **VM** — the assembler is being implemented by a peer.
+
+---
+
+## Game dynamics
+
+* Each program (player) starts with a single process.
+* A process has its own **registers**, a **program counter (PC)**, and a **carry flag**.
+* Players can execute instructions to:
+
+  * move through memory,
+  * copy or modify data,
+  * create new processes,
+  * and call `live` to prove they’re still alive.
+
+The VM periodically checks which processes executed `live`. If a process hasn’t, it dies. The last player to say it’s alive wins the match.
+
+---
+
+## Implementation (Rust)
+
+I’m building the VM step by step:
+
+* memory management with a circular arena
+* processes with registers and program counters
+* instruction set decoding and execution
+* cycle scheduling and process life/death checks
+* loading players and handling game flow
+
+For now, I’m only using the Rust **standard library**, so there are no external dependencies to worry about.
+
+---
+
+## Testing
+
+The project includes a **playground** with a reference assembler, VM, and test players.
+You can run the project with:
+
+```sh
 make run
 ```
 
-this is going to provide one file of .cor extention to the rust executable. 
-the .cor file is parsed where i read the header and the program and then i fill in the memory with instruction, at this point i will start working on fetch execute sycle...
+This will launch the VM with a simple example setup.
 
-The first 4 bytes 00 ea 83 f3 are the program signature (also called the magic), this is a 32 bits integer, represented as four 8 bits slices.
+---
 
-Then the next 128 bits are for the name of the program, the first five 61 6d 65 62 61 are the actual name, the others are zeros because we don't actually need it.
+## Progress
 
-Then we have 4 bytes 00 00 00 17 (so 23) which will be a 32 bits integer with the size in bytes of the program to be executed in the arena of the VM (so only the size of the instructions, without the name, description, signature and so on).
-
-Then we have the description which works exactly the same as the name but it will add four bytes padding at the end of it.
-
+You can track what’s completed and what’s pending in the [`todo.md`](./todo.md) file.
