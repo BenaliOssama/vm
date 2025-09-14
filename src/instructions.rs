@@ -1,14 +1,14 @@
 use crate::arena::*;
 use crate::process::*;
 // instruction.rs
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum Parameter {
     Register(usize),
     Direct(i32),
     Indirect(i32),
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct Instruction {
     opcode: u8,
     parameters: Vec<Parameter>,
@@ -33,11 +33,15 @@ impl Instruction {
         process.carry = false;
 
         process.live_status.executed = true;
-        // pay more attention to this line it could cause run time error
-        let Parameter::Direct(player_id) = self.parameters[0] else {
-            unreachable!()
-        };
-        process.live_status.player_id = player_id;
+
+        if let Parameter::Direct(player_id) = self.parameters[0] {
+            process.live_status.player_id = player_id;
+        } else {
+            eprintln!(
+                "Invalid parameter for live instruction {:?}",
+                self.parameters
+            );
+        }
 
         println!("heeeey!!! i'm alive :)");
     }
