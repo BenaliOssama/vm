@@ -1,6 +1,6 @@
 use crate::config::MEM_SIZE;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct PC {
     pub addr: usize,
 }

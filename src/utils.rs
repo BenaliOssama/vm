@@ -8,7 +8,6 @@ pub fn parse_arguments(args: Vec<String>) -> Player {
     if args.len() != 2 {
         panic!("{}", red("not enought argumentsh!"));
     }
-
     let file_name = args[1].as_str();
 
     //TODO!
@@ -53,7 +52,7 @@ pub fn parse_arguments(args: Vec<String>) -> Player {
     let program = &buffer[prev..next];
 
     let player = Player::new(
-        1,
+        -1,
         name.to_string(),
         disc.to_string(),
         program.to_vec(),

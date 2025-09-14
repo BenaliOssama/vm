@@ -14,14 +14,14 @@ enum State {
     Ready,
     NoInstruction,
 }
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct LiveStatus {
     pub executed: bool,
     pub player_id: i32, // negative of the player ID as per Core War convention
     pub nbr_live: usize,
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct Process {
     pub pc: PC, // Program Counter
     pub registers: [i32; REG_NUMBER],
@@ -32,10 +32,10 @@ pub struct Process {
 }
 
 impl Process {
-    pub fn new() -> Self {
-        Self {
+    pub fn new(player: i32) -> Self {
+        let mut pro = Self {
             pc: PC::new(),
-            registers: [0; 16],
+            registers: [0; REG_NUMBER],
             remaining_cycles: 0,
             current_instruction: None,
             carry: false,
@@ -44,7 +44,9 @@ impl Process {
                 player_id: 0,
                 nbr_live: 0,
             },
-        }
+        };
+        pro.registers[0] = player;
+        pro
     }
     fn state(&self) -> State {
         if self.current_instruction.is_some() && self.remaining_cycles == 0 {

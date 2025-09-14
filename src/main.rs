@@ -1,12 +1,11 @@
 mod arena;
+mod config;
 mod counter;
 mod instructions;
 mod player;
 mod process;
 mod utils;
 mod vm;
-mod config;
-
 
 pub use arena::*;
 use process::*;
@@ -19,7 +18,8 @@ fn main() {
 
     let player = parse_arguments(args);
     let arena = Arena::new();
-    let process = Process::new();
+    let process = Process::new(player.id);
+    println!("{:?}", process);
 
     let mut vm = VirtualMachine::new(arena, vec![process]);
 

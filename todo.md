@@ -22,20 +22,13 @@ The provided VM has an extra flag `-v` which you can use to print the state of t
 
 # End game
 
-* [ ] Notify the VM that the player is live.
+* [X] Notify the VM that the player is live.
 * [ ] worry about the integrety of the instruction's arguments
 * [X] Live check during VM checks and remove dead processes.
 * [X] Decrease the elapsed time since last check according to the algorithm.
 ---
 
 # The assembler
-
-* [ ] If no parameters are passed it will print a help message.
-* [ ] Takes a `file.s` as input.
-* [ ] Returns a `file.cor` as output.
-* [ ] If there is any error in the source file, the Assembler should exit with an error code, print a message on `stderr` (the more specific the better), and do not create any `file.cor`.
-* [ ] `.name` and `.description` must appear before any instruction.
-* [ ] The binary must be written in big-endian.
 
 ---
 
@@ -87,8 +80,8 @@ cycle [X]: The winner is player [X]: [NAME]!
 
 # Stop process execution
 
-* [ ] Every `CYCLE_TO_DIE` the VM will check every process and kill all that did not successfully execute any `live` instruction.
-* [ ] To avoid infinite games, `CYCLES_TO_DIE` will be decremented by `CYCLE_DELTA` under certain conditions:
+* [X] Every `CYCLE_TO_DIE` the VM will check every process and kill all that did not successfully execute any `live` instruction.
+* [X] To avoid infinite games, `CYCLES_TO_DIE` will be decremented by `CYCLE_DELTA` under certain conditions:
 
   * During the last life loop, if at least `NBR_LIVE` successfully executed.
   * If it has been `MAX_CHECKS` life loops since the last decrement.
@@ -98,7 +91,7 @@ cycle [X]: The winner is player [X]: [NAME]!
 
 # Parameters types
 
-* [ ] The VM will initialize registers to 0 for each player, except `r1` = `-PLAYER_ID` (first player: r1 = -1).
+* [X] The VM will initialize registers to 0 for each player, except `r1` = `-PLAYER_ID` (first player: r1 = -1).
 * [ ] All addresses are relative to the current PC of the process.
 * [ ] Some instructions truncate addresses using `IDX_MOD` to prevent processes from attacking faraway memory directly (balance purposes).
 
