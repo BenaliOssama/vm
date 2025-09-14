@@ -7,7 +7,6 @@ pub struct VirtualMachine {
     pub processes: Vec<Process>,
     pub cycle_count: u64,
     pub cycles_to_die: i32,
-    pub live_players: Vec<Player>,
 }
 
 impl VirtualMachine {
@@ -17,7 +16,6 @@ impl VirtualMachine {
             processes,
             cycle_count: 0,
             cycles_to_die: 10,
-            live_players: vec![],
         }
     }
 
@@ -43,23 +41,14 @@ impl VirtualMachine {
     }
 
     fn processes_alive(&self) -> bool {
-        true
+        self.processes.len() > 0
     }
 
-    fn check_lives(&self) {
-        // [ ] check lives
-        for process in &self.processes {
-            if process.live_status.executed {
-                // [ ] add to live players after check
-                //
-            }
-            // [ ] then reset process live
+    fn check_lives(&mut self) {
+        self.processes
+            .retain(|process| process.live_status.executed);
+        for process in &mut self.processes {
+            process.live_status.executed = false;
         }
-    }
-
-    fn kill_process() {
-        // if vm.current_cycle - process.last_live_cycle > vm.cycle_to_die {
-        //     // kill the process
-        // }
     }
 }
