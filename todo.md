@@ -26,8 +26,6 @@ The provided VM has an extra flag `-v` which you can use to print the state of t
 * [ ] worry about the integrety of the instruction's arguments
 * [X] Live check during VM checks and remove dead processes.
 * [X] Decrease the elapsed time since last check according to the algorithm.
-* [ ] The VM will use some rules to decrease the elapsed time since the last check down to zero, this means the games can never be infinite and all processes will be killed at one point.
-
 ---
 
 # The assembler
