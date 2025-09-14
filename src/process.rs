@@ -1,4 +1,5 @@
 use crate::arena::*;
+use crate::config::REG_NUMBER;
 use crate::counter::PC;
 use crate::instructions::*;
 
@@ -17,12 +18,13 @@ enum State {
 pub struct LiveStatus {
     pub executed: bool,
     pub player_id: i32, // negative of the player ID as per Core War convention
+    pub nbr_live: usize,
 }
 
 #[derive(Clone)]
 pub struct Process {
     pub pc: PC, // Program Counter
-    pub registers: [i32; 16],
+    pub registers: [i32; REG_NUMBER],
     pub carry: bool,
     pub current_instruction: Option<Instruction>,
     pub remaining_cycles: i32,
@@ -40,6 +42,7 @@ impl Process {
             live_status: LiveStatus {
                 executed: false,
                 player_id: 0,
+                nbr_live: 0,
             },
         }
     }
@@ -53,19 +56,24 @@ impl Process {
         }
     }
     fn decode(&mut self, opcode: u8, raw_bytes: &[u8]) -> Instruction {
-        let parameters = vec![]; // later: parse based on opcode/pcode
-
         let param = match opcode {
             1 => {
                 //parameters
                 let mut arr: [u8; 4] = raw_bytes.try_into().unwrap();
                 let num = i32::from_be_bytes(arr);
-                self.remaining_cycles = 10;
+                println!(
+                    "{}: {}",
+                    vm::cyan("player id"),
+                    vm::magenta(num.to_string().as_ref())
+                );
+                self.remaining_cycles = 8;
                 Parameter::Direct(num)
             }
             _ => panic!("no paramiter"),
         };
-        Instruction::new(opcode, parameters)
+        println!("{}: {:?}", vm::cyan("parameter from player id"), param);
+
+        Instruction::new(opcode, vec![param])
     }
 
     fn fetch_decode(&mut self, arena: &mut Arena) {
@@ -76,6 +84,7 @@ impl Process {
             let params = arena.read(self.pc.get(), 4);
             self.pc.set(self.pc.get() + 4);
             let inst = self.decode(inst, params);
+            println!("{}, {:?}", vm::blue("current instruction"), inst);
             self.current_instruction = Some(inst);
         } else {
             println!("Not relevent for now");
@@ -95,16 +104,18 @@ impl Process {
             }
             State::Ready => {
                 println!("executing...");
+                println!("instruction {:?}", self.current_instruction);
                 self.current_instruction
                     .take()
                     .unwrap()
                     .execute(self, arena);
+                self.live_status.nbr_live += 1;
             }
             State::NoInstruction => {
                 println!("free...");
                 self.fetch_decode(arena);
             }
         }
-        thread::sleep(Duration::from_millis(400));
+        thread::sleep(Duration::from_millis(60));
     }
 }
