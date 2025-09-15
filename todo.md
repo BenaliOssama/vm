@@ -93,7 +93,7 @@ cycle [X]: The winner is player [X]: [NAME]!
 
 * [X] The VM will initialize registers to 0 for each player, except `r1` = `-PLAYER_ID` (first player: r1 = -1).
 * [ ] All addresses are relative to the current PC of the process.
-* [ ] Some instructions truncate addresses using `IDX_MOD` to prevent processes from attacking faraway memory directly (balance purposes).
+----> * [ ] Some instructions truncate addresses using `IDX_MOD` to prevent processes from attacking faraway memory directly (balance purposes).
 
 ---
 

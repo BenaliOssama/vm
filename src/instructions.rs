@@ -46,3 +46,22 @@ impl Instruction {
         println!("heeeey!!! i'm alive :)");
     }
 }
+#[derive(Copy, Clone)]
+pub struct InstructionInfo {
+    pub nb_params: u8,
+    pub nb_cycles: i32,
+    pub has_pcode: bool,
+    pub has_idx: bool,
+    pub direct_size: usize, // 2 if IDX, 4 otherwise
+}
+
+pub const INSTRUCTION_TABLE: [InstructionInfo; 1] = [
+    // opcode 1..16
+    InstructionInfo {
+        nb_params: 1,
+        nb_cycles: 10,
+        has_pcode: false,
+        has_idx: false,
+        direct_size: 4,
+    }, // live
+];

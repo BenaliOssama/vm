@@ -58,17 +58,13 @@ impl Process {
         }
     }
     fn decode(&mut self, opcode: u8, raw_bytes: &[u8]) -> Instruction {
+        let inst_info = INSTRUCTION_TABLE[(opcode - 1) as usize]; // opcodes start at 1
         let param = match opcode {
             1 => {
                 //parameters
                 let mut arr: [u8; 4] = raw_bytes.try_into().unwrap();
                 let num = i32::from_be_bytes(arr);
-                println!(
-                    "{}: {}",
-                    vm::cyan("player id"),
-                    vm::magenta(num.to_string().as_ref())
-                );
-                self.remaining_cycles = 8;
+                self.remaining_cycles = inst_info.nb_cycles - 2;
                 Parameter::Direct(num)
             }
             _ => panic!("no paramiter"),
@@ -84,7 +80,7 @@ impl Process {
         self.pc.add();
         if inst == 1 {
             let params = arena.read(self.pc.get(), 4);
-            self.pc.set(self.pc.get() + 4);
+            self.pc.set(self.pc.get() + 4, false);
             let inst = self.decode(inst, params);
             println!("{}, {:?}", vm::blue("current instruction"), inst);
             self.current_instruction = Some(inst);
