@@ -60,6 +60,6 @@ pub fn parse_arguments(args: Vec<String>) -> Player {
         0,
     );
 
-    println!("{player}");
+
     return player;
 }

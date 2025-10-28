@@ -1,4 +1,6 @@
 use crate::config::MEM_SIZE;
+use std::fmt::{Display, Formatter, Result};
+use vm::*;
 
 // arena.rs
 #[derive(Debug)]
@@ -23,5 +25,35 @@ impl Arena {
             current_pos = (current_pos + 1) % MEM_SIZE; // proper circular wrap
         }
         arr
+    }
+}
+
+// configurable display width
+const BYTES_PER_ROW: usize = 64; // change to 16, 32, or 64 as you like
+
+impl Display for Arena {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        let mut table = Table::new();
+
+        // header
+        table.add_header("Addr");
+        for i in 0..BYTES_PER_ROW {
+            table.add_header(&format!("{:02X}", i));
+        }
+
+        // rows
+        let mut row = Vec::new();
+        for chunk_start in (0..MEM_SIZE).step_by(BYTES_PER_ROW) {
+            row.clear();
+            row.push(format!("{:04X}", chunk_start));
+            for offset in 0..BYTES_PER_ROW {
+                let idx = (chunk_start + offset) % MEM_SIZE;
+                row.push(format!("{:02X}", self.memory[idx]));
+            }
+            table.add_row(&row);
+        }
+
+        println!("{table}");
+        Ok(())
     }
 }
