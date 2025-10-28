@@ -23,7 +23,6 @@ The provided VM has an extra flag `-v` which you can use to print the state of t
 # End game
 
 * [X] Notify the VM that the player is live.
-* [ ] worry about the integrety of the instruction's arguments
 * [X] Live check during VM checks and remove dead processes.
 * [X] Decrease the elapsed time since last check according to the algorithm.
 ---
@@ -56,17 +55,21 @@ cycle [X]: The winner is player [X]: [NAME]!
 * [ ] The players will be loaded into the arena starting from the first byte and will be evenly spaced.
 * [ ] The VM must handle a `-d [NB_CYCLES]` flag (dump). If specified, the VM stops execution at `NB_CYCLES` and dumps the arena memory in hexadecimal (32 bytes per row).
 * [ ] The last program passed will be the first one executed during the cycle.
-* [ ] Only when executing the instruction, the VM will check parameters. If incorrect, it will print an error on stderr and continue.
-* [ ] If an instruction has incorrect parameters, the PC will be moved forward according to the size of the parameters.
-* [ ] If the instruction doesn't exist in the instruction set, the PC will move forward by 1 byte.
+
+* [ ] worry about the integrety of the instruction's arguments
+  * [ ] Only when executing the instruction, the VM will check parameters. If incorrect, it will print an error on stderr and continue.
+  * [ ] If an instruction has incorrect parameters, the PC will be moved forward according to the size of the parameters.
+  * [ ] If the instruction doesn't exist in the instruction set, the PC will move forward by 1 byte.
+
 * [ ] When a new process is forked, it will be placed at the end of the processes and start execution at the start of the next cycle (it will be first executed on the next cycle).
 * [ ] The VM assumes the binary is in big-endian.
-* [ ] Those are the cases where a file is considered corrupted:
 
+* [ ] Those are the cases where a file is considered corrupted:
   * Wrong signature code.
   * Declared size of the program not matching the actual size.
   * The size of the program is bigger than the maximum allowed size.
   * The total file size is smaller than the minimum size.
+
 * [ ] The entire execution is deterministic: same inputs → same outputs.
 
 ---
@@ -74,7 +77,7 @@ cycle [X]: The winner is player [X]: [NAME]!
 # Circular memory space of the arena
 
 * [x] The memory where the players will fight is circular. Moving forward from the last address (e.g., 4095) wraps to address 0.
-* [ ] Moving backward from 0 wraps to address 4095.
+* [X] Moving backward from 0 wraps to address 4095.
 
 ---
 

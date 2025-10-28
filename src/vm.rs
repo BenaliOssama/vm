@@ -2,6 +2,7 @@ use crate::arena::Arena;
 use crate::config::{CYCLE_DELTA, CYCLE_TO_DIE, MAX_CHECKS, NBR_LIVE};
 use crate::player::Player;
 use crate::process::Process;
+
 // vm.rs
 pub struct VirtualMachine {
     pub arena: Arena,
@@ -44,6 +45,7 @@ impl VirtualMachine {
             }
         }
     }
+
     fn read_nbr_lives(&mut self) -> usize {
         let mut count = 0;
         for process in &mut self.processes {
@@ -52,6 +54,7 @@ impl VirtualMachine {
         }
         count
     }
+
     fn cycle(&mut self) {
         for process in &mut self.processes {
             process.execute_cycle(&mut self.arena);
