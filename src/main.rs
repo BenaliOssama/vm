@@ -19,7 +19,7 @@ fn main() {
     let player = parse_arguments(args);
     let arena = Arena::new();
     let process = Process::new(player.id);
-    println!("{:?}", process);
+    println!("{}", process);
 
     let mut vm = VirtualMachine::new(arena, vec![process]);
 

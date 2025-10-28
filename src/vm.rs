@@ -8,7 +8,7 @@ pub struct VirtualMachine {
     pub arena: Arena,
     pub processes: Vec<Process>,
     pub cycle_count: u64,
-    pub cycles_to_die: i32,
+    pub cycles_to_die: usize,
     nbr_checks: usize,
     cycle_todie: usize,
 }
@@ -19,7 +19,7 @@ impl VirtualMachine {
             arena,
             processes,
             cycle_count: 0,
-            cycles_to_die: 10,
+            cycles_to_die: CYCLE_TO_DIE,
             nbr_checks: 0,
             cycle_todie: CYCLE_TO_DIE,
         }
@@ -33,7 +33,7 @@ impl VirtualMachine {
         while self.processes_alive() {
             self.cycle();
             self.cycle_count += 1;
-            if self.cycle_count % CYCLE_TO_DIE as u64 == 0 {
+            if self.cycle_count % self.cycles_to_die as u64 == 0 {
                 println!("{} {}", vm::yellow("usual check: "), self.cycle_count);
                 self.check_lives();
                 self.nbr_checks += 1;
