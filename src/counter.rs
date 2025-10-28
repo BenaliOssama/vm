@@ -10,7 +10,7 @@ impl PC {
         Self { addr: 0 }
     }
 
-    pub fn add(&mut self) {
+    pub fn inc(&mut self) {
         self.addr = (self.addr + 1) % MEM_SIZE;
     }
 

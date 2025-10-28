@@ -18,7 +18,7 @@ enum State {
 pub struct LiveStatus {
     pub executed: bool,
     pub player_id: i32, // negative of the player ID as per Core War convention
-    pub nbr_live: usize,
+    pub nbr_live: usize, // used with "Stop process execution"
 }
 
 #[derive(Debug, Clone)]
@@ -77,11 +77,11 @@ impl Process {
     fn fetch_decode(&mut self, arena: &mut Arena) {
         let inst = arena.read(self.pc.get(), 1)[0];
         println!("address {} instruction : {:?}", self.pc.get(), inst);
-        self.pc.add();
+        self.pc.inc();
         if inst == 1 {
             let params = arena.read(self.pc.get(), 4);
             self.pc.set(self.pc.get() + 4, false);
-            let inst = self.decode(inst, params);
+            let inst = self.decode(inst, &params);
             println!("{}, {:?}", vm::blue("current instruction"), inst);
             self.current_instruction = Some(inst);
         } else {
