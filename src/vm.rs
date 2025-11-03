@@ -27,6 +27,7 @@ impl VirtualMachine {
 
     pub fn load_player(&mut self, player: Player) {
         self.arena.write(0, &player.code);
+        println!("{}", self.arena);
     }
 
     pub fn run(&mut self) {

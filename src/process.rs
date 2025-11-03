@@ -17,6 +17,15 @@ enum State {
     Ready,
     NoInstruction,
 }
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ParamType {
+    None,
+    Register,
+    Direct,
+    Indirect,
+}
+
 #[derive(Debug, Clone)]
 pub struct LiveStatus {
     pub executed: bool,
@@ -78,18 +87,32 @@ impl Process {
     }
 
     fn fetch_decode(&mut self, arena: &mut Arena) {
-        let inst = arena.read(self.pc.get(), 1)[0];
-        println!("address {} instruction : {:?}", self.pc.get(), inst);
-        self.pc.inc();
-        if inst == 1 {
-            let params = arena.read(self.pc.get(), 4);
-            self.pc.set(self.pc.get() + 4, false);
-            let inst = self.decode(inst, &params);
-            println!("{}, {:?}", vm::blue("current instruction"), inst);
-            self.current_instruction = Some(inst);
-        } else {
-            println!("Not relevent for now");
-            self.current_instruction = None;
+        let opcode = arena.read(self.pc.get(), 1)[0];
+        println!("address {} instruction : {:?}", self.pc.get(), opcode);
+        match opcode {
+            // [ ] i must verify the integrety of the arguments, if currepted i jump.
+            1 => {
+                let params = arena.read(self.pc.get(), 4);
+                self.pc.set(self.pc.get() + 5, false);
+                let inst = self.decode(opcode, &params);
+                println!("{}, {:?}", vm::blue("current instruction"), inst);
+                self.current_instruction = Some(inst);
+            }
+            2 => {
+                // read and  print the pcode and break
+                let pcode = arena.read(self.pc.get(), 1)[0];
+                println!("-------> ld instruction ->");
+                println!("--pcode: {}", pcode);
+                self.pc.inc();
+                let type_params = decode_pcode(pcode, INSTRUCTION_TABLE[2].nb_params);
+                // analyse the pcode
+                
+            }
+            _ => {
+                println!("Not relevent for now");
+                self.current_instruction = None;
+                self.pc.inc()
+            }
         }
     }
     //Opcode ->
@@ -169,4 +192,21 @@ impl Display for Process {
 
         Ok(())
     }
+}
+
+fn decode_pcode(pcode: u8, num_args: usize) -> [ParamType; 3] {
+    let mut result = [ParamType::None; 3];
+
+    for i in 0..num_args {
+        let shift = 6 - (i * 2);
+        let bits = (pcode >> shift) & 0b11;
+        result[i] = match bits {
+            0b01 => ParamType::Register,
+            0b10 => ParamType::Direct,
+            0b11 => ParamType::Indirect,
+            _ => ParamType::None, // 0b00 means unused/invalid
+        };
+    }
+
+    result
 }

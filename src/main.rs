@@ -22,9 +22,9 @@ fn main() {
 
     println!("{player}");
     println!("{}", process);
-    // println!("{}", arena);
+    //println!("{}", arena);
 
-    let mut vm = VirtualMachine::new(arena, vec![process]);
+    let mut vm = VirtualMachine::new(arena.clone(), vec![process]);
 
     vm.load_player(player);
     vm.run();

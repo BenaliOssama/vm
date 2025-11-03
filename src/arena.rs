@@ -3,7 +3,7 @@ use std::fmt::{Display, Formatter, Result};
 use vm::*;
 
 // arena.rs
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Arena {
     memory: [u8; 4096],
 }
@@ -29,7 +29,7 @@ impl Arena {
 }
 
 // configurable display width
-const BYTES_PER_ROW: usize = 64; // change to 16, 32, or 64 as you like
+const BYTES_PER_ROW: usize = 16; // change to 16, 32, or 64 as you like
 
 impl Display for Arena {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
@@ -43,7 +43,8 @@ impl Display for Arena {
 
         // rows
         let mut row = Vec::new();
-        for chunk_start in (0..MEM_SIZE).step_by(BYTES_PER_ROW) {
+        //for chunk_start in (0..MEM_SIZE).step_by(BYTES_PER_ROW) {
+        for chunk_start in (0..64).step_by(BYTES_PER_ROW) {
             row.clear();
             row.push(format!("{:04X}", chunk_start));
             for offset in 0..BYTES_PER_ROW {
