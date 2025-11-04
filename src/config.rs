@@ -36,4 +36,3 @@ pub const DESCRIPTION_LENGTH: usize = 2048;
 
 // File signature for .cor binaries
 pub const COREWAR_EXEC_SIGNATURE: u32 = 0xea83f3;
-

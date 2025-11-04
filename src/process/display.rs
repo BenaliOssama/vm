@@ -4,7 +4,7 @@ use std::fmt::Formatter;
 use vm::*;
 
 impl Display for Process {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), std::fmt::Error> {
+    fn fmt(&self, _f: &mut Formatter<'_>) -> Result<(), std::fmt::Error> {
         // create a table
         let mut table = Table::new();
 

@@ -1,10 +1,10 @@
 pub mod decode;
 pub mod display;
 
-use crate::config::{MEM_SIZE, REG_NUMBER};
+use crate::arena::*;
+use crate::config::REG_NUMBER;
 use crate::counter::PC;
-use crate::{arena, instructions::*};
-use crate::{arena::*, instructions};
+use crate::instructions::*;
 
 use std::{thread, time::Duration};
 
@@ -69,7 +69,6 @@ impl Process {
             return State::NoInstruction;
         }
     }
- 
 
     fn fetch_decode(&mut self, arena: &mut Arena) {
         let opcode = arena.read(self.pc.get(), 1)[0];
@@ -121,7 +120,3 @@ impl Process {
         thread::sleep(Duration::from_millis(60));
     }
 }
-
-
-
-

@@ -32,7 +32,7 @@ impl Arena {
 const BYTES_PER_ROW: usize = 16; // change to 16, 32, or 64 as you like
 
 impl Display for Arena {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+    fn fmt(&self, _: &mut Formatter<'_>) -> Result {
         let mut table = Table::new();
 
         // header

@@ -14,7 +14,7 @@ impl PC {
         self.addr = (self.addr + 1) % MEM_SIZE;
     }
 
-    pub fn reset(&mut self) {
+    pub fn _reset(&mut self) {
         self.addr = 0;
     }
 

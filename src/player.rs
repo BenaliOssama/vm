@@ -32,7 +32,7 @@ impl Player {
 }
 
 impl Display for Player {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), std::fmt::Error> {
+    fn fmt(&self, _f: &mut Formatter<'_>) -> Result<(), std::fmt::Error> {
         // make a table
         let mut table = Table::new();
         // add headers id, name, comment
@@ -58,7 +58,7 @@ impl Display for Player {
             hex_string,
         ]);
         println!("{table}");
-        
+
         Ok(())
     }
 }

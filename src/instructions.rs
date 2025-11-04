@@ -29,7 +29,7 @@ impl Instruction {
             _ => panic!("Unknown instruction"),
         }
     }
-    fn ld(&self, process: &mut Process, arena: &mut Arena) {
+    fn ld(&self, process: &mut Process, _arena: &mut Arena) {
         let value = match self.parameters[0] {
             Parameter::Direct(v) | Parameter::Indirect(v) => v,
             _ => {
@@ -51,7 +51,7 @@ impl Instruction {
         println!("{}", process);
     }
 
-    fn live(&self, process: &mut Process, arena: &mut Arena) {
+    fn live(&self, process: &mut Process, _arena: &mut Arena) {
         // Implement live instruction
         process.live_status.executed = true;
         process.live_status.nbr_live += 1;

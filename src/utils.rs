@@ -25,7 +25,7 @@ pub fn parse_arguments(args: Vec<String>) -> Player {
     let mut prev = 0;
     let mut next = 4;
 
-    let magic = &buffer[prev..next];
+    let _magic = &buffer[prev..next];
     // 128 + 4
     prev = next;
     next = next + 128;
@@ -59,7 +59,6 @@ pub fn parse_arguments(args: Vec<String>) -> Player {
         size,
         0,
     );
-
 
     return player;
 }

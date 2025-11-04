@@ -1,7 +1,7 @@
 use super::Process;
 use crate::ParamType;
 use crate::arena::*;
-use crate::config::{MEM_SIZE, REG_NUMBER};
+use crate::config::MEM_SIZE;
 use crate::instructions::*;
 
 impl Process {
