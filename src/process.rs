@@ -1,5 +1,5 @@
 use crate::arena::*;
-use crate::config::REG_NUMBER;
+use crate::config::{MEM_SIZE, REG_NUMBER};
 use crate::counter::PC;
 use crate::instructions::*;
 use std::fmt::Display;
@@ -108,6 +108,7 @@ impl Process {
 
                 let type_params = decode_pcode(pcode, INSTRUCTION_TABLE[2].nb_params);
 
+                /*________________________________________________________________ */
                 // Validate parameter types
                 let first_ok = matches!(type_params[0], ParamType::Direct | ParamType::Indirect);
                 let second_ok = matches!(type_params[1], ParamType::Register);
@@ -121,30 +122,48 @@ impl Process {
                     // or just return to continue next cycle
                     return;
                 }
+                /*________________________________________________________________ */
 
+                /*________________________________________________________________ */
                 // Decode parameters based on type
+                let mut arg1: i32 = 0;
                 for (i, param_type) in type_params.iter().enumerate() {
                     match param_type {
                         ParamType::Direct => {
                             let size = if INSTRUCTION_TABLE[2].has_idx { 2 } else { 4 };
                             let bytes = arena.read(self.pc.get(), size);
                             let value = bytes_to_i32(&bytes);
+                            arg1 = value;
                             println!("param {}: Direct ({})", i + 1, value);
                             self.pc.add(size);
                         }
                         ParamType::Indirect => {
                             let bytes = arena.read(self.pc.get(), 2);
+                            self.pc.add(2);
                             let value = bytes_to_i16(&bytes);
                             println!("param {}: Indirect ({})", i + 1, value);
+
+                            let mut addr =
+                                (self.pc.get() as isize + value as isize) % MEM_SIZE as isize;
+                            if addr < 0 {
+                                addr += MEM_SIZE as isize;
+                            }
+                            println!("going to memroy location: {}", addr);
+                            let v = bytes_to_i32(&arena.read(addr as usize, 4));
+                            println!("this is what i fetched: {:?}", v);
+                            arg1 = v;
                         }
                         ParamType::Register => {
                             let reg = arena.read(self.pc.get(), 1)[0];
-                            println!("param {}: Register (r{})", i + 1, reg);
+                            println!("param {}: Register (r{}) arg1 {}", i + 1, reg, arg1);
                             self.pc.inc();
+                            self.registers[(reg - 1) as usize] = arg1;
                         }
                         _ => (),
                     }
                 }
+                println!("ld executed now: -> ");
+                println!("{}", self);
             }
             _ => {
                 println!("Not relevent for now");
