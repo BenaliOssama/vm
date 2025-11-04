@@ -88,25 +88,63 @@ impl Process {
 
     fn fetch_decode(&mut self, arena: &mut Arena) {
         let opcode = arena.read(self.pc.get(), 1)[0];
+        self.pc.inc();
         println!("address {} instruction : {:?}", self.pc.get(), opcode);
         match opcode {
             // [ ] i must verify the integrety of the arguments, if currepted i jump.
             1 => {
+                println!("LIVE");
                 let params = arena.read(self.pc.get(), 4);
-                self.pc.set(self.pc.get() + 5, false);
+                self.pc.set(self.pc.get() + 4, false);
                 let inst = self.decode(opcode, &params);
                 println!("{}, {:?}", vm::blue("current instruction"), inst);
                 self.current_instruction = Some(inst);
             }
             2 => {
-                // read and  print the pcode and break
+                println!("LD");
+                // Read and decode pcode
                 let pcode = arena.read(self.pc.get(), 1)[0];
-                println!("-------> ld instruction ->");
-                println!("--pcode: {}", pcode);
                 self.pc.inc();
+
                 let type_params = decode_pcode(pcode, INSTRUCTION_TABLE[2].nb_params);
-                // analyse the pcode
-                
+
+                // Validate parameter types
+                let first_ok = matches!(type_params[0], ParamType::Direct | ParamType::Indirect);
+                let second_ok = matches!(type_params[1], ParamType::Register);
+
+                if !first_ok || !second_ok {
+                    eprintln!(
+                        "Invalid parameter types for ld: {:?} {:?}",
+                        type_params[0], type_params[1]
+                    );
+                    // skip the instruction: move PC by total size (opcode + pcode + params)
+                    // or just return to continue next cycle
+                    return;
+                }
+
+                // Decode parameters based on type
+                for (i, param_type) in type_params.iter().enumerate() {
+                    match param_type {
+                        ParamType::Direct => {
+                            let size = if INSTRUCTION_TABLE[2].has_idx { 2 } else { 4 };
+                            let bytes = arena.read(self.pc.get(), size);
+                            let value = bytes_to_i32(&bytes);
+                            println!("param {}: Direct ({})", i + 1, value);
+                            self.pc.add(size);
+                        }
+                        ParamType::Indirect => {
+                            let bytes = arena.read(self.pc.get(), 2);
+                            let value = bytes_to_i16(&bytes);
+                            println!("param {}: Indirect ({})", i + 1, value);
+                        }
+                        ParamType::Register => {
+                            let reg = arena.read(self.pc.get(), 1)[0];
+                            println!("param {}: Register (r{})", i + 1, reg);
+                            self.pc.inc();
+                        }
+                        _ => (),
+                    }
+                }
             }
             _ => {
                 println!("Not relevent for now");
@@ -209,4 +247,19 @@ fn decode_pcode(pcode: u8, num_args: usize) -> [ParamType; 3] {
     }
 
     result
+}
+
+fn bytes_to_i32(bytes: &[u8]) -> i32 {
+    let mut arr = [0u8; 4]; // 4 bytes for i32
+    let len = bytes.len();
+    // copy bytes to the end of the array (big-endian)
+    arr[4 - len..].copy_from_slice(bytes);
+    i32::from_be_bytes(arr)
+}
+
+fn bytes_to_i16(bytes: &[u8]) -> i16 {
+    let mut arr = [0u8; 2]; // 2 bytes for i16
+    let len = bytes.len();
+    arr[2 - len..].copy_from_slice(bytes);
+    i16::from_be_bytes(arr)
 }
