@@ -1,11 +1,12 @@
 use crate::arena::*;
 use crate::process::*;
 // instruction.rs
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum Parameter {
     Register(usize),
     Direct(i32),
     Indirect(i32),
+    None,
 }
 
 #[derive(Debug, Clone)]
@@ -24,15 +25,36 @@ impl Instruction {
             1 => self.live(process, arena),
             // 0x02 => self.ld(process, arena),
             // // ... other instructions
+            2 => self.ld(process, arena),
             _ => panic!("Unknown instruction"),
         }
+    }
+    fn ld(&self, process: &mut Process, arena: &mut Arena) {
+        let value = match self.parameters[0] {
+            Parameter::Direct(v) | Parameter::Indirect(v) => v,
+            _ => {
+                eprintln!("Invalid first parameter for ld");
+                return;
+            }
+        };
+        let reg = match self.parameters[1] {
+            Parameter::Register(r) => r,
+            _ => {
+                eprintln!("Invalid second parameter for ld");
+                return;
+            }
+        };
+
+        println!("ld: r{} ← {}", reg, value);
+        process.registers[reg - 1] = value;
+
+        println!("{}", process);
     }
 
     fn live(&self, process: &mut Process, arena: &mut Arena) {
         // Implement live instruction
-        process.carry = false;
-
         process.live_status.executed = true;
+        process.live_status.nbr_live += 1;
 
         if let Parameter::Direct(player_id) = self.parameters[0] {
             process.live_status.player_id = player_id;

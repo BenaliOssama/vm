@@ -1,7 +1,7 @@
-use crate::arena::*;
 use crate::config::{MEM_SIZE, REG_NUMBER};
 use crate::counter::PC;
-use crate::instructions::*;
+use crate::{arena, instructions::*};
+use crate::{arena::*, instructions};
 use std::fmt::Display;
 use std::fmt::Formatter;
 use vm::*;
@@ -69,21 +69,88 @@ impl Process {
             return State::NoInstruction;
         }
     }
-    fn decode(&mut self, opcode: u8, raw_bytes: &[u8]) -> Instruction {
-        let inst_info = INSTRUCTION_TABLE[(opcode - 1) as usize]; // opcodes start at 1
-        let param = match opcode {
-            1 => {
-                //parameters
-                let mut arr: [u8; 4] = raw_bytes.try_into().unwrap();
-                let num = i32::from_be_bytes(arr);
-                self.remaining_cycles = inst_info.nb_cycles - 2;
-                Parameter::Direct(num)
-            }
-            _ => panic!("no paramiter"),
-        };
-        println!("{}: {:?}", vm::cyan("parameter from player id"), param);
+    fn decode(&mut self, opcode: u8, arena: &mut Arena) -> Option<Instruction> {
+        let inst_index = (opcode - 1) as usize;
+        let inst_info = INSTRUCTION_TABLE[inst_index]; // instructions table is 1-indexed
 
-        Instruction::new(opcode, vec![param])
+        match opcode {
+            // -------------------------------------------------------------------------
+            // live %<direct>
+            // -------------------------------------------------------------------------
+            1 => {
+                // live has no pcode, always 4-byte direct
+                let bytes = arena.read(self.pc.get(), 4);
+                self.pc.add(4);
+                let value = bytes_to_i32(&bytes);
+
+                self.remaining_cycles = inst_info.nb_cycles.saturating_sub(2);
+                println!("{}: {}", vm::cyan("LIVE param"), value);
+
+                Some(Instruction::new(opcode, vec![Parameter::Direct(value)]))
+            }
+
+            // -------------------------------------------------------------------------
+            // ld <direct|indirect>, <register>
+            // -------------------------------------------------------------------------
+            2 => {
+                // read and decode pcode
+                let pcode = arena.read(self.pc.get(), 1)[0];
+                self.pc.inc();
+
+                let type_params = decode_pcode(pcode, inst_info.nb_params);
+
+                // validate params
+                let first_ok = matches!(
+                    type_params.get(0),
+                    Some(ParamType::Direct | ParamType::Indirect)
+                );
+                let second_ok = matches!(type_params.get(1), Some(ParamType::Register));
+                if !first_ok || !second_ok {
+                    eprintln!(
+                        "Invalid parameter types for ld: {:?} {:?}",
+                        type_params.get(0),
+                        type_params.get(1)
+                    );
+                    return None;
+                }
+
+                // decode parameters
+                let mut params = Vec::new();
+                for param_type in type_params.iter() {
+                    let param = match param_type {
+                        ParamType::Direct => {
+                            let size = if inst_info.has_idx { 2 } else { 4 };
+                            let bytes = arena.read(self.pc.get(), size);
+                            self.pc.add(size);
+                            Parameter::Direct(bytes_to_i32(&bytes))
+                        }
+                        ParamType::Indirect => {
+                            let bytes = arena.read(self.pc.get(), 2);
+                            self.pc.add(2);
+                            let offset = bytes_to_i16(&bytes);
+                            let addr = wrap_address(self.pc.get(), offset);
+                            let value = bytes_to_i32(&arena.read(addr, 4));
+                            Parameter::Indirect(value)
+                        }
+                        ParamType::Register => {
+                            let reg = arena.read(self.pc.get(), 1)[0] as usize;
+                            self.pc.inc();
+                            Parameter::Register(reg)
+                        }
+                        _ => Parameter::None,
+                    };
+                    params.push(param);
+                }
+
+                Some(Instruction::new(opcode, params))
+            }
+
+            // -------------------------------------------------------------------------
+            _ => {
+                eprintln!("Unknown opcode {}", opcode);
+                None
+            }
+        }
     }
 
     fn fetch_decode(&mut self, arena: &mut Arena) {
@@ -93,82 +160,18 @@ impl Process {
         match opcode {
             // [ ] i must verify the integrety of the arguments, if currepted i jump.
             1 => {
-                println!("LIVE");
-                let params = arena.read(self.pc.get(), 4);
-                self.pc.set(self.pc.get() + 4, false);
-                let inst = self.decode(opcode, &params);
-                println!("{}, {:?}", vm::blue("current instruction"), inst);
-                self.current_instruction = Some(inst);
+                println!("{}", vm::blue("LIVE"));
+                let inst = self.decode(opcode, arena);
+                self.current_instruction = inst;
             }
             2 => {
-                println!("LD");
-                // Read and decode pcode
-                let pcode = arena.read(self.pc.get(), 1)[0];
-                self.pc.inc();
-
-                let type_params = decode_pcode(pcode, INSTRUCTION_TABLE[2].nb_params);
-
-                /*________________________________________________________________ */
-                // Validate parameter types
-                let first_ok = matches!(type_params[0], ParamType::Direct | ParamType::Indirect);
-                let second_ok = matches!(type_params[1], ParamType::Register);
-
-                if !first_ok || !second_ok {
-                    eprintln!(
-                        "Invalid parameter types for ld: {:?} {:?}",
-                        type_params[0], type_params[1]
-                    );
-                    // skip the instruction: move PC by total size (opcode + pcode + params)
-                    // or just return to continue next cycle
-                    return;
-                }
-                /*________________________________________________________________ */
-
-                /*________________________________________________________________ */
-                // Decode parameters based on type
-                let mut arg1: i32 = 0;
-                for (i, param_type) in type_params.iter().enumerate() {
-                    match param_type {
-                        ParamType::Direct => {
-                            let size = if INSTRUCTION_TABLE[2].has_idx { 2 } else { 4 };
-                            let bytes = arena.read(self.pc.get(), size);
-                            let value = bytes_to_i32(&bytes);
-                            arg1 = value;
-                            println!("param {}: Direct ({})", i + 1, value);
-                            self.pc.add(size);
-                        }
-                        ParamType::Indirect => {
-                            let bytes = arena.read(self.pc.get(), 2);
-                            self.pc.add(2);
-                            let value = bytes_to_i16(&bytes);
-                            println!("param {}: Indirect ({})", i + 1, value);
-
-                            let mut addr =
-                                (self.pc.get() as isize + value as isize) % MEM_SIZE as isize;
-                            if addr < 0 {
-                                addr += MEM_SIZE as isize;
-                            }
-                            println!("going to memroy location: {}", addr);
-                            let v = bytes_to_i32(&arena.read(addr as usize, 4));
-                            println!("this is what i fetched: {:?}", v);
-                            arg1 = v;
-                        }
-                        ParamType::Register => {
-                            let reg = arena.read(self.pc.get(), 1)[0];
-                            println!("param {}: Register (r{}) arg1 {}", i + 1, reg, arg1);
-                            self.pc.inc();
-                            self.registers[(reg - 1) as usize] = arg1;
-                        }
-                        _ => (),
-                    }
-                }
-                println!("ld executed now: -> ");
-                println!("{}", self);
+                println!("{}", vm::blue("LD"));
+                let inst = self.decode(opcode, arena);
+                self.current_instruction = inst;
             }
             _ => {
                 println!("Not relevent for now");
                 self.current_instruction = None;
-                self.pc.inc()
             }
         }
     }
@@ -190,7 +193,7 @@ impl Process {
                     .take()
                     .unwrap()
                     .execute(self, arena);
-                self.live_status.nbr_live += 1;
+                // self.live_status.nbr_live += 1;
             }
             State::NoInstruction => {
                 println!("free...");
@@ -281,4 +284,12 @@ fn bytes_to_i16(bytes: &[u8]) -> i16 {
     let len = bytes.len();
     arr[2 - len..].copy_from_slice(bytes);
     i16::from_be_bytes(arr)
+}
+
+fn wrap_address(pc: usize, offset: i16) -> usize {
+    let mut addr = (pc as isize + offset as isize) % MEM_SIZE as isize;
+    if addr < 0 {
+        addr += MEM_SIZE as isize;
+    }
+    addr as usize
 }
