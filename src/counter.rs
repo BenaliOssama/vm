@@ -18,6 +18,10 @@ impl PC {
         self.addr = 0;
     }
 
+    pub fn add(&mut self, size: usize) {
+        self.set(self.get() + size, false)
+    }
+
     pub fn set(&mut self, new_addr: usize, use_idx_mod: bool) {
         let addr = if use_idx_mod {
             new_addr % IDX_MOD
@@ -30,5 +34,4 @@ impl PC {
     pub fn get(&self) -> usize {
         return self.addr;
     }
-
 }
