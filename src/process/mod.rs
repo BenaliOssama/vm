@@ -86,6 +86,11 @@ impl Process {
                 let inst = self.decode(opcode, arena);
                 self.current_instruction = inst;
             }
+            3 => {
+                println!("{}", vm::blue("ST"));
+                let inst = self.decode(opcode, arena);
+                self.current_instruction = inst;
+            }
             _ => {
                 println!("Not relevent for now");
                 self.current_instruction = None;

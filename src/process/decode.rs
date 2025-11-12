@@ -1,7 +1,9 @@
 use super::Process;
 use crate::ParamType;
+use crate::arena;
 use crate::arena::*;
 use crate::config::MEM_SIZE;
+use crate::instructions;
 use crate::instructions::*;
 
 impl Process {
@@ -81,12 +83,78 @@ impl Process {
                 Some(Instruction::new(opcode, params))
             }
 
+            3 => {
+                // return the add instruction
+                // read and decode pcode
+                let pcode = arena.read(self.pc.get(), 1)[0];
+                self.pc.inc();
+
+                let type_params = decode_pcode(pcode, inst_info.nb_params);
+                // validate params
+                // validate params
+                let first_ok = matches!(type_params.get(0), Some(ParamType::Register));
+
+                let second_ok = matches!(
+                    type_params.get(1),
+                    Some(ParamType::Indirect) | Some(ParamType::Register)
+                );
+
+                if !first_ok || !second_ok {
+                    eprintln!(
+                        "Invalid parameter types for st: {:?} {:?}",
+                        type_params.get(0),
+                        type_params.get(1)
+                    );
+                    return None;
+                }
+
+                let params = self.build_params(type_params, inst_info, arena);
+
+                // decode parameters
+                println!("ls parms $$$ {:?}", params);
+                Some(Instruction::new(opcode, params))
+            }
             // -------------------------------------------------------------------------
             _ => {
                 eprintln!("Unknown opcode {}", opcode);
                 None
             }
         }
+    }
+
+    fn build_params(
+        &mut self,
+        type_params: [ParamType; 3],
+        inst_info: InstructionInfo,
+        arena: &mut Arena,
+    ) -> Vec<instructions::Parameter> {
+        let mut params = Vec::new();
+        for param_type in type_params.iter() {
+            let param = match param_type {
+                ParamType::Direct => {
+                    let size = if inst_info.has_idx { 2 } else { 4 };
+                    let bytes = arena.read(self.pc.get(), size);
+                    self.pc.add(size);
+                    Parameter::Direct(bytes_to_i32(&bytes))
+                }
+                ParamType::Indirect => {
+                    let bytes = arena.read(self.pc.get(), 2);
+                    self.pc.add(2);
+                    let offset = bytes_to_i16(&bytes);
+                    let addr = wrap_address(self.pc.get(), offset);
+                    let value = bytes_to_i32(&arena.read(addr, 4));
+                    Parameter::Indirect(value)
+                }
+                ParamType::Register => {
+                    let reg = arena.read(self.pc.get(), 1)[0] as usize;
+                    self.pc.inc();
+                    Parameter::Register(reg)
+                }
+                _ => Parameter::None,
+            };
+            params.push(param);
+        }
+        return params.clone();
     }
 }
 
