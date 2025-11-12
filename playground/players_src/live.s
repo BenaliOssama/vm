@@ -5,3 +5,5 @@ live %1
 ld -8, r2
 ld %2, r3
 ld %10, r4
+st r4, r5
+st r6, 6
