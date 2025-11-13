@@ -3,6 +3,7 @@ use crate::ParamType;
 use crate::arena;
 use crate::arena::*;
 use crate::config::MEM_SIZE;
+use crate::helper;
 use crate::instructions;
 use crate::instructions::*;
 
@@ -19,7 +20,7 @@ impl Process {
                 // live has no pcode, always 4-byte direct
                 let bytes = arena.read(self.pc.get(), 4);
                 self.pc.add(4);
-                let value = bytes_to_i32(&bytes);
+                let value = helper::bytes_to_i32(&bytes);
 
                 self.remaining_cycles = inst_info.nb_cycles.saturating_sub(2);
                 println!("{}: {}", vm::cyan("LIVE param"), value);
@@ -52,34 +53,8 @@ impl Process {
                     return None;
                 }
 
+                let params = self.build_params(type_params, inst_info, arena);
                 // decode parameters
-                let mut params = Vec::new();
-                for param_type in type_params.iter() {
-                    let param = match param_type {
-                        ParamType::Direct => {
-                            let size = if inst_info.has_idx { 2 } else { 4 };
-                            let bytes = arena.read(self.pc.get(), size);
-                            self.pc.add(size);
-                            Parameter::Direct(bytes_to_i32(&bytes))
-                        }
-                        ParamType::Indirect => {
-                            let bytes = arena.read(self.pc.get(), 2);
-                            self.pc.add(2);
-                            let offset = bytes_to_i16(&bytes);
-                            let addr = wrap_address(self.pc.get(), offset);
-                            let value = bytes_to_i32(&arena.read(addr, 4));
-                            Parameter::Indirect(value)
-                        }
-                        ParamType::Register => {
-                            let reg = arena.read(self.pc.get(), 1)[0] as usize;
-                            self.pc.inc();
-                            Parameter::Register(reg)
-                        }
-                        _ => Parameter::None,
-                    };
-                    params.push(param);
-                }
-
                 Some(Instruction::new(opcode, params))
             }
 
@@ -135,15 +110,13 @@ impl Process {
                     let size = if inst_info.has_idx { 2 } else { 4 };
                     let bytes = arena.read(self.pc.get(), size);
                     self.pc.add(size);
-                    Parameter::Direct(bytes_to_i32(&bytes))
+                    Parameter::Direct(helper::bytes_to_i32(&bytes))
                 }
                 ParamType::Indirect => {
                     let bytes = arena.read(self.pc.get(), 2);
                     self.pc.add(2);
-                    let offset = bytes_to_i16(&bytes);
-                    let addr = wrap_address(self.pc.get(), offset);
-                    let value = bytes_to_i32(&arena.read(addr, 4));
-                    Parameter::Indirect(value)
+                    let offset = helper::bytes_to_i16(&bytes);
+                    Parameter::Indirect(offset as i32)
                 }
                 ParamType::Register => {
                     let reg = arena.read(self.pc.get(), 1)[0] as usize;
@@ -173,26 +146,4 @@ fn decode_pcode(pcode: u8, num_args: usize) -> [ParamType; 3] {
     }
 
     result
-}
-fn bytes_to_i32(bytes: &[u8]) -> i32 {
-    let mut arr = [0u8; 4]; // 4 bytes for i32
-    let len = bytes.len();
-    // copy bytes to the end of the array (big-endian)
-    arr[4 - len..].copy_from_slice(bytes);
-    i32::from_be_bytes(arr)
-}
-
-fn bytes_to_i16(bytes: &[u8]) -> i16 {
-    let mut arr = [0u8; 2]; // 2 bytes for i16
-    let len = bytes.len();
-    arr[2 - len..].copy_from_slice(bytes);
-    i16::from_be_bytes(arr)
-}
-
-fn wrap_address(pc: usize, offset: i16) -> usize {
-    let mut addr = (pc as isize + offset as isize) % MEM_SIZE as isize;
-    if addr < 0 {
-        addr += MEM_SIZE as isize;
-    }
-    addr as usize
 }

@@ -1,4 +1,6 @@
-use crate::arena::*;
+use crate::arena::{self, *};
+use crate::config::MEM_SIZE;
+use crate::helper;
 use crate::process::*;
 // instruction.rs
 #[derive(Debug, Clone, Copy)]
@@ -26,29 +28,9 @@ impl Instruction {
             // 0x02 => self.ld(process, arena),
             // // ... other instructions
             2 => self.ld(process, arena),
+            3 => self.st(process, arena),
             _ => panic!("Unknown instruction"),
         }
-    }
-    fn ld(&self, process: &mut Process, _arena: &mut Arena) {
-        let value = match self.parameters[0] {
-            Parameter::Direct(v) | Parameter::Indirect(v) => v,
-            _ => {
-                eprintln!("Invalid first parameter for ld");
-                return;
-            }
-        };
-        let reg = match self.parameters[1] {
-            Parameter::Register(r) => r,
-            _ => {
-                eprintln!("Invalid second parameter for ld");
-                return;
-            }
-        };
-
-        println!("ld: r{} ← {}", reg, value);
-        process.registers[reg - 1] = value;
-
-        println!("{}", process);
     }
 
     fn live(&self, process: &mut Process, _arena: &mut Arena) {
@@ -67,7 +49,73 @@ impl Instruction {
 
         println!("heeeey!!! i'm alive :)");
     }
+    fn ld(&self, process: &mut Process, arena: &mut Arena) {
+        let value = match self.parameters[0] {
+            Parameter::Direct(v) | Parameter::Indirect(v) => v,
+            Parameter::Indirect(v) => helper::bytes_to_i32(
+                &arena.read(helper::wrap_address(process.pc.get(), v as i16), 4),
+            ),
+            _ => {
+                eprintln!("Invalid first parameter for ld");
+                return;
+            }
+        };
+        let reg = match self.parameters[1] {
+            Parameter::Register(r) => r,
+            _ => {
+                eprintln!("Invalid second parameter for ld");
+                return;
+            }
+        };
+
+        println!("ld: r{} ← {}", reg, value);
+        process.registers[reg - 1] = value;
+        println!("{}", process);
+    }
+
+    fn st(&self, process: &mut Process, arena: &mut Arena) {
+        println!("{:?}", self.parameters);
+        let source_reg = match self.parameters[0] {
+            Parameter::Register(r) => r,
+            _ => {
+                eprintln!("Invalid second parameter for st");
+                return;
+            }
+        };
+
+        match self.parameters[1] {
+            Parameter::Register(dist_reg) => {
+                println!("st: r{} ← r{}", dist_reg, source_reg);
+                process.registers[dist_reg - 1] = process.registers[source_reg - 1];
+            }
+            Parameter::Indirect(dist_memory) => {
+                // pub fn write(&mut self, pos: usize, data: &[u8]) {
+                println!(
+                    "current address {} to be increased by {}",
+                    process.pc.get(),
+                    dist_memory
+                );
+                println!(
+                    "st: m{} ← r{}",
+                    (process.pc.get() + dist_memory as usize) % MEM_SIZE,
+                    source_reg
+                );
+                arena.write(
+                    (process.pc.get() + dist_memory as usize) % MEM_SIZE,
+                    &process.registers[source_reg - 1].to_be_bytes(),
+                );
+                println!("{}", process);
+            }
+            _ => {
+                eprintln!("Invalid first parameter for st");
+                return;
+            }
+        };
+        println!("{}", process);
+        println!("{}", arena);
+    }
 }
+
 #[derive(Copy, Clone)]
 pub struct InstructionInfo {
     pub nb_params: usize,
