@@ -29,6 +29,8 @@ impl Instruction {
             // // ... other instructions
             2 => self.ld(process, arena),
             3 => self.st(process, arena),
+            4 => self.add(process, arena),
+            5 => self.sub(process, arena),
             _ => panic!("Unknown instruction"),
         }
     }
@@ -113,6 +115,60 @@ impl Instruction {
         };
         println!("{}", process);
         println!("{}", arena);
+    }
+    fn add(&self, process: &mut Process, arena: &mut Arena) {
+        let reg1 = match self.parameters[0] {
+            Parameter::Register(r) => r,
+            _ => {
+                eprintln!("Invalid second parameter for add");
+                return;
+            }
+        };
+
+        let reg2 = match self.parameters[1] {
+            Parameter::Register(r) => r,
+            _ => {
+                eprintln!("Invalid second parameter for add");
+                return;
+            }
+        };
+        let reg3 = match self.parameters[2] {
+            Parameter::Register(r) => r,
+            _ => {
+                eprintln!("Invalid second parameter for add");
+                return;
+            }
+        };
+        println!("add : r{} ← r{} + r{}", reg3, reg1, reg2);
+        process.registers[reg3 - 1] = process.registers[reg1 - 1] + process.registers[reg2 - 1];
+        println!("{}", process);
+    }
+    fn sub(&self, process: &mut Process, arena: &mut Arena) {
+        let reg1 = match self.parameters[0] {
+            Parameter::Register(r) => r,
+            _ => {
+                eprintln!("Invalid second parameter for add");
+                return;
+            }
+        };
+
+        let reg2 = match self.parameters[1] {
+            Parameter::Register(r) => r,
+            _ => {
+                eprintln!("Invalid second parameter for add");
+                return;
+            }
+        };
+        let reg3 = match self.parameters[2] {
+            Parameter::Register(r) => r,
+            _ => {
+                eprintln!("Invalid second parameter for add");
+                return;
+            }
+        };
+        println!("add : r{} ← r{} -jjjj r{}", reg3, reg1, reg2);
+        process.registers[reg3 - 1] = process.registers[reg1 - 1] - process.registers[reg2 - 1];
+        println!("{}", process);
     }
 }
 

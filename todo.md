@@ -7,8 +7,8 @@ The provided VM has an extra flag `-v` which you can use to print the state of t
 - [x] live — announce that the process is alive  
 - [x] ld — load a value into a register  
 - [x] st — store a register value into another register or memory  
-- [ ] add — add two registers and store the result  
-- [ ] sub — subtract two registers and store the result  
+- [x] add — add two registers and store the result  
+- [x] sub — subtract two registers and store the result  
 - [ ] and — bitwise AND operation  
 - [ ] or — bitwise OR operation  
 - [ ] xor — bitwise XOR operation  

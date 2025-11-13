@@ -7,3 +7,5 @@ ld %2, r3
 ld %10, r4
 st r4, r5
 st r5, 11
+add r4, r5, r6
+sub r3, r6, r7

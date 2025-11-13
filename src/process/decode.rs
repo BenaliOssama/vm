@@ -89,7 +89,7 @@ impl Process {
                 println!("ls parms $$$ {:?}", params);
                 Some(Instruction::new(opcode, params))
             }
-            4 => {
+            4 | 5 => {
                 // return the add instruction
                 // read and decode pcode
                 let pcode = arena.read(self.pc.get(), 1)[0];
