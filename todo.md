@@ -1,7 +1,33 @@
 # Note
 
 The provided VM has an extra flag `-v` which you can use to print the state of the VM at every cycle, this should greatly help you during development and debugging.
+ 
+--- 
+## Instruction Implementation Progress
+- [x] live — announce that the process is alive  
+- [x] ld — load a value into a register  
+- [ ] st — store a register value into another register or memory  
+- [ ] add — add two registers and store the result  
+- [ ] sub — subtract two registers and store the result  
+- [ ] and — bitwise AND operation  
+- [ ] or — bitwise OR operation  
+- [ ] xor — bitwise XOR operation  
+- [ ] zjmp — conditional jump if carry is set  
+- [ ] ldi — load from computed address into a register  
+- [ ] sti — store register value to computed address  
+- [ ] fork — duplicate a process at a relative address  
+- [ ] lld — long version of `ld` (no IDX_MOD)  
+- [ ] lldi — long version of `ldi` (no IDX_MOD)  
+- [ ] lfork — long version of `fork` (no IDX_MOD)  
+- [ ] nop — no operation (timing test instruction)
 
+### 💡 Steps
+
+* [ ] Finish memory write logic for `st`
+* [ ] Implement arithmetic/logic operators (`sub`, `and`, `or`, `xor`)
+* [ ] Add address-based instructions (`ldi`, `sti`, `fork`, `lfork`)
+* [ ] Complete “long” variants (`lld`, `lldi`)
+* [ ] Finalize instruction decoding tests and cycle timing
 ---
 
 # General instruction
