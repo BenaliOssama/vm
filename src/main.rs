@@ -1,6 +1,7 @@
 mod arena;
 mod config;
 mod counter;
+mod helper;
 mod instructions;
 mod player;
 mod process;
