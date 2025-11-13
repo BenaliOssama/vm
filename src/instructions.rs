@@ -190,46 +190,57 @@ impl Instruction {
     }
 
     fn and(&self, process: &mut Process, _arena: &mut Arena) {
+        println!("{}", blue("AND"));
         todo!()
     }
 
     fn or(&self, process: &mut Process, _arena: &mut Arena) {
+        println!("{}", blue("OR"));
         todo!()
     }
 
     fn xor(&self, process: &mut Process, _arena: &mut Arena) {
+        println!("{}", blue("XOR"));
         todo!()
     }
 
     fn zjmp(&self, process: &mut Process, _arena: &mut Arena) {
+        println!("{}", blue("ZJMP"));
         todo!()
     }
 
     fn ldi(&self, process: &mut Process, _arena: &mut Arena) {
+        println!("{}", blue("LDI"));
         todo!()
     }
 
     fn sti(&self, process: &mut Process, _arena: &mut Arena) {
+        println!("{}", blue("STI"));
         todo!()
     }
 
     fn fork(&self, process: &mut Process, _arena: &mut Arena) {
+        println!("{}", blue("FORK"));
         todo!()
     }
 
     fn lld(&self, process: &mut Process, _arena: &mut Arena) {
+        println!("{}", blue("LLD"));
         todo!()
     }
 
     fn lldi(&self, process: &mut Process, _arena: &mut Arena) {
+        println!("{}", blue("LLDI"));
         todo!()
     }
 
     fn lfork(&self, process: &mut Process, _arena: &mut Arena) {
+        println!("{}", blue("LFORK"));
         todo!()
     }
 
     fn nop(&self, process: &mut Process, _arena: &mut Arena) {
+        println!("{}", blue("NOP"));
         todo!()
     }
 }
