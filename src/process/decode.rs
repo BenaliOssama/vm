@@ -13,116 +13,24 @@ impl Process {
         let inst_info = INSTRUCTION_TABLE[inst_index]; // instructions table is 1-indexed
         self.remaining_cycles = inst_info.nb_cycles.saturating_sub(2);
 
-        match opcode {
-            // -------------------------------------------------------------------------
-            // live %<direct>
-            // -------------------------------------------------------------------------
-            1 => {
-                // live has no pcode, always 4-byte direct
-                let bytes = arena.read(self.pc.get(), 4);
-                self.pc.add(4);
-                let value = helper::bytes_to_i32(&bytes);
+        if inst_info.has_pcode {
+            let pcode = arena.read(self.pc.get(), 1)[0];
+            self.pc.inc();
 
-                println!("{}: {}", vm::cyan("LIVE param"), value);
-
-                Some(Instruction::new(opcode, vec![Parameter::Direct(value)]))
+            let type_params = decode_pcode(pcode, inst_info.nb_params);
+            if !is_valid_params(opcode, &type_params) {
+                eprintln!("Invalid parameter {:?}", type_params);
+                return None;
             }
-
-            // -------------------------------------------------------------------------
-            // ld <direct|indirect>, <register>
-            // -------------------------------------------------------------------------
-            2 => {
-                // read and decode pcode
-                let pcode = arena.read(self.pc.get(), 1)[0];
-                self.pc.inc();
-
-                let type_params = decode_pcode(pcode, inst_info.nb_params);
-
-                // validate params
-                let first_ok = matches!(
-                    type_params.get(0),
-                    Some(ParamType::Direct | ParamType::Indirect)
-                );
-                let second_ok = matches!(type_params.get(1), Some(ParamType::Register));
-                if !first_ok || !second_ok {
-                    eprintln!(
-                        "Invalid parameter types for ld: {:?} {:?}",
-                        type_params.get(0),
-                        type_params.get(1)
-                    );
-                    return None;
-                }
-
-                let params = self.build_params(type_params, inst_info, arena);
-                // decode parameters
-                Some(Instruction::new(opcode, params))
-            }
-
-            3 => {
-                // return the add instruction
-                // read and decode pcode
-                let pcode = arena.read(self.pc.get(), 1)[0];
-                self.pc.inc();
-
-                let type_params = decode_pcode(pcode, inst_info.nb_params);
-                // validate params
-                // validate params
-                let first_ok = matches!(type_params.get(0), Some(ParamType::Register));
-
-                let second_ok = matches!(
-                    type_params.get(1),
-                    Some(ParamType::Indirect) | Some(ParamType::Register)
-                );
-
-                if !first_ok || !second_ok {
-                    eprintln!(
-                        "Invalid parameter types for st: {:?} {:?}",
-                        type_params.get(0),
-                        type_params.get(1)
-                    );
-                    return None;
-                }
-
-                let params = self.build_params(type_params, inst_info, arena);
-
-                // decode parameters
-                println!("ls parms $$$ {:?}", params);
-                Some(Instruction::new(opcode, params))
-            }
-            4 | 5 => {
-                // return the add instruction
-                // read and decode pcode
-                let pcode = arena.read(self.pc.get(), 1)[0];
-                self.pc.inc();
-
-                let type_params = decode_pcode(pcode, inst_info.nb_params);
-                // validate params
-                // validate params
-                let first_ok = matches!(type_params.get(0), Some(ParamType::Register));
-                let second_ok = matches!(type_params.get(1), Some(ParamType::Register));
-                let third_ok = matches!(type_params.get(2), Some(ParamType::Register));
-
-                if !first_ok || !second_ok || !third_ok {
-                    eprintln!(
-                        "Invalid parameter types for st: {:?} {:?} {:?}",
-                        type_params.get(0),
-                        type_params.get(1),
-                        type_params.get(2),
-                    );
-                    return None;
-                }
-
-                let params = self.build_params(type_params, inst_info, arena);
-
-                // decode parameters
-                println!("ls parms $$$ {:?}", params);
-                Some(Instruction::new(opcode, params))
-            }
-            // -------------------------------------------------------------------------
-            _ => {
-                eprintln!("Unknown opcode {}", opcode);
-                None
-            }
+            let params = self.build_params(type_params, inst_info, arena);
+            // decode parameters
+            Some(Instruction::new(opcode, params))
+            // verify integraty
+        } else {
+            let bytes = arena.read(self.pc.get(), 4);
+            self.pc.add(4);
+            let value = helper::bytes_to_i32(&bytes);
+            return Some(Instruction::new(opcode, vec![Parameter::Direct(value)]));
         }
     }
 
@@ -175,4 +83,130 @@ fn decode_pcode(pcode: u8, num_args: usize) -> [ParamType; 3] {
     }
 
     result
+}
+
+fn is_valid_params(opcode: u8, type_params: &[ParamType; 3]) -> bool {
+    match opcode {
+        // -------------------------------------------------------------------------
+        // live %<direct>
+        // -------------------------------------------------------------------------
+        1 => matches!(type_params.get(0), Some(ParamType::Direct)),
+
+        // -------------------------------------------------------------------------
+        // ld <direct|indirect>, <register>
+        // -------------------------------------------------------------------------
+        2 => {
+            let first_ok = matches!(
+                type_params.get(0),
+                Some(ParamType::Direct) | Some(ParamType::Indirect)
+            );
+            let second_ok = matches!(type_params.get(1), Some(ParamType::Register));
+            first_ok && second_ok
+        }
+
+        // -------------------------------------------------------------------------
+        // st <register>, <register|indirect>
+        // -------------------------------------------------------------------------
+        3 => {
+            let first_ok = matches!(type_params.get(0), Some(ParamType::Register));
+            let second_ok = matches!(
+                type_params.get(1),
+                Some(ParamType::Register) | Some(ParamType::Indirect)
+            );
+            first_ok && second_ok
+        }
+
+        // -------------------------------------------------------------------------
+        // add / sub <register>, <register>, <register>
+        // -------------------------------------------------------------------------
+        4 | 5 => type_params
+            .iter()
+            .take(3)
+            .all(|p| matches!(p, ParamType::Register)),
+
+        // -------------------------------------------------------------------------
+        // and / or / xor <reg|ind|dir>, <reg|ind|dir>, <register>
+        // -------------------------------------------------------------------------
+        6 | 7 | 8 => {
+            let first_ok = matches!(
+                type_params.get(0),
+                Some(ParamType::Register) | Some(ParamType::Direct) | Some(ParamType::Indirect)
+            );
+            let second_ok = matches!(
+                type_params.get(1),
+                Some(ParamType::Register) | Some(ParamType::Direct) | Some(ParamType::Indirect)
+            );
+            let third_ok = matches!(type_params.get(2), Some(ParamType::Register));
+            first_ok && second_ok && third_ok
+        }
+
+        // -------------------------------------------------------------------------
+        // zjmp %<direct>
+        // -------------------------------------------------------------------------
+        9 => matches!(type_params.get(0), Some(ParamType::Direct)),
+
+        // -------------------------------------------------------------------------
+        // ldi / sti / lldi <various>
+        // -------------------------------------------------------------------------
+        10 => {
+            let first_ok = matches!(
+                type_params.get(0),
+                Some(ParamType::Register) | Some(ParamType::Direct) | Some(ParamType::Indirect)
+            );
+            let second_ok = matches!(
+                type_params.get(1),
+                Some(ParamType::Register) | Some(ParamType::Direct)
+            );
+            let third_ok = matches!(type_params.get(2), Some(ParamType::Register));
+            first_ok && second_ok && third_ok
+        }
+
+        11 => {
+            let first_ok = matches!(type_params.get(0), Some(ParamType::Register));
+            let second_ok = matches!(
+                type_params.get(1),
+                Some(ParamType::Register) | Some(ParamType::Direct) | Some(ParamType::Indirect)
+            );
+            let third_ok = matches!(
+                type_params.get(2),
+                Some(ParamType::Register) | Some(ParamType::Direct)
+            );
+            first_ok && second_ok && third_ok
+        }
+
+        12 | 15 => matches!(type_params.get(0), Some(ParamType::Direct)), // fork / lfork
+
+        13 => {
+            let first_ok = matches!(
+                type_params.get(0),
+                Some(ParamType::Direct) | Some(ParamType::Indirect)
+            );
+            let second_ok = matches!(type_params.get(1), Some(ParamType::Register));
+            first_ok && second_ok
+        }
+
+        14 => {
+            let first_ok = matches!(
+                type_params.get(0),
+                Some(ParamType::Register) | Some(ParamType::Direct) | Some(ParamType::Indirect)
+            );
+            let second_ok = matches!(
+                type_params.get(1),
+                Some(ParamType::Register) | Some(ParamType::Direct)
+            );
+            let third_ok = matches!(type_params.get(2), Some(ParamType::Register));
+            first_ok && second_ok && third_ok
+        }
+
+        // -------------------------------------------------------------------------
+        // nop <register>
+        // -------------------------------------------------------------------------
+        16 => matches!(type_params.get(0), Some(ParamType::Register)),
+
+        // -------------------------------------------------------------------------
+        _ => {
+            eprintln!("Unknown opcode {}", opcode);
+            false
+        }
+    }
 }

@@ -1,3 +1,5 @@
+use vm::blue;
+
 use crate::arena::{self, *};
 use crate::config::MEM_SIZE;
 use crate::helper;
@@ -36,6 +38,7 @@ impl Instruction {
     }
 
     fn live(&self, process: &mut Process, _arena: &mut Arena) {
+        println!("{}", blue("LIVE"));
         // Implement live instruction
         process.live_status.executed = true;
         process.live_status.nbr_live += 1;
@@ -52,6 +55,7 @@ impl Instruction {
         println!("heeeey!!! i'm alive :)");
     }
     fn ld(&self, process: &mut Process, arena: &mut Arena) {
+        println!("{}", blue("LD"));
         let value = match self.parameters[0] {
             Parameter::Direct(v) | Parameter::Indirect(v) => v,
             Parameter::Indirect(v) => helper::bytes_to_i32(
@@ -76,6 +80,7 @@ impl Instruction {
     }
 
     fn st(&self, process: &mut Process, arena: &mut Arena) {
+        println!("{}", blue("ST"));
         println!("{:?}", self.parameters);
         let source_reg = match self.parameters[0] {
             Parameter::Register(r) => r,
@@ -117,6 +122,7 @@ impl Instruction {
         println!("{}", arena);
     }
     fn add(&self, process: &mut Process, arena: &mut Arena) {
+        println!("{}", blue("ADD"));
         let reg1 = match self.parameters[0] {
             Parameter::Register(r) => r,
             _ => {
@@ -144,6 +150,7 @@ impl Instruction {
         println!("{}", process);
     }
     fn sub(&self, process: &mut Process, arena: &mut Arena) {
+        println!("{}", blue("SUB"));
         let reg1 = match self.parameters[0] {
             Parameter::Register(r) => r,
             _ => {
@@ -166,7 +173,7 @@ impl Instruction {
                 return;
             }
         };
-        println!("add : r{} ← r{} -jjjj r{}", reg3, reg1, reg2);
+        println!("sub : r{} ← r{} - r{}", reg3, reg1, reg2);
         process.registers[reg3 - 1] = process.registers[reg1 - 1] - process.registers[reg2 - 1];
         println!("{}", process);
     }

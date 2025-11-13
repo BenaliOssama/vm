@@ -73,38 +73,10 @@ impl Process {
     fn fetch_decode(&mut self, arena: &mut Arena) {
         let opcode = arena.read(self.pc.get(), 1)[0];
         self.pc.inc();
-        println!("address {} instruction : {:?}", self.pc.get(), opcode);
-        match opcode {
-            // [ ] i must verify the integrety of the arguments, if currepted i jump.
-            1 => {
-                println!("{}", vm::blue("LIVE"));
-                let inst = self.decode(opcode, arena);
-                self.current_instruction = inst;
-            }
-            2 => {
-                println!("{}", vm::blue("LD"));
-                let inst = self.decode(opcode, arena);
-                self.current_instruction = inst;
-            }
-            3 => {
-                println!("{}", vm::blue("ST"));
-                let inst = self.decode(opcode, arena);
-                self.current_instruction = inst;
-            }
-            4 => {
-                println!("{}", vm::blue("ADD"));
-                let inst = self.decode(opcode, arena);
-                self.current_instruction = inst;
-            }
-            5 => {
-                println!("{}", vm::blue("SUB"));
-                let inst = self.decode(opcode, arena);
-                self.current_instruction = inst;
-            }
-            _ => {
-                println!("Not relevent for now");
-                self.current_instruction = None;
-            }
+        if opcode >= 1 && opcode <= 16 {
+            println!("address {} instruction : {:?}", self.pc.get(), opcode);
+            let inst = self.decode(opcode, arena);
+            self.current_instruction = inst;
         }
     }
     //Opcode ->
