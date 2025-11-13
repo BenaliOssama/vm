@@ -2,7 +2,7 @@ use vm::blue;
 
 use crate::arena::{self, *};
 use crate::config::MEM_SIZE;
-use crate::helper;
+use crate::helper::{self, bytes_to_i32};
 use crate::process::*;
 // instruction.rs
 #[derive(Debug, Clone, Copy)]
@@ -33,9 +33,7 @@ impl Instruction {
             3 => self.st(process, arena),
             4 => self.add(process, arena),
             5 => self.sub(process, arena),
-            6 => self.and(process, arena),
-            7 => self.or(process, arena),
-            8 => self.xor(process, arena),
+            6 | 7 | 8 => self.betwise(process, arena),
             9 => self.zjmp(process, arena),
             10 => self.ldi(process, arena),
             11 => self.sti(process, arena),
@@ -69,9 +67,7 @@ impl Instruction {
         println!("{}", blue("LD"));
         let value = match self.parameters[0] {
             Parameter::Direct(v) | Parameter::Indirect(v) => v,
-            Parameter::Indirect(v) => helper::bytes_to_i32(
-                &arena.read(helper::wrap_address(process.pc.get(), v as i16), 4),
-            ),
+            Parameter::Indirect(v) => read_indirect(process, arena, v),
             _ => {
                 eprintln!("Invalid first parameter for ld");
                 return;
@@ -189,9 +185,56 @@ impl Instruction {
         println!("{}", process);
     }
 
-    fn and(&self, process: &mut Process, _arena: &mut Arena) {
-        println!("{}", blue("AND"));
-        todo!()
+    fn betwise(&self, process: &mut Process, arena: &mut Arena) {
+        let value1 = match self.parameters[0] {
+            Parameter::Direct(v) => v,
+            Parameter::Indirect(v) => read_indirect(process, arena, v),
+            Parameter::Register(v) => process.registers[v - 1],
+            _ => {
+                eprintln!("Invalid first parameter for ld");
+                return;
+            }
+        };
+        let value2 = match self.parameters[1] {
+            Parameter::Direct(v) => v,
+            Parameter::Indirect(v) => read_indirect(process, arena, v),
+            Parameter::Register(v) => process.registers[v - 1],
+            _ => {
+                eprintln!("Invalid first parameter for ld");
+                return;
+            }
+        };
+        let reg = match self.parameters[2] {
+            Parameter::Register(r) => r,
+            _ => {
+                eprintln!("Invalid second parameter for ld");
+                return;
+            }
+        };
+        let result = match self.opcode {
+            6 => {
+                println!("{}", blue("AND"));
+                println!("r{} <- {} AND {}", reg, value1, value2);
+                value1 & value2
+            }
+            7 => {
+                println!("{}", blue("OR"));
+                println!("r{} <- {} OR {}", reg, value1, value2);
+                value1 | value2
+            }
+            8 => {
+                println!("{}", blue("XOR"));
+                println!("values {} {}", value1, value2);
+                println!("r{} <- {} XOR {}", reg, value1, value2);
+
+                value1 ^ value2
+            }
+            _ => return,
+        };
+        println!("result of betwise {}", result);
+        process.registers[reg - 1] = result;
+        process.carry = result == 0;
+        println!("{}", process);
     }
 
     fn or(&self, process: &mut Process, _arena: &mut Arena) {
@@ -206,7 +249,7 @@ impl Instruction {
 
     fn zjmp(&self, process: &mut Process, _arena: &mut Arena) {
         println!("{}", blue("ZJMP"));
-        todo!()
+        return;
     }
 
     fn ldi(&self, process: &mut Process, _arena: &mut Arena) {
@@ -243,6 +286,14 @@ impl Instruction {
         println!("{}", blue("NOP"));
         todo!()
     }
+}
+
+fn read_indirect(process: &mut Process, arena: &mut Arena, at: i32) -> i32 {
+    bytes_to_i32(
+        &arena
+            .read(helper::wrap_address(process.pc.get(), at as i16), 4)
+            .clone(),
+    )
 }
 
 #[derive(Copy, Clone)]

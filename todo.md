@@ -9,9 +9,9 @@ The provided VM has an extra flag `-v` which you can use to print the state of t
 - [x] st — store a register value into another register or memory  
 - [x] add — add two registers and store the result  
 - [x] sub — subtract two registers and store the result  
-- [ ] and — bitwise AND operation  
-- [ ] or — bitwise OR operation  
-- [ ] xor — bitwise XOR operation  
+- [x] and — bitwise AND operation  
+- [x] or — bitwise OR operation  
+- [x] xor — bitwise XOR operation  
 - [ ] zjmp — conditional jump if carry is set  
 - [ ] ldi — load from computed address into a register  
 - [ ] sti — store register value to computed address  
