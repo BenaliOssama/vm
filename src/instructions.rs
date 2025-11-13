@@ -33,6 +33,17 @@ impl Instruction {
             3 => self.st(process, arena),
             4 => self.add(process, arena),
             5 => self.sub(process, arena),
+            6 => self.and(process, arena),
+            7 => self.or(process, arena),
+            8 => self.xor(process, arena),
+            9 => self.zjmp(process, arena),
+            10 => self.ldi(process, arena),
+            11 => self.sti(process, arena),
+            12 => self.fork(process, arena),
+            13 => self.lld(process, arena),
+            14 => self.lldi(process, arena),
+            15 => self.lfork(process, arena),
+            16 => self.nop(process, arena),
             _ => panic!("Unknown instruction"),
         }
     }
@@ -176,6 +187,50 @@ impl Instruction {
         println!("sub : r{} ← r{} - r{}", reg3, reg1, reg2);
         process.registers[reg3 - 1] = process.registers[reg1 - 1] - process.registers[reg2 - 1];
         println!("{}", process);
+    }
+
+    fn and(&self, process: &mut Process, _arena: &mut Arena) {
+        todo!()
+    }
+
+    fn or(&self, process: &mut Process, _arena: &mut Arena) {
+        todo!()
+    }
+
+    fn xor(&self, process: &mut Process, _arena: &mut Arena) {
+        todo!()
+    }
+
+    fn zjmp(&self, process: &mut Process, _arena: &mut Arena) {
+        todo!()
+    }
+
+    fn ldi(&self, process: &mut Process, _arena: &mut Arena) {
+        todo!()
+    }
+
+    fn sti(&self, process: &mut Process, _arena: &mut Arena) {
+        todo!()
+    }
+
+    fn fork(&self, process: &mut Process, _arena: &mut Arena) {
+        todo!()
+    }
+
+    fn lld(&self, process: &mut Process, _arena: &mut Arena) {
+        todo!()
+    }
+
+    fn lldi(&self, process: &mut Process, _arena: &mut Arena) {
+        todo!()
+    }
+
+    fn lfork(&self, process: &mut Process, _arena: &mut Arena) {
+        todo!()
+    }
+
+    fn nop(&self, process: &mut Process, _arena: &mut Arena) {
+        todo!()
     }
 }
 
