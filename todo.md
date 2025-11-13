@@ -6,7 +6,7 @@ The provided VM has an extra flag `-v` which you can use to print the state of t
 ## Instruction Implementation Progress
 - [x] live — announce that the process is alive  
 - [x] ld — load a value into a register  
-- [ ] st — store a register value into another register or memory  
+- [x] st — store a register value into another register or memory  
 - [ ] add — add two registers and store the result  
 - [ ] sub — subtract two registers and store the result  
 - [ ] and — bitwise AND operation  
