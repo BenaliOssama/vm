@@ -11,6 +11,7 @@ impl Process {
     pub fn decode(&mut self, opcode: u8, arena: &mut Arena) -> Option<Instruction> {
         let inst_index = (opcode - 1) as usize;
         let inst_info = INSTRUCTION_TABLE[inst_index]; // instructions table is 1-indexed
+        self.remaining_cycles = inst_info.nb_cycles.saturating_sub(2);
 
         match opcode {
             // -------------------------------------------------------------------------
@@ -22,7 +23,6 @@ impl Process {
                 self.pc.add(4);
                 let value = helper::bytes_to_i32(&bytes);
 
-                self.remaining_cycles = inst_info.nb_cycles.saturating_sub(2);
                 println!("{}: {}", vm::cyan("LIVE param"), value);
 
                 Some(Instruction::new(opcode, vec![Parameter::Direct(value)]))
@@ -79,6 +79,35 @@ impl Process {
                         "Invalid parameter types for st: {:?} {:?}",
                         type_params.get(0),
                         type_params.get(1)
+                    );
+                    return None;
+                }
+
+                let params = self.build_params(type_params, inst_info, arena);
+
+                // decode parameters
+                println!("ls parms $$$ {:?}", params);
+                Some(Instruction::new(opcode, params))
+            }
+            4 => {
+                // return the add instruction
+                // read and decode pcode
+                let pcode = arena.read(self.pc.get(), 1)[0];
+                self.pc.inc();
+
+                let type_params = decode_pcode(pcode, inst_info.nb_params);
+                // validate params
+                // validate params
+                let first_ok = matches!(type_params.get(0), Some(ParamType::Register));
+                let second_ok = matches!(type_params.get(1), Some(ParamType::Register));
+                let third_ok = matches!(type_params.get(2), Some(ParamType::Register));
+
+                if !first_ok || !second_ok || !third_ok {
+                    eprintln!(
+                        "Invalid parameter types for st: {:?} {:?} {:?}",
+                        type_params.get(0),
+                        type_params.get(1),
+                        type_params.get(2),
                     );
                     return None;
                 }
