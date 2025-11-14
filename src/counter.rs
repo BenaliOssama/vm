@@ -19,26 +19,16 @@ impl PC {
     }
 
     pub fn add(&mut self, size: usize) {
-        self.set((self.get() + size) as i32, false)
+        self.set(self.get() + size, false)
     }
 
-    pub fn jump(&mut self, size: usize, use_idx_mod: bool) {
-        self.set(size as i32, use_idx_mod); // size is relative to current PC
-    }
-
-    pub fn set(&mut self, offset: i32, use_idx_mod: bool) {
-        let offset = if use_idx_mod {
-            offset % IDX_MOD as i32
+    pub fn set(&mut self, new_addr: usize, use_idx_mod: bool) {
+        let addr = if use_idx_mod {
+            new_addr % IDX_MOD
         } else {
-            offset
+            new_addr
         };
-
-        let mut new_addr = (self.addr as i32 + offset) % MEM_SIZE as i32;
-        if new_addr < 0 {
-            new_addr += MEM_SIZE as i32;
-        }
-
-        self.addr = new_addr as usize;
+        self.addr = addr % MEM_SIZE; // always wrap around arena
     }
 
     pub fn get(&self) -> usize {

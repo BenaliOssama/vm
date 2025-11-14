@@ -27,9 +27,18 @@ impl Process {
             Some(Instruction::new(opcode, params))
             // verify integraty
         } else {
-            let bytes = arena.read(self.pc.get(), 4);
-            self.pc.add(4);
-            let value = helper::bytes_to_i32(&bytes);
+            let size = if inst_info.has_idx {
+                println!("we are going to fetch just 2");
+                2
+            } else {
+                println!("we are going to fetch 4");
+                4
+            };
+            let bytes = arena.read(self.pc.get(), size);
+            println!("the value we fetched bytes is {:?}", bytes);
+            self.pc.add(size);
+            let value = helper::bytes_to_i32(&bytes); // sign-extend 2-byte or 4-byte to i32
+            println!("the value we fetched is {}", value);
             return Some(Instruction::new(opcode, vec![Parameter::Direct(value)]));
         }
     }

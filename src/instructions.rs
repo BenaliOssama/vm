@@ -1,6 +1,7 @@
-use vm::blue;
+use vm::{blue, yellow};
 
 use crate::arena::{self, *};
+use crate::config::IDX_MOD;
 use crate::config::MEM_SIZE;
 use crate::helper::{self, bytes_to_i32};
 use crate::{instructions, process::*};
@@ -239,15 +240,24 @@ impl Instruction {
 
     fn zjmp(&self, process: &mut Process, _arena: &mut Arena) {
         println!("{}", blue("ZJMP"));
+        println!("{} {}", yellow("befor jump :"), process.pc.get());
 
         if let Parameter::Direct(offset) = self.parameters[0] {
             if process.carry {
-                process.pc.set(offset, true); // offset relative to PC, handled in set
+                let offset = offset % IDX_MOD as i32;
+                // Step 2: calculate new PC as signed i32
+                let mut new_pc = process.pc.get() as i32 + offset - 3; // -3 is the size of opcode + direct_size;
+
+                // Step 3: wrap around circular memory
+                new_pc %= MEM_SIZE as i32;
+                if new_pc < 0 {
+                    new_pc += MEM_SIZE as i32;
+                }
+                process.pc.set(new_pc as usize, false); // offset relative to PC, handled in set
             } else {
-                process.pc.jump(
-                    INSTRUCTION_TABLE[(self.opcode - 1) as usize].direct_size,
-                    false, // don't apply IDX_MOD for simple forward move
-                );
+                process
+                    .pc
+                    .add(INSTRUCTION_TABLE[(self.opcode - 1) as usize].direct_size);
             }
         } else {
             eprintln!(
@@ -256,6 +266,7 @@ impl Instruction {
             );
         }
 
+        println!("{} {}", yellow("after jump :"), process.pc.get());
         println!("heeeey!!! i jumped or didn't :)");
     }
 
