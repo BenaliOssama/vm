@@ -3,7 +3,7 @@ use vm::blue;
 use crate::arena::{self, *};
 use crate::config::MEM_SIZE;
 use crate::helper::{self, bytes_to_i32};
-use crate::process::*;
+use crate::{instructions, process::*};
 // instruction.rs
 #[derive(Debug, Clone, Copy)]
 pub enum Parameter {
@@ -237,19 +237,26 @@ impl Instruction {
         println!("{}", process);
     }
 
-    fn or(&self, process: &mut Process, _arena: &mut Arena) {
-        println!("{}", blue("OR"));
-        todo!()
-    }
-
-    fn xor(&self, process: &mut Process, _arena: &mut Arena) {
-        println!("{}", blue("XOR"));
-        todo!()
-    }
-
     fn zjmp(&self, process: &mut Process, _arena: &mut Arena) {
         println!("{}", blue("ZJMP"));
-        return;
+
+        if let Parameter::Direct(offset) = self.parameters[0] {
+            if process.carry {
+                process.pc.set(offset, true); // offset relative to PC, handled in set
+            } else {
+                process.pc.jump(
+                    INSTRUCTION_TABLE[(self.opcode - 1) as usize].direct_size,
+                    false, // don't apply IDX_MOD for simple forward move
+                );
+            }
+        } else {
+            eprintln!(
+                "Invalid parameter for zjmp instruction {:?}",
+                self.parameters
+            );
+        }
+
+        println!("heeeey!!! i jumped or didn't :)");
     }
 
     fn ldi(&self, process: &mut Process, _arena: &mut Arena) {
