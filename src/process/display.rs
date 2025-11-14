@@ -7,6 +7,7 @@ impl Display for Process {
     fn fmt(&self, _f: &mut Formatter<'_>) -> Result<(), std::fmt::Error> {
         // create a table
         let mut table = Table::new();
+        let mut table2 = Table::new();
 
         // add headers
         table.add_header("PC");
@@ -14,8 +15,7 @@ impl Display for Process {
         table.add_header("Current Instruction");
         table.add_header("Remaining Cycles");
         table.add_header("Lives Status");
-        table.add_header("Registers");
-
+        table2.add_header("Registers");
         let registers_str = self
             .registers
             .iter()
@@ -43,11 +43,13 @@ impl Display for Process {
             current_inst_str,
             self.remaining_cycles.to_string(),
             live_status_str,
-            registers_str,
+            //registers_str,
         ]);
+        table2.add_row(&vec![registers_str]);
 
         // print the table
         println!("{table}");
+        println!("{table2}");
 
         Ok(())
     }
