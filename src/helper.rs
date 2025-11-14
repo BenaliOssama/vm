@@ -1,5 +1,57 @@
 use crate::config::MEM_SIZE;
 
+use crate::arena::{self, *};
+use crate::config::IDX_MOD;
+use crate::instructions::Parameter;
+use crate::process::*;
+
+// [ ]  account for the case of negative indirect
+pub fn read_indirect(process: &mut Process, arena: &mut Arena, at: i32) -> i32 {
+    bytes_to_i32(
+        &arena
+            .read(wrap_address(process.pc.get(), at as i16), 4)
+            .clone(),
+    )
+}
+
+pub fn get_value(p: &Parameter, process: &Process, arena: &Arena, apply_idx_mod: bool) -> i32 {
+    match p {
+        // ----------------------------
+        // 1) REGISTER
+        // ----------------------------
+        Parameter::Register(reg) => process.registers[*reg] as i32,
+
+        // ----------------------------
+        // 2) DIRECT
+        // ----------------------------
+        Parameter::Direct(val) => *val,
+
+        // ----------------------------
+        // 3) INDIRECT
+        // ----------------------------
+        Parameter::Indirect(offset) => {
+            println!("reading indirect");
+            let mut off = *offset;
+
+            // apply IDX_MOD if instruction requires it
+            if apply_idx_mod {
+                off %= IDX_MOD as i32;
+            }
+
+            // match what read_indirect does:
+            // helper::wrap_address(process.pc.get(), off as i16)
+            let addr = wrap_address(process.pc.get(), off as i16);
+
+            // arena.read() returns &[u8] of length 4
+            let bytes = arena.read(addr, 4);
+
+            bytes_to_i32(&bytes)
+        }
+
+        _ => panic!("none parameter"),
+    }
+}
+
 pub fn bytes_to_i16(bytes: &[u8]) -> i16 {
     let mut arr = [0u8; 2]; // 2 bytes for i16
     let len = bytes.len();

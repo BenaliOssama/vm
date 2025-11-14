@@ -6,6 +6,7 @@ use crate::config::MEM_SIZE;
 use crate::helper;
 use crate::instructions;
 use crate::instructions::*;
+use crate::process::instruction_info::*; //INSTRUCTION_TABLE};
 
 impl Process {
     pub fn decode(&mut self, opcode: u8, arena: &mut Arena) -> Option<Instruction> {

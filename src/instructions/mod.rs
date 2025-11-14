@@ -1,9 +1,14 @@
+use super::Process;
+
+pub mod instruction_info;
 use vm::{blue, yellow};
 
 use crate::arena::{self, *};
 use crate::config::IDX_MOD;
 use crate::config::MEM_SIZE;
 use crate::helper::{self, bytes_to_i32};
+use crate::instructions::instruction_info::INSTRUCTION_TABLE;
+
 use crate::{instructions, process::*};
 // instruction.rs
 #[derive(Debug, Clone, Copy)]
@@ -68,7 +73,7 @@ impl Instruction {
         println!("{}", blue("LD"));
         let value = match self.parameters[0] {
             Parameter::Direct(v) | Parameter::Indirect(v) => v,
-            Parameter::Indirect(v) => read_indirect(process, arena, v),
+            Parameter::Indirect(v) => helper::read_indirect(process, arena, v),
             _ => {
                 eprintln!("Invalid first parameter for ld");
                 return;
@@ -189,7 +194,7 @@ impl Instruction {
     fn betwise(&self, process: &mut Process, arena: &mut Arena) {
         let value1 = match self.parameters[0] {
             Parameter::Direct(v) => v,
-            Parameter::Indirect(v) => read_indirect(process, arena, v),
+            Parameter::Indirect(v) => helper::read_indirect(process, arena, v),
             Parameter::Register(v) => process.registers[v - 1],
             _ => {
                 eprintln!("Invalid first parameter for ld");
@@ -198,7 +203,7 @@ impl Instruction {
         };
         let value2 = match self.parameters[1] {
             Parameter::Direct(v) => v,
-            Parameter::Indirect(v) => read_indirect(process, arena, v),
+            Parameter::Indirect(v) => helper::read_indirect(process, arena, v),
             Parameter::Register(v) => process.registers[v - 1],
             _ => {
                 eprintln!("Invalid first parameter for ld");
@@ -270,9 +275,49 @@ impl Instruction {
         println!("heeeey!!! i jumped or didn't :)");
     }
 
-    fn ldi(&self, process: &mut Process, _arena: &mut Arena) {
+    fn ldi(&self, process: &mut Process, arena: &mut Arena) {
         println!("{}", blue("LDI"));
-        todo!()
+        // Extract parameters
+        let p1 = &self.parameters[0];
+        let p2 = &self.parameters[1];
+        let p3 = &self.parameters[2];
+
+        // ---------- 1) Validate that the 3rd parameter is a register ----------
+        let dest_reg = match p3 {
+            Parameter::Register(r) => *r,
+            _ => {
+                eprintln!("LDI: invalid destination register");
+                return;
+            }
+        };
+        // ---------- 2) Resolve parameter values ----------
+        // ldi always applies IDX_MOD to its addressing
+        let val1 = helper::get_value(p1, process, arena, true); // apply IDX_MOD for INDIRECT
+        let val2 = helper::get_value(p2, process, arena, true);
+
+        // ---------- 3) Compute address offset ----------
+        let sum = val1 + val2;
+        let addr_offset = sum % IDX_MOD as i32;
+        //---
+        let mut new_pc = process.pc.get() as i32 + addr_offset - 3; // -3 is the size of opcode + direct_size;
+
+        // Step 3: wrap around circular memory
+        new_pc %= MEM_SIZE as i32;
+        if new_pc < 0 {
+            new_pc += MEM_SIZE as i32;
+        }
+        //---
+        // Final effective address is PC + offset (wrapped)
+
+        // ---------- 4) Read 4 bytes from arena ----------
+        let value = arena.read(new_pc as usize, 4);
+        let value = bytes_to_i32(&value);
+        println!("{} <- {}", dest_reg, value);
+
+        // ---------- 5) Store into the destination register ----------
+        process.registers[dest_reg - 1] = value;
+        // LDI does NOT change carry
+        println!("{}", process);
     }
 
     fn sti(&self, process: &mut Process, _arena: &mut Arena) {
@@ -305,151 +350,3 @@ impl Instruction {
         todo!()
     }
 }
-
-fn read_indirect(process: &mut Process, arena: &mut Arena, at: i32) -> i32 {
-    bytes_to_i32(
-        &arena
-            .read(helper::wrap_address(process.pc.get(), at as i16), 4)
-            .clone(),
-    )
-}
-
-#[derive(Copy, Clone)]
-pub struct InstructionInfo {
-    pub nb_params: usize,
-    pub nb_cycles: i32,
-    pub has_pcode: bool,
-    pub has_idx: bool,
-    pub direct_size: usize, // 2 if IDX, 4 otherwise
-}
-
-pub const INSTRUCTION_TABLE: [InstructionInfo; 16] = [
-    // 1. live
-    InstructionInfo {
-        nb_params: 1,
-        nb_cycles: 10,
-        has_pcode: false,
-        has_idx: false,
-        direct_size: 4,
-    },
-    // 2. ld
-    InstructionInfo {
-        nb_params: 2,
-        nb_cycles: 5,
-        has_pcode: true,
-        has_idx: false,
-        direct_size: 4,
-    },
-    // 3. st
-    InstructionInfo {
-        nb_params: 2,
-        nb_cycles: 5,
-        has_pcode: true,
-        has_idx: false,
-        direct_size: 4,
-    },
-    // 4. add
-    InstructionInfo {
-        nb_params: 3,
-        nb_cycles: 10,
-        has_pcode: true,
-        has_idx: false,
-        direct_size: 4,
-    },
-    // 5. sub
-    InstructionInfo {
-        nb_params: 3,
-        nb_cycles: 10,
-        has_pcode: true,
-        has_idx: false,
-        direct_size: 4,
-    },
-    // 6. and
-    InstructionInfo {
-        nb_params: 3,
-        nb_cycles: 6,
-        has_pcode: true,
-        has_idx: false,
-        direct_size: 4,
-    },
-    // 7. or
-    InstructionInfo {
-        nb_params: 3,
-        nb_cycles: 6,
-        has_pcode: true,
-        has_idx: false,
-        direct_size: 4,
-    },
-    // 8. xor
-    InstructionInfo {
-        nb_params: 3,
-        nb_cycles: 6,
-        has_pcode: true,
-        has_idx: false,
-        direct_size: 4,
-    },
-    // 9. zjmp
-    InstructionInfo {
-        nb_params: 1,
-        nb_cycles: 20,
-        has_pcode: false,
-        has_idx: true,
-        direct_size: 2,
-    },
-    // 10. ldi
-    InstructionInfo {
-        nb_params: 3,
-        nb_cycles: 25,
-        has_pcode: true,
-        has_idx: true,
-        direct_size: 2,
-    },
-    // 11. sti
-    InstructionInfo {
-        nb_params: 3,
-        nb_cycles: 25,
-        has_pcode: true,
-        has_idx: true,
-        direct_size: 2,
-    },
-    // 12. fork
-    InstructionInfo {
-        nb_params: 1,
-        nb_cycles: 800,
-        has_pcode: false,
-        has_idx: true,
-        direct_size: 2,
-    },
-    // 13. lld
-    InstructionInfo {
-        nb_params: 2,
-        nb_cycles: 10,
-        has_pcode: true,
-        has_idx: false,
-        direct_size: 4,
-    },
-    // 14. lldi
-    InstructionInfo {
-        nb_params: 3,
-        nb_cycles: 50,
-        has_pcode: true,
-        has_idx: true,
-        direct_size: 2,
-    },
-    // 15. lfork
-    InstructionInfo {
-        nb_params: 1,
-        nb_cycles: 1000,
-        has_pcode: false,
-        has_idx: true,
-        direct_size: 2,
-    },
-    // 16. nop
-    InstructionInfo {
-        nb_params: 1,
-        nb_cycles: 2,
-        has_pcode: true,
-        has_idx: false,
-        direct_size: 4,
-    },
-];

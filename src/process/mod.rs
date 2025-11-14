@@ -87,11 +87,11 @@ impl Process {
     pub fn execute_cycle(&mut self, arena: &mut Arena) {
         match self.state() {
             State::Waiting => {
-                println!("waiting...");
+                //println!("waiting...");
                 self.remaining_cycles -= 1;
             }
             State::Ready => {
-                println!("executing...");
+                //println!("executing...");
                 println!("instruction {:?}", self.current_instruction);
                 self.current_instruction
                     .take()
@@ -100,7 +100,7 @@ impl Process {
                 // self.live_status.nbr_live += 1;
             }
             State::NoInstruction => {
-                println!("free...");
+                //println!("free...");
                 self.fetch_decode(arena);
             }
         }
