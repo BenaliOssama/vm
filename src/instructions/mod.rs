@@ -298,19 +298,24 @@ impl Instruction {
         // ---------- 3) Compute address offset ----------
         let sum = val1 + val2;
         let addr_offset = sum % IDX_MOD as i32;
+        println!("addr offset {}", addr_offset);
         //---
-        let mut new_pc = process.pc.get() as i32 + addr_offset - 3; // -3 is the size of opcode + direct_size;
+        let mut new_pc = process.pc.get() as i32 + addr_offset - 7; // cont for the paramiter size
+        //+ INSTRUCTION_TABLE[self.opcode as usize - 1].direct_size as i32;
 
+        println!("new addr {}", new_pc);
         // Step 3: wrap around circular memory
         new_pc %= MEM_SIZE as i32;
         if new_pc < 0 {
             new_pc += MEM_SIZE as i32;
         }
+        println!("new addr  after module {}", new_pc);
         //---
         // Final effective address is PC + offset (wrapped)
 
         // ---------- 4) Read 4 bytes from arena ----------
         let value = arena.read(new_pc as usize, 4);
+        println!("bytes read {:?}", value);
         let value = bytes_to_i32(&value);
         println!("{} <- {}", dest_reg, value);
 
