@@ -12,9 +12,9 @@ The provided VM has an extra flag `-v` which you can use to print the state of t
 - [x] and — bitwise AND operation  
 - [x] or — bitwise OR operation  
 - [x] xor — bitwise XOR operation  
-- [ ] zjmp — conditional jump if carry is set  
-- [ ] ldi — load from computed address into a register  
-- [ ] sti — store register value to computed address  
+- [x] zjmp — conditional jump if carry is set  
+- [x] ldi — load from computed address into a register  
+- [x] sti — store register value to computed address  
 - [ ] fork — duplicate a process at a relative address  
 - [ ] lld — long version of `ld` (no IDX_MOD)  
 - [ ] lldi — long version of `ldi` (no IDX_MOD)  
