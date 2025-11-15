@@ -71,14 +71,16 @@ impl Instruction {
     }
     fn ld(&self, process: &mut Process, arena: &mut Arena) {
         println!("{}", blue("LD"));
+
         let value = match self.parameters[0] {
-            Parameter::Direct(v) | Parameter::Indirect(v) => v,
+            Parameter::Direct(v) => v,
             Parameter::Indirect(v) => helper::read_indirect(process, arena, v),
             _ => {
                 eprintln!("Invalid first parameter for ld");
                 return;
             }
         };
+
         let reg = match self.parameters[1] {
             Parameter::Register(r) => r,
             _ => {
@@ -89,6 +91,10 @@ impl Instruction {
 
         println!("ld: r{} ← {}", reg, value);
         process.registers[reg - 1] = value;
+
+        // --- Set the carry ---
+        process.carry = value == 0;
+
         println!("{}", process);
     }
 
@@ -317,7 +323,7 @@ impl Instruction {
         let value = arena.read(new_pc as usize, 4);
         println!("bytes read {:?}", value);
         let value = bytes_to_i32(&value);
-        println!("{} <- {}", dest_reg, value);
+        println!("r{} <- {}", dest_reg, value);
 
         // ---------- 5) Store into the destination register ----------
         process.registers[dest_reg - 1] = value;
@@ -325,9 +331,51 @@ impl Instruction {
         println!("{}", process);
     }
 
-    fn sti(&self, process: &mut Process, _arena: &mut Arena) {
+    fn sti(&self, process: &mut Process, arena: &mut Arena) {
         println!("{}", blue("STI"));
-        todo!()
+
+        let p1 = &self.parameters[0];
+        let p2 = &self.parameters[1];
+        let p3 = &self.parameters[2];
+
+        // ---------- 1) Validate that the 3rd parameter is a register ----------
+        let from_reg = match p1 {
+            Parameter::Register(r) => *r,
+            _ => {
+                eprintln!("STI: invalid destination register");
+                return;
+            }
+        };
+        // ---------- 2) Resolve parameter values ----------
+        // ldi always applies IDX_MOD to its addressing
+        let val1 = helper::get_value(p2, process, arena, true); // apply IDX_MOD for INDIRECT
+        let val2 = helper::get_value(p3, process, arena, true);
+        // ---------- 3) Compute address offset ----------
+        let sum = val1 + val2;
+        let addr_offset = sum % IDX_MOD as i32;
+        println!("addr offset {}", addr_offset);
+        //---
+        let mut new_pc = process.pc.get() as i32 + addr_offset - 7; // cont for the paramiter size
+        //+ INSTRUCTION_TABLE[self.opcode as usize - 1].direct_size as i32;
+
+        println!("new addr {}", new_pc);
+        // Step 3: wrap around circular memory
+        new_pc %= MEM_SIZE as i32;
+        if new_pc < 0 {
+            new_pc += MEM_SIZE as i32;
+        }
+        println!("new addr  after module {}", new_pc);
+        //---
+        // Final effective address is PC + offset (wrapped)
+
+        // ---------- 4) Read 4 bytes from arena ----------
+        let value = process.registers[from_reg-1];
+        arena.write(new_pc as usize, &(value).to_be_bytes());
+        println!("m{} <- {}",new_pc,  value);
+
+        // ---------- 5) Store into the destination register ----------
+        // LDI does NOT change carry
+        println!("{}", arena);
     }
 
     fn fork(&self, process: &mut Process, _arena: &mut Arena) {
