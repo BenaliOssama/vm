@@ -3,13 +3,12 @@ use super::Process;
 pub mod instruction_info;
 use vm::{blue, yellow};
 
-use crate::arena::{self, *};
+use crate::arena::*;
 use crate::config::IDX_MOD;
 use crate::config::MEM_SIZE;
 use crate::helper::{self, bytes_to_i32};
 use crate::instructions::instruction_info::INSTRUCTION_TABLE;
 
-use crate::{instructions, process::*};
 // instruction.rs
 #[derive(Debug, Clone, Copy)]
 pub enum Parameter {
@@ -140,7 +139,7 @@ impl Instruction {
         println!("{}", process);
         println!("{}", arena);
     }
-    fn add(&self, process: &mut Process, arena: &mut Arena) {
+    fn add(&self, process: &mut Process, _arena: &mut Arena) {
         println!("{}", blue("ADD"));
         let reg1 = match self.parameters[0] {
             Parameter::Register(r) => r,
@@ -168,7 +167,7 @@ impl Instruction {
         process.registers[reg3 - 1] = process.registers[reg1 - 1] + process.registers[reg2 - 1];
         println!("{}", process);
     }
-    fn sub(&self, process: &mut Process, arena: &mut Arena) {
+    fn sub(&self, process: &mut Process, _arena: &mut Arena) {
         println!("{}", blue("SUB"));
         let reg1 = match self.parameters[0] {
             Parameter::Register(r) => r,

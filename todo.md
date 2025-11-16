@@ -16,17 +16,17 @@ The provided VM has an extra flag `-v` which you can use to print the state of t
 - [x] ldi — load from computed address into a register  
 - [x] sti — store register value to computed address  
 - [x] fork — duplicate a process at a relative address  
-- [ ] lld — long version of `ld` (no IDX_MOD)  
-- [ ] lldi — long version of `ldi` (no IDX_MOD)  
-- [ ] lfork — long version of `fork` (no IDX_MOD)  
-- [ ] nop — no operation (timing test instruction)
+- [x] lld — long version of `ld` (no IDX_MOD)  
+- [x] lldi — long version of `ldi` (no IDX_MOD)  
+- [x] lfork — long version of `fork` (no IDX_MOD)  
+- [x] nop — no operation (timing test instruction)
 
 ### 💡 Steps
 
-* [ ] Finish memory write logic for `st`
-* [ ] Implement arithmetic/logic operators (`sub`, `and`, `or`, `xor`)
-* [ ] Add address-based instructions (`ldi`, `sti`, `fork`, `lfork`)
-* [ ] Complete “long” variants (`lld`, `lldi`)
+* [x] Finish memory write logic for `st`
+* [x] Implement arithmetic/logic operators (`sub`, `and`, `or`, `xor`)
+* [x] Add address-based instructions (`ldi`, `sti`, `fork`, `lfork`)
+* [x] Complete “long” variants (`lld`, `lldi`)
 * [ ] Finalize instruction decoding tests and cycle timing
 ---
 
@@ -38,7 +38,7 @@ The provided VM has an extra flag `-v` which you can use to print the state of t
 
 # Game dynamics
 
-* [ ] Use 2 or more players, change the counter to support that.
+* [ ] Use 2 or more players.
 
 ---
 
