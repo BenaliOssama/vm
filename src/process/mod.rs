@@ -1,5 +1,6 @@
 pub mod decode;
 pub mod display;
+use vm::{blue, red, yellow};
 
 use crate::arena::*;
 use crate::config::REG_NUMBER;
@@ -84,7 +85,8 @@ impl Process {
     // https://corewar-docs.readthedocs.io/en/latest/redcode/parser/
     // work on decoding an instruction
     // [Opcode] [Pcode?] [Param1] [Param2] [Param3]
-    pub fn execute_cycle(&mut self, arena: &mut Arena) {
+    pub fn execute_cycle(&mut self, arena: &mut Arena) -> Option<Process> {
+        let mut child: Option<Process> = None;
         match self.state() {
             State::Waiting => {
                 //println!("waiting...");
@@ -93,10 +95,23 @@ impl Process {
             State::Ready => {
                 //println!("executing...");
                 println!("instruction {:?}", self.current_instruction);
-                self.current_instruction
-                    .take()
-                    .unwrap()
-                    .execute(self, arena);
+                let current_inst = self.current_instruction.clone().take().unwrap();
+                child = match current_inst.opcode {
+                    12 => {
+                        println!("{}", red("FORK"));
+
+                        // in this case we should for the process
+                        // use v
+                        println!("the process we are forking should have {:?}", self);
+                        let save = self.clone();
+                        self.current_instruction = None;
+                        Some(save)
+                    }
+                    _ => {
+                        current_inst.execute(self, arena);
+                        None
+                    }
+                };
                 // self.live_status.nbr_live += 1;
             }
             State::NoInstruction => {
@@ -105,5 +120,6 @@ impl Process {
             }
         }
         thread::sleep(Duration::from_millis(60));
+        return child;
     }
 }

@@ -1,5 +1,8 @@
-use crate::arena::Arena;
+use vm::{blue, red};
+
+use crate::arena::{self, Arena};
 use crate::config::{CYCLE_DELTA, CYCLE_TO_DIE, MAX_CHECKS, NBR_LIVE};
+use crate::helper;
 use crate::player::Player;
 use crate::process::Process;
 
@@ -57,8 +60,36 @@ impl VirtualMachine {
     }
 
     fn cycle(&mut self) {
+        let mut child_process = vec![];
+        let mut i = 0;
         for process in &mut self.processes {
-            process.execute_cycle(&mut self.arena);
+            println!("{} {}", red("running process"), i);
+            i += 1;
+            let ch = process.execute_cycle(&mut self.arena);
+            if ch.is_some() {
+                println!("we found a pregrnant process");
+                child_process.push(ch);
+            }
+        }
+        if !child_process.is_empty() {
+            for child in child_process {
+                let mut c = child.unwrap();
+                if c.current_instruction.is_none() {
+                    continue;
+                }
+                let value = helper::get_value(
+                    &c.current_instruction.clone().unwrap().parameters[0],
+                    &c,
+                    &self.arena,
+                    true,
+                );
+                c.pc.set(value as usize, true);
+                c.current_instruction = None;
+                println!("{} {}", red("add process to vm at address: "), c.pc.get());
+                self.processes.push(c);
+            }
+            println!("{} {:?}", red("current processes"), self.processes);
+            println!("{}", self.arena);
         }
     }
 

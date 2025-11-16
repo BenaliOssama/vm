@@ -21,8 +21,8 @@ pub enum Parameter {
 
 #[derive(Debug, Clone)]
 pub struct Instruction {
-    opcode: u8,
-    parameters: Vec<Parameter>,
+    pub opcode: u8,
+    pub parameters: Vec<Parameter>,
 }
 
 impl Instruction {
@@ -380,6 +380,10 @@ impl Instruction {
 
     fn fork(&self, process: &mut Process, _arena: &mut Arena) {
         println!("{}", blue("FORK"));
+        let mut new_process = process.clone();
+        new_process.pc.add(100);
+        
+        // now edit this process
         todo!()
     }
 
