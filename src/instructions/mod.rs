@@ -379,31 +379,103 @@ impl Instruction {
     }
 
     fn fork(&self, process: &mut Process, _arena: &mut Arena) {
-        println!("{}", blue("FORK"));
-        let mut new_process = process.clone();
-        new_process.pc.add(100);
+        // println!("{}", blue("FORK"));
+        // let mut new_process = process.clone();
+        // new_process.pc.add(100);
         
-        // now edit this process
+        // // now edit this process
         todo!()
     }
 
-    fn lld(&self, process: &mut Process, _arena: &mut Arena) {
+    fn lld(&self, process: &mut Process, arena: &mut Arena) {
         println!("{}", blue("LLD"));
-        todo!()
+        let p1 = &self.parameters[0];
+        let p2 = &self.parameters[1];
+
+        let value = match self.parameters[0] {
+            Parameter::Direct(v) => v,
+            Parameter::Indirect(v) => helper::get_value( p1, process, arena, false),
+            _ => {
+                eprintln!("Invalid first parameter for ld");
+                return;
+            }
+        };
+
+        let reg = match self.parameters[1] {
+            Parameter::Register(r) => r,
+            _ => {
+                eprintln!("Invalid second parameter for lld");
+                return;
+            }
+        };
+
+        println!("ld: r{} ← {}", reg, value);
+        process.registers[reg - 1] = value;
+
+        // --- Set the carry ---
+        process.carry = value == 0;
+
+        println!("{}", process);
     }
 
-    fn lldi(&self, process: &mut Process, _arena: &mut Arena) {
+    fn lldi(&self, process: &mut Process, arena: &mut Arena) {
         println!("{}", blue("LLDI"));
-        todo!()
+
+        // Extract parameters
+        let p1 = &self.parameters[0];
+        let p2 = &self.parameters[1];
+        let p3 = &self.parameters[2];
+
+        // ---------- 1) Validate that the 3rd parameter is a register ----------
+        let dest_reg = match p3 {
+            Parameter::Register(r) => *r,
+            _ => {
+                eprintln!("LDI: invalid destination register");
+                return;
+            }
+        };
+        // ---------- 2) Resolve parameter values ----------
+        // ldi always applies IDX_MOD to its addressing
+        let val1 = helper::get_value(p1, process, arena, false); // apply IDX_MOD for INDIRECT
+        let val2 = helper::get_value(p2, process, arena, false);
+
+        // ---------- 3) Compute address offset ----------
+        let sum = val1 + val2;
+        let addr_offset = sum % IDX_MOD as i32;
+        println!("addr offset {}", addr_offset);
+        //---
+        let mut new_pc = process.pc.get() as i32 + addr_offset - 7; // cont for the paramiter size
+        //+ INSTRUCTION_TABLE[self.opcode as usize - 1].direct_size as i32;
+
+        println!("new addr {}", new_pc);
+        // Step 3: wrap around circular memory
+        new_pc %= MEM_SIZE as i32;
+        if new_pc < 0 {
+            new_pc += MEM_SIZE as i32;
+        }
+        println!("new addr  after module {}", new_pc);
+        //---
+        // Final effective address is PC + offset (wrapped)
+
+        // ---------- 4) Read 4 bytes from arena ----------
+        let value = arena.read(new_pc as usize, 4);
+        println!("bytes read {:?}", value);
+        let value = bytes_to_i32(&value);
+        println!("r{} <- {}", dest_reg, value);
+
+        // ---------- 5) Store into the destination register ----------
+        process.registers[dest_reg - 1] = value;
+        // LDI does NOT change carry
+        println!("{}", process);
     }
 
-    fn lfork(&self, process: &mut Process, _arena: &mut Arena) {
-        println!("{}", blue("LFORK"));
-        todo!()
+    fn lfork(&self, _process: &mut Process, _arena: &mut Arena) {
+        // println!("{}", blue("LFORK"));
+        // todo!()
     }
 
-    fn nop(&self, process: &mut Process, _arena: &mut Arena) {
+    fn nop(&self, _process: &mut Process, _arena: &mut Arena) {
         println!("{}", blue("NOP"));
-        todo!()
+        return;
     }
 }

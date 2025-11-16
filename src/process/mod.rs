@@ -97,7 +97,7 @@ impl Process {
                 println!("instruction {:?}", self.current_instruction);
                 let current_inst = self.current_instruction.clone().take().unwrap();
                 child = match current_inst.opcode {
-                    12 => {
+                    12 | 15 => {
                         println!("{}", red("FORK"));
 
                         // in this case we should for the process

@@ -83,7 +83,11 @@ impl VirtualMachine {
                     &self.arena,
                     true,
                 );
-                c.pc.set(value as usize, true);
+                if c.current_instruction.clone().unwrap().opcode == 15 {
+                    c.pc.set(value as usize, false);
+                } else {
+                    c.pc.set(value as usize, true);
+                }
                 c.current_instruction = None;
                 println!("{} {}", red("add process to vm at address: "), c.pc.get());
                 self.processes.push(c);
