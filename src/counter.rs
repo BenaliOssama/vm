@@ -35,3 +35,24 @@ impl PC {
         return self.addr;
     }
 }
+
+// Unit tests
+#[cfg(test)]
+mod tests {
+    use crate::counter;
+
+    use super::*;
+
+    #[test]
+    fn test_process_initialization() {
+        let pc = PC::new();
+        assert_eq!(pc.get(), 0);
+    }
+
+    #[test]
+    fn test_add_method() {
+        let mut pc = PC::new();
+        pc.add(1);
+        assert_eq!(pc.get(), 1);
+    }
+}
