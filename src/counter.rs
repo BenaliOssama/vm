@@ -1,3 +1,5 @@
+use std::{fs::Metadata, mem::offset_of, os::unix::process};
+
 use crate::config::{IDX_MOD, MEM_SIZE};
 
 #[derive(Debug, Clone)]
@@ -31,6 +33,23 @@ impl PC {
         self.addr = addr % MEM_SIZE; // always wrap around arena
     }
 
+    pub fn relative_jump(&mut self, offset: i32, use_idx_mod: bool) {
+        let mut offset = if use_idx_mod {
+            offset % IDX_MOD as i32
+        } else {
+            offset
+        };
+
+        let mut new_pc = self.get() as i32 + offset;
+
+        new_pc %= MEM_SIZE as i32;
+
+        if new_pc < 0 {
+            new_pc += MEM_SIZE as i32;
+        }
+        self.addr = new_pc as usize;
+    }
+
     pub fn get(&self) -> usize {
         return self.addr;
     }
@@ -41,6 +60,40 @@ impl PC {
 mod tests {
 
     use super::*;
+
+    #[test]
+    fn test_relative_jump() {
+        // no idx mod
+        // inc
+        let mut pc = PC::new();
+        pc.relative_jump(1, false);
+        assert_eq!(pc.get(), 1);
+        pc.relative_jump(1, false);
+        assert_eq!(pc.get(), 2);
+        pc.relative_jump(1, true);
+        assert_eq!(pc.get(), 3);
+
+        // negative
+        pc.relative_jump(0, true);
+        assert_eq!(pc.get(), 3);
+        pc.relative_jump(-1, true);
+        assert_eq!(pc.get(), 2);
+        pc.relative_jump(-1, true);
+        assert_eq!(pc.get(), 1);
+        pc.relative_jump(-1, true);
+        assert_eq!(pc.get(), 0);
+        pc.relative_jump(-1, true);
+        assert_eq!(pc.get(), MEM_SIZE - 1);
+        pc.relative_jump(1, true);
+        assert_eq!(pc.get(), 0);
+        // use idx mod
+        pc._reset();
+        pc.relative_jump(1000, true);
+        assert_eq!(pc.get(), 1000 % IDX_MOD);
+        pc._reset();
+        pc.relative_jump(-1000, true);
+        assert_eq!(pc.get(), MEM_SIZE - 1000 % IDX_MOD);
+    }
 
     #[test]
     fn test_counter_set() {
