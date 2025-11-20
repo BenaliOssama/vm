@@ -43,20 +43,26 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_couter_initialization() {
-        let pc = PC::new();
-        assert_eq!(pc.get(), 0);
+    fn test_counter_set() {
+        // no idx mod
+        let mut pc = PC::new();
+        pc.set(1, false);
+        assert_eq!(pc.get(), 1);
+        pc.set(MEM_SIZE - 1, false);
+        assert_eq!(pc.get(), MEM_SIZE - 1);
+        // with idx mod
+        pc._reset();
+        pc.set(1000, true);
+        let should_be = 1000 % IDX_MOD;
+        assert_eq!(pc.get(), should_be);
     }
 
     #[test]
-    fn test_counter_add() {
+    fn test_counter_reset() {
         let mut pc = PC::new();
         pc.add(1);
-        assert_eq!(pc.get(), 1);
-        pc.add(MEM_SIZE);
-        assert_eq!(pc.get(), 1);
-        pc.add(0);
-        assert_eq!(pc.get(), 1);
+        pc._reset();
+        assert_eq!(pc.get(), 0);
     }
 
     #[test]
@@ -74,5 +80,22 @@ mod tests {
         pc.inc();
         pc.inc();
         assert_eq!(pc.get(), 2);
+    }
+
+    #[test]
+    fn test_counter_add() {
+        let mut pc = PC::new();
+        pc.add(1);
+        assert_eq!(pc.get(), 1);
+        pc.add(MEM_SIZE);
+        assert_eq!(pc.get(), 1);
+        pc.add(0);
+        assert_eq!(pc.get(), 1);
+    }
+
+    #[test]
+    fn test_couter_initialization() {
+        let pc = PC::new();
+        assert_eq!(pc.get(), 0);
     }
 }
