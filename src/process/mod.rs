@@ -89,11 +89,11 @@ impl Process {
         let mut child: Option<Process> = None;
         match self.state() {
             State::Waiting => {
-                //println!("waiting...");
+                println!("waiting...");
                 self.remaining_cycles -= 1;
             }
             State::Ready => {
-                //println!("executing...");
+                println!("executing...");
                 println!("instruction {:?}", self.current_instruction);
                 let current_inst = self.current_instruction.clone().take().unwrap();
                 child = match current_inst.opcode {
@@ -112,10 +112,9 @@ impl Process {
                         None
                     }
                 };
-                // self.live_status.nbr_live += 1;
             }
             State::NoInstruction => {
-                //println!("free...");
+                println!("free...");
                 self.fetch_decode(arena);
             }
         }

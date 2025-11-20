@@ -49,6 +49,7 @@ impl Instruction {
             16 => self.nop(process, arena),
             _ => panic!("Unknown instruction"),
         }
+        process.current_instruction = None;
     }
 
     fn live(&self, process: &mut Process, _arena: &mut Arena) {
