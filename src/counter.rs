@@ -39,20 +39,40 @@ impl PC {
 // Unit tests
 #[cfg(test)]
 mod tests {
-    use crate::counter;
 
     use super::*;
 
     #[test]
-    fn test_process_initialization() {
+    fn test_couter_initialization() {
         let pc = PC::new();
         assert_eq!(pc.get(), 0);
     }
 
     #[test]
-    fn test_add_method() {
+    fn test_counter_add() {
         let mut pc = PC::new();
         pc.add(1);
         assert_eq!(pc.get(), 1);
+        pc.add(MEM_SIZE);
+        assert_eq!(pc.get(), 1);
+        pc.add(0);
+        assert_eq!(pc.get(), 1);
+    }
+
+    #[test]
+    fn test_counter_inc() {
+        let mut pc = PC::new();
+        pc.inc();
+        assert_eq!(pc.get(), 1);
+
+        pc.add(MEM_SIZE - 2);
+        assert_eq!(pc.get(), MEM_SIZE - 1);
+
+        pc.inc();
+        assert_eq!(pc.get(), 0);
+
+        pc.inc();
+        pc.inc();
+        assert_eq!(pc.get(), 2);
     }
 }
