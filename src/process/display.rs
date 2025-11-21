@@ -1,8 +1,7 @@
 use super::Process;
+use crate::*;
 use std::fmt::Display;
 use std::fmt::Formatter;
-use vm::*;
-
 impl Display for Process {
     fn fmt(&self, _f: &mut Formatter<'_>) -> Result<(), std::fmt::Error> {
         // create a table

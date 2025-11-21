@@ -1,18 +1,8 @@
-mod arena;
-mod config;
-mod counter;
-mod helper;
-mod instructions;
-mod player;
-mod process;
-mod utils;
-mod vm;
-
-pub use arena::*;
-use process::*;
+// use process::*;
 use std::env;
-use utils::*;
-use vm::VirtualMachine;
+use vm::*;
+// use utils::*;
+// use vm::VirtualMachine;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args: Vec<String> = env::args().collect();

@@ -1,8 +1,8 @@
-use super::Process;
-
+//use super::Process;
+use crate::*;
 pub mod instruction_info;
-use vm::{blue, yellow};
-
+//use vm::{blue, yellow};
+use crate::process::*;
 use crate::arena::*;
 use crate::config::IDX_MOD;
 use crate::config::MEM_SIZE;

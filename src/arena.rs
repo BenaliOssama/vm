@@ -1,7 +1,7 @@
 use crate::config::MEM_SIZE;
 use std::fmt::{Display, Formatter, Result};
-use vm::*;
-
+//use vm::*;
+use crate::Table;
 // arena.rs
 #[derive(Debug, Clone)]
 pub struct Arena {

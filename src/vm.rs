@@ -1,10 +1,10 @@
-use vm::{blue, red};
-
+//use vm::{blue, red};
 use crate::arena::{self, Arena};
 use crate::config::{CYCLE_DELTA, CYCLE_TO_DIE, MAX_CHECKS, NBR_LIVE};
 use crate::helper;
 use crate::player::Player;
 use crate::process::Process;
+use crate::*;
 
 // vm.rs
 pub struct VirtualMachine {

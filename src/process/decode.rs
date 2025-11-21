@@ -1,11 +1,11 @@
 use super::Process;
-use crate::ParamType;
 use crate::arena;
 use crate::arena::*;
 use crate::config::MEM_SIZE;
 use crate::helper;
 use crate::instructions;
 use crate::instructions::*;
+use crate::process::ParamType;
 use crate::process::instruction_info::*; //INSTRUCTION_TABLE};
 
 impl Process {

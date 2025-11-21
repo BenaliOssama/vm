@@ -1,11 +1,11 @@
 pub mod decode;
 pub mod display;
-use vm::red;
-
+//use vm::red;
 use crate::arena::*;
 use crate::config::REG_NUMBER;
 use crate::counter::PC;
 use crate::instructions::*;
+use crate::*;
 
 use std::{thread, time::Duration};
 
@@ -61,6 +61,7 @@ impl Process {
         pro.registers[0] = player;
         pro
     }
+
     fn state(&self) -> State {
         if self.current_instruction.is_some() && self.remaining_cycles == 0 {
             return State::Ready;

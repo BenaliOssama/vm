@@ -1,3 +1,18 @@
+mod arena;
+mod config;
+mod counter;
+mod helper;
+mod instructions;
+mod player;
+mod process;
+mod utils;
+mod vm;
+
+pub use arena::*;
+pub use process::*;
+pub use utils::parse_arguments;
+pub use vm::*;
+
 /*draw table */
 use std::fmt;
 

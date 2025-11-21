@@ -1,6 +1,7 @@
 use std::fmt::Display;
 use std::fmt::Formatter;
-use vm::*;
+//use vm::*;
+use crate::*;
 
 pub struct Player {
     pub id: i32, // The player id (assigned by the VM, starting from 1)
