@@ -1,6 +1,6 @@
 pub mod decode;
 pub mod display;
-use vm::{blue, red, yellow};
+use vm::red;
 
 use crate::arena::*;
 use crate::config::REG_NUMBER;

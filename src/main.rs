@@ -14,10 +14,10 @@ use std::env;
 use utils::*;
 use vm::VirtualMachine;
 
-fn main() {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args: Vec<String> = env::args().collect();
 
-    let player = parse_arguments(args);
+    let player = parse_arguments(args)?;
     let arena = Arena::new();
     let process = Process::new(player.id);
 
@@ -29,7 +29,7 @@ fn main() {
 
     vm.load_player(player);
     vm.run();
-
+    Ok(())
     // end of the game, declare winner or no winner
     // vm.declare_winner();
 }

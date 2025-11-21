@@ -3,7 +3,7 @@ use std::fs::File;
 use std::io::Read;
 use vm::*;
 
-pub fn parse_arguments(args: Vec<String>) -> Player {
+pub fn parse_arguments(args: Vec<String>) -> Result<Player, String> {
     /*_____________read arguments___________________ */
     if args.len() != 2 {
         panic!("{}", red("not enought argumentsh!"));
@@ -60,5 +60,5 @@ pub fn parse_arguments(args: Vec<String>) -> Player {
         0,
     );
 
-    return player;
+    return Ok(player);
 }
