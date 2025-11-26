@@ -1,6 +1,11 @@
 //////////////////use corewar::{Arena, Process, VirtualMachine, parse_arguments};
 use vm::*;
 
+/*
+the idea behine this test is to have specific compiled files (.cor) to run
+and check the behaviour of the vm at certain steps.
+this test should cover all instructions and make sure they do the job as should
+ */
 #[test]
 fn test_vm_initialization_and_execution() {
     // This simulates what main() does
@@ -17,20 +22,8 @@ fn test_vm_initialization_and_execution() {
     let mut vm = VirtualMachine::new(arena.clone(), vec![process]);
 
     vm.load_player(player);
-    vm.run();
-    // let arena = Arena::new();
-    // let process = Process::new(player.id);
+    for _ in 0..50 {
+        vm.cycle();
+    }
 
-    // let mut vm = VirtualMachine::new(arena.clone(), vec![process]);
-    // vm.load_player(player);
-
-    // // Run only N cycles if you have run_step()
-    // for _ in 0..50 {
-    //     vm.run_cycle(); // or vm.run_step()
-    // }
-
-    // // Now check state like you suggested
-    // assert!(vm.processes.len() > 0);
-    // assert_eq!(vm.processes[0].carry, true);
-    // assert!(vm.last_live_id.is_some());
 }

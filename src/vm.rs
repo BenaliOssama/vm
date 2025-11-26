@@ -59,7 +59,7 @@ impl VirtualMachine {
         count
     }
 
-    fn cycle(&mut self) {
+    pub fn cycle(&mut self) {
         let mut child_process = vec![];
         let mut i = 0;
         for process in &mut self.processes {
