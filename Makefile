@@ -1,5 +1,5 @@
 run:
-	RUSTFLAGS="-Awarnings" cargo run playground/players_src/live.cor
+	RUSTFLAGS="-Awarnings" cargo run playground/players_src/pierino_and_ind_ind.cor
 #	cargo run playground/players_src/crab.cor
 #	cargo run playground/players_src/pierino_add.cor
 zjmp:

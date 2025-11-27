@@ -6,12 +6,10 @@ use crate::instructions::Parameter;
 use crate::process::*;
 
 // [ ]  account for the case of negative indirect
-pub fn read_indirect(process: &mut Process, arena: &mut Arena, at: i32) -> i32 {
-    bytes_to_i32(
-        &arena
-            .read(wrap_address(process.pc.get(), at as i16), 4)
-            .clone(),
-    )
+pub fn read_indirect(process: &mut Process, arena: &mut Arena, opcode_addr: usize, at: i32) -> i32 {
+    let read_from = wrap_address(opcode_addr, at as i16);
+    println!("reading value from address: {}", read_from);
+    bytes_to_i32(&arena.read(read_from, 2).clone())
 }
 
 pub fn get_value(p: &Parameter, process: &Process, arena: &Arena, apply_idx_mod: bool) -> i32 {

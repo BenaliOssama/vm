@@ -14,6 +14,8 @@ impl Process {
         let inst_info = INSTRUCTION_TABLE[inst_index]; // instructions table is 1-indexed
         self.remaining_cycles = inst_info.nb_cycles.saturating_sub(2);
 
+        let opcode_addr = self.pc.get() - 1;
+
         if inst_info.has_pcode {
             let pcode = arena.read(self.pc.get(), 1)[0];
             self.pc.inc();
@@ -25,7 +27,7 @@ impl Process {
             }
             let params = self.build_params(type_params, inst_info, arena);
             // decode parameters
-            Some(Instruction::new(opcode, params))
+            Some(Instruction::new(opcode, params, opcode_addr))
             // verify integraty
         } else {
             let size = if inst_info.has_idx {
@@ -40,7 +42,11 @@ impl Process {
             self.pc.add(size);
             let value = helper::bytes_to_i32(&bytes); // sign-extend 2-byte or 4-byte to i32
             println!("the value we fetched is {}", value);
-            return Some(Instruction::new(opcode, vec![Parameter::Direct(value)]));
+            return Some(Instruction::new(
+                opcode,
+                vec![Parameter::Direct(value)],
+                opcode_addr,
+            ));
         }
     }
 

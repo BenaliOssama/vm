@@ -22,11 +22,12 @@ pub enum Parameter {
 pub struct Instruction {
     pub opcode: u8,
     pub parameters: Vec<Parameter>,
+    pub opcode_addr: usize,
 }
 
 impl Instruction {
-    pub fn new(opcode: u8, parameters: Vec<Parameter>) -> Self {
-        Self { opcode, parameters }
+    pub fn new(opcode: u8, parameters: Vec<Parameter>, opcode_addr: usize) -> Self {
+        Self { opcode, parameters, opcode_addr }
     }
 
     pub fn execute(&self, process: &mut Process, arena: &mut Arena) {
@@ -74,7 +75,7 @@ impl Instruction {
 
         let value = match self.parameters[0] {
             Parameter::Direct(v) => v,
-            Parameter::Indirect(v) => helper::read_indirect(process, arena, v),
+            Parameter::Indirect(v) => helper::read_indirect(process, arena,self.opcode_addr, v),
             _ => {
                 eprintln!("Invalid first parameter for ld");
                 return;
@@ -200,7 +201,7 @@ impl Instruction {
     fn betwise(&self, process: &mut Process, arena: &mut Arena) {
         let value1 = match self.parameters[0] {
             Parameter::Direct(v) => v,
-            Parameter::Indirect(v) => helper::read_indirect(process, arena, v),
+            Parameter::Indirect(v) => helper::read_indirect(process, arena, self.opcode_addr, v),
             Parameter::Register(v) => process.registers[v - 1],
             _ => {
                 eprintln!("Invalid first parameter for ld");
@@ -209,7 +210,7 @@ impl Instruction {
         };
         let value2 = match self.parameters[1] {
             Parameter::Direct(v) => v,
-            Parameter::Indirect(v) => helper::read_indirect(process, arena, v),
+            Parameter::Indirect(v) => helper::read_indirect(process, arena,self.opcode_addr, v),
             Parameter::Register(v) => process.registers[v - 1],
             _ => {
                 eprintln!("Invalid first parameter for ld");
@@ -223,6 +224,7 @@ impl Instruction {
                 return;
             }
         };
+        println!("{} {} {} {}", red("debugging v1 v2 reg :"), value1,  value2 ,reg);
         let result = match self.opcode {
             6 => {
                 println!("{}", blue("AND"));
