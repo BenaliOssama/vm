@@ -10,10 +10,10 @@ use crate::*;
 pub struct VirtualMachine {
     pub arena: Arena,
     pub processes: Vec<Process>,
-    pub cycle_count: u64,
+    pub cycle_count: usize,
     pub cycles_to_die: usize,
     nbr_checks: usize,
-    cycle_todie: usize,
+    cycle_to_die: usize,
 }
 
 impl VirtualMachine {
@@ -24,7 +24,7 @@ impl VirtualMachine {
             cycle_count: 0,
             cycles_to_die: CYCLE_TO_DIE,
             nbr_checks: 0,
-            cycle_todie: CYCLE_TO_DIE,
+            cycle_to_die: CYCLE_TO_DIE,
         }
     }
 
@@ -37,16 +37,70 @@ impl VirtualMachine {
         while self.processes_alive() {
             self.cycle();
             self.cycle_count += 1;
-            if self.cycle_count % self.cycles_to_die as u64 == 0 {
+            if self.cycle_count % self.cycles_to_die == 0 {
                 println!("{} {}", vm::yellow("usual check: "), self.cycle_count);
                 self.check_lives();
                 self.nbr_checks += 1;
                 if self.read_nbr_lives() >= NBR_LIVE || self.nbr_checks % MAX_CHECKS == 0 {
-                    self.cycle_todie -= CYCLE_DELTA;
+                    self.cycle_to_die -= CYCLE_DELTA;
                     self.nbr_checks = 0;
-                    println!("{}  {}", vm::green("reduce check cycle:"), self.cycle_todie);
+                    println!(
+                        "{}  {}",
+                        vm::green("reduce check cycle:"),
+                        self.cycle_to_die
+                    );
                 }
             }
+            // debugging lines goew here
+            println!(
+                "------------------------------------------------------------------------------------"
+            );
+            println!(
+                "Cycle {} || Cycles before life check: {} || Cycles between checks: {}",
+                self.cycle_count,
+                self.cycle_to_die - self.cycle_count,
+                self.cycle_to_die
+            );
+
+            // println!("Processes:");
+            // println!("Id |Player Id |Pc   |Carry |Instr  |Wait |Registers");
+            // for p in self.processes.iter() {
+            //     print!(
+            //         "{:>2} |{:>9} |{:>4} |{:5} |{:<6} |{:>4} | ",
+            //         p.id, p.player_id, p.pc, p.carry, p.current_instruction_name, p.cycles_to_wait
+            //     );
+
+            //     // Registers print
+            //     for (i, reg) in p.registers.iter().enumerate() {
+            //         print!("{}:{:08x}  ", i + 1, reg);
+            //     }
+            //     println!();
+            // }
+
+            // println!("Players:");
+            // println!("Id |Last Live |Nb Live since last check");
+            // for pl in self.processes.iter() {
+            //     println!(
+            //         "{:>2} |{:>9} |{:>3}",
+            //         pl.id, pl.last_live_cycle, pl.live_count_since_check
+            //     );
+            // }
+
+            // println!("Arena:");
+            // for (i, byte) in self.arena.iter().enumerate() {
+            //     if i % 32 == 0 {
+            //         print!("{:08x}  ", i);
+            //     }
+            //     print!("{:02x} ", byte);
+            //     if i % 32 == 31 {
+            //         println!();
+            //     }
+            // }
+            // println!();
+
+            println!(
+                "------------------------------------------------------------------------------------"
+            );
         }
     }
 

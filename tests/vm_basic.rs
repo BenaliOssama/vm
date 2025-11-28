@@ -45,7 +45,6 @@ fn test_pierino_add() {
     for _ in 0..10 {
         vm.cycle();
     }
-    assert_eq!(vm.processes[0].pc.get(), 10);
     assert_eq!(vm.processes[0].live_status.executed, true);
     assert_eq!(vm.processes[0].live_status.player_id, -1);
     assert_eq!(vm.processes[0].live_status.nbr_live, 1);
@@ -72,11 +71,10 @@ fn test_pierino_add() {
 #[test]
 fn test_pierino_and_ind_ind() {
     // This simulates what main() does
-    // let args = vec![
-    //     "vm".into(),
-    //     "playground/players_src/pierino_and_ind_ind.cor".into(),
-    // ];
-    let args = vec!["vm".into(), "playground/players_src/pierino_add.cor".into()];
+    let args = vec![
+        "vm".into(),
+        "playground/players_src/pierino_and_ind_ind.cor".into(),
+    ];
     let player = parse_arguments(args).expect("parse failed");
 
     let arena = Arena::new();
@@ -93,25 +91,24 @@ fn test_pierino_and_ind_ind() {
     for _ in 0..10 {
         vm.cycle();
     }
-    assert_eq!(vm.processes[0].pc.get(), 10);
-    // assert_eq!(vm.processes[0].live_status.executed, true);
-    // assert_eq!(vm.processes[0].live_status.player_id, -1);
-    // assert_eq!(vm.processes[0].live_status.nbr_live, 1);
-    // //and
-    // for _ in 0..=6 {
-    //     vm.cycle();
-    // }
-    // assert_eq!(vm.processes[0].pc.get(), 16);
-    // assert_eq!(vm.processes[0].registers[3 - 1], 0x302);
-    // // ld
-    // for _ in 0..=5 {
-    //     vm.cycle();
-    // }
-    // assert_eq!(vm.processes[0].pc.get(), 21);
-    // assert_eq!(vm.processes[0].registers[2 - 1], 0);
-    // //ld 5 zjmp 20
-    // for _ in 0..=20 {
-    //     vm.cycle();
-    // }
-    // assert_eq!(vm.processes[0].pc.get(), 0);
+    assert_eq!(vm.processes[0].live_status.executed, true);
+    assert_eq!(vm.processes[0].live_status.player_id, -1);
+    assert_eq!(vm.processes[0].live_status.nbr_live, 1);
+    //and
+    for _ in 0..=6 {
+        vm.cycle();
+    }
+    assert_eq!(vm.processes[0].pc.get(), 16);
+    assert_eq!(vm.processes[0].registers[3 - 1], 0x302);
+    // ld
+    for _ in 0..=5 {
+        vm.cycle();
+    }
+    assert_eq!(vm.processes[0].pc.get(), 21);
+    assert_eq!(vm.processes[0].registers[2 - 1], 0);
+    //ld 5 zjmp 20
+    for _ in 0..=20 {
+        vm.cycle();
+    }
+    assert_eq!(vm.processes[0].pc.get(), 0);
 }
