@@ -5,6 +5,14 @@ use crate::helper;
 use crate::player::Player;
 use crate::process::Process;
 use crate::*;
+/*
+[X] create
+[ ] destroy
+[ ] wait
+[ ] miscellaneous
+[ ] control (suspend)
+[ ] status
+ */
 
 // vm.rs
 pub struct VirtualMachine {
@@ -17,7 +25,7 @@ pub struct VirtualMachine {
 }
 
 impl VirtualMachine {
-    pub fn new(arena: Arena, processes: Vec<Process>) -> Self {
+    pub fn create(arena: Arena, processes: Vec<Process>) -> Self {
         Self {
             arena,
             processes,

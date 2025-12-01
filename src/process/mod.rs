@@ -13,6 +13,33 @@ use std::{thread, time::Duration};
 // https://www.geeksforgeeks.org/operating-systems/process-in-operating-system/
 // https://www.geeksforgeeks.org/operating-systems/process-control-block-in-os/
 // running, waiting, or ready to execute.
+/*
+• Running: In the running state, a process is running on a processor.
+    This means it is executing instructions.
+• Ready: In the ready state, a process is ready to run but for some
+   reason the OS has chosen not to run it at this given moment.
+• Blocked: In the blocked state, a process has performed some kind
+    of operation that makes it not ready to run until some other event
+    takes place. A common example: when a process initiates an I/O
+    request to a disk, it becomes blocked and thus some other process
+    can use the processor.
+
+    // the registers xv6 will save and restore
+// to stop and subsequently restart a process
+struct context {
+int eip;
+int esp;
+int ebx;
+int ecx;
+int edx;
+int esi;
+int edi;
+int ebp;
+};
+// the different states a process can be in
+enum proc_state { UNUSED, EMBRYO, SLEEPING,
+RUNNABLE, RUNNING, ZOMBIE };
+*/
 enum State {
     Waiting,
     Ready,
@@ -33,7 +60,36 @@ pub struct LiveStatus {
     pub player_id: i32,  // negative of the player ID as per Core War convention
     pub nbr_live: usize, // used with "Stop process execution"
 }
-
+/*
+// the information xv6 tracks about each process
+// including its register context and state
+struct proc {
+char *mem;
+// Start of process memory
+uint sz;
+// Size of process memory
+char *kstack;
+// Bottom of kernel stack
+// for this process
+enum proc_state state;
+// Process state
+int pid;
+// Process ID
+struct proc *parent;
+// Parent process
+void *chan;
+// If non-zero, sleeping on chan
+int killed;
+// If non-zero, have been killed
+struct file *ofile[NOFILE]; // Open files
+struct inode *cwd;
+// Current directory
+struct context context;
+// Switch here to run process
+struct trapframe *tf;
+// Trap frame for the
+// current interrupt
+};*/
 #[derive(Debug, Clone)]
 pub struct Process {
     pub pc: PC, // Program Counter
@@ -93,7 +149,7 @@ impl Process {
                 println!("waiting...");
                 self.remaining_cycles -= 1;
             }
-            State::Ready => {
+            State::Ready | State::NoInstruction => {
                 println!("executing...");
                 println!("instruction {:?}", self.current_instruction);
                 let current_inst = self.current_instruction.clone().take().unwrap();

@@ -38,7 +38,7 @@ fn test_pierino_add() {
     println!("{}", process);
     //println!("{}", arena);
 
-    let mut vm = VirtualMachine::new(arena.clone(), vec![process]);
+    let mut vm = VirtualMachine::create(arena.clone(), vec![process]);
 
     vm.load_player(player);
     // live 10 ld 5 ld 5 add 10
@@ -84,7 +84,7 @@ fn test_pierino_and_ind_ind() {
     println!("{}", process);
     //println!("{}", arena);
 
-    let mut vm = VirtualMachine::new(arena.clone(), vec![process]);
+    let mut vm = VirtualMachine::create(arena.clone(), vec![process]);
 
     vm.load_player(player);
     // live 10 ld 5 ld 5 add 10
