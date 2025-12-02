@@ -1,6 +1,6 @@
 //////////////////use corewar::{Arena, Process, VirtualMachine, parse_arguments};
+use vm::State;
 use vm::*;
-
 /*
 the idea behine this test is to have specific compiled files (.cor) to run
 and check the behaviour of the vm at certain steps.
@@ -41,27 +41,64 @@ fn test_1() {
     let mut vm = VirtualMachine::create(arena.clone(), vec![process]);
 
     vm.load_player(player);
-    // live 10 ld 5 ld 5 add 10
+    // live 10
     for _ in 0..10 {
+        for process in &mut vm.processes {
+            if process.state() == State::NoInstruction {
+                process.fetch_decode(&mut vm.arena);
+            }
+        }
         vm.cycle();
     }
     assert_eq!(vm.processes[0].live_status.executed, true);
     assert_eq!(vm.processes[0].live_status.player_id, -1);
     assert_eq!(vm.processes[0].live_status.nbr_live, 1);
+    //ld 5
     for _ in 0..5 {
+        for process in &mut vm.processes {
+            if process.state() == State::NoInstruction {
+                process.fetch_decode(&mut vm.arena);
+            }
+        }
         vm.cycle();
     }
     assert_eq!(vm.processes[0].registers[2 - 1], 2);
+    // ld
     for _ in 0..5 {
+        for process in &mut vm.processes {
+            if process.state() == State::NoInstruction {
+                process.fetch_decode(&mut vm.arena);
+            }
+        }
         vm.cycle();
     }
     assert_eq!(vm.processes[0].registers[3 - 1], 3);
+    // add
     for _ in 0..10 {
+        for process in &mut vm.processes {
+            if process.state() == State::NoInstruction {
+                process.fetch_decode(&mut vm.arena);
+            }
+        }
         vm.cycle();
     }
     assert_eq!(vm.processes[0].registers[4 - 1], 5);
+    // ld
+    for _ in 0..5 {
+        for process in &mut vm.processes {
+            if process.state() == State::NoInstruction {
+                process.fetch_decode(&mut vm.arena);
+            }
+        }
+        vm.cycle();
+    }
     //ld 5 zjmp 20
     for _ in 0..20 {
+        for process in &mut vm.processes {
+            if process.state() == State::NoInstruction {
+                process.fetch_decode(&mut vm.arena);
+            }
+        }
         vm.cycle();
     }
     assert_eq!(vm.processes[0].registers[3 - 1], 0);
