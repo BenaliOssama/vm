@@ -26,13 +26,13 @@ this test should cover all instructions and make sure they do the job as should
 - [ ] nop — no operation (timing test instruction)
  */
 #[test]
-fn test_pierino_add() {
+fn test_1() {
     // This simulates what main() does
     let args = vec!["vm".into(), "playground/players_src/pierino_add.cor".into()];
     let player = parse_arguments(args).expect("parse failed");
 
     let arena = Arena::new();
-    let process = Process::new(player.id);
+    let process = Process::new(player.id, 0);
 
     println!("{player}");
     println!("{}", process);
@@ -69,7 +69,7 @@ fn test_pierino_add() {
 }
 
 #[test]
-fn test_pierino_and_ind_ind() {
+fn test_2() {
     // This simulates what main() does
     let args = vec![
         "vm".into(),
@@ -78,7 +78,7 @@ fn test_pierino_and_ind_ind() {
     let player = parse_arguments(args).expect("parse failed");
 
     let arena = Arena::new();
-    let process = Process::new(player.id);
+    let process = Process::new(player.id, 0);
 
     println!("{player}");
     println!("{}", process);

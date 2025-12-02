@@ -3,7 +3,7 @@ use crate::arena::{self, Arena};
 use crate::config::{CYCLE_DELTA, CYCLE_TO_DIE, MAX_CHECKS, NBR_LIVE};
 use crate::helper;
 use crate::player::Player;
-use crate::process::Process;
+use crate::process::{Process, State};
 use crate::*;
 /*
 [X] create
@@ -29,7 +29,7 @@ impl VirtualMachine {
         Self {
             arena,
             processes,
-            cycle_count: 0,
+            cycle_count: 1,
             cycles_to_die: CYCLE_TO_DIE,
             nbr_checks: 0,
             cycle_to_die: CYCLE_TO_DIE,
@@ -44,24 +44,12 @@ impl VirtualMachine {
     pub fn run(&mut self) {
         while self.processes_alive() {
             self.cycle();
-            self.cycle_count += 1;
-            if self.cycle_count % self.cycles_to_die == 0 {
-                println!("{} {}", vm::yellow("usual check: "), self.cycle_count);
-                self.check_lives();
-                self.nbr_checks += 1;
-                if self.read_nbr_lives() >= NBR_LIVE || self.nbr_checks % MAX_CHECKS == 0 {
-                    self.cycle_to_die -= CYCLE_DELTA;
-                    self.nbr_checks = 0;
-                    println!(
-                        "{}  {}",
-                        vm::green("reduce check cycle:"),
-                        self.cycle_to_die
-                    );
-                }
-            }
             // debugging lines goew here
             println!(
-                "------------------------------------------------------------------------------------"
+                "{} ",
+                green(
+                    "------------------------------------------------------------------------------------"
+                )
             );
             println!(
                 "Cycle {} || Cycles before life check: {} || Cycles between checks: {}",
@@ -70,20 +58,25 @@ impl VirtualMachine {
                 self.cycle_to_die
             );
 
-            // println!("Processes:");
-            // println!("Id |Player Id |Pc   |Carry |Instr  |Wait |Registers");
-            // for p in self.processes.iter() {
-            //     print!(
-            //         "{:>2} |{:>9} |{:>4} |{:5} |{:<6} |{:>4} | ",
-            //         p.id, p.player_id, p.pc, p.carry, p.current_instruction_name, p.cycles_to_wait
-            //     );
+            println!("Processes:");
+            println!("Id |Player Id |Pc   |Carry |Instr  |Wait |Registers");
+            for p in self.processes.iter() {
+                print!(
+                    "{:>2} |{:>9} |{:>4} |{:5} |{:<6} |{:>4} | ",
+                    p.id,
+                    &p.player_id.to_string(),
+                    &p.instction_pc.to_string(),
+                    &p.carry.to_string(),
+                    p.current_instruction_name,
+                    &p.remaining_cycles.to_string()
+                );
 
-            //     // Registers print
-            //     for (i, reg) in p.registers.iter().enumerate() {
-            //         print!("{}:{:08x}  ", i + 1, reg);
-            //     }
-            //     println!();
-            // }
+                // Registers print
+                for (i, reg) in p.registers.iter().enumerate() {
+                    print!("{}:{:x}  ", i + 1, reg);
+                }
+                println!();
+            }
 
             // println!("Players:");
             // println!("Id |Last Live |Nb Live since last check");
@@ -107,8 +100,26 @@ impl VirtualMachine {
             // println!();
 
             println!(
-                "------------------------------------------------------------------------------------"
+                "{} ",
+                green(
+                    "------------------------------------------------------------------------------------"
+                )
             );
+            self.cycle_count += 1;
+            if self.cycle_count % self.cycles_to_die == 0 {
+                println!("{} {}", vm::yellow("usual check: "), self.cycle_count);
+                self.check_lives();
+                self.nbr_checks += 1;
+                if self.read_nbr_lives() >= NBR_LIVE || self.nbr_checks % MAX_CHECKS == 0 {
+                    self.cycle_to_die -= CYCLE_DELTA;
+                    self.nbr_checks = 0;
+                    println!(
+                        "{}  {}",
+                        vm::green("reduce check cycle:"),
+                        self.cycle_to_die
+                    );
+                }
+            }
         }
     }
 
@@ -127,6 +138,9 @@ impl VirtualMachine {
         for process in &mut self.processes {
             println!("{} {}", red("running process"), i);
             i += 1;
+            if process.state() == process::State::NoInstruction {
+                process.fetch_decode(&mut self.arena);
+            }
             let ch = process.execute_cycle(&mut self.arena);
             if ch.is_some() {
                 println!("we found a pregrnant process");

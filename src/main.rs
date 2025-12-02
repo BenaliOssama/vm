@@ -15,7 +15,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // the loading process is done eagerly as old days
     // To understand how lazy loading of pieces of code and data works,
     // you’ll have to understand the machinery of paging and swapping,
-    let process = Process::new(player.id);
+    let process = Process::new(player.id, 0);
 
     println!("{player}");
     println!("{}", process);
