@@ -30,9 +30,9 @@ impl Instruction {
         Self { opcode, parameters, opcode_addr }
     }
 
-    pub fn execute(&self, process: &mut Process, arena: &mut Arena) {
+    pub fn execute(&self, process: &mut Process, arena: &mut Arena, current_cyle: usize) {
         match self.opcode {
-            1 => self.live(process, arena),
+            1 => self.live(process, arena, current_cyle),
             // 0x02 => self.ld(process, arena),
             // // ... other instructions
             2 => self.ld(process, arena),
@@ -53,12 +53,12 @@ impl Instruction {
         process.current_instruction = None;
     }
 
-    fn live(&self, process: &mut Process, _arena: &mut Arena) {
+    fn live(&self, process: &mut Process, _arena: &mut Arena,current_cyle: usize) {
         println!("{}", blue("LIVE"));
         // Implement live instruction
         process.live_status.executed = true;
         process.live_status.nbr_live += 1;
-
+        process.live_status.last_live_cycle = current_cyle;
         if let Parameter::Direct(player_id) = self.parameters[0] {
             process.live_status.player_id = player_id;
         } else {

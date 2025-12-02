@@ -88,27 +88,34 @@ impl VirtualMachine {
             self.cycle();
             // debugging lines goew here
 
-            // println!("Players:");
-            // println!("Id |Last Live |Nb Live since last check");
-            // for pl in self.processes.iter() {
-            //     println!(
-            //         "{:>2} |{:>9} |{:>3}",
-            //         pl.id, pl.last_live_cycle, pl.live_count_since_check
-            //     );
-            // }
+            println!("Players:");
+            println!("Id |Last Live |Nb Live since last check");
+            for pl in self.processes.iter() {
+                println!(
+                    "{:>2} |{:>9} |{:>3}",
+                    pl.live_status.player_id,
+                    pl.live_status.last_live_cycle,
+                    pl.live_status.nbr_live
+                );
+            }
 
-            // println!("Arena:");
-            // for (i, byte) in self.arena.iter().enumerate() {
-            //     if i % 32 == 0 {
-            //         print!("{:08x}  ", i);
-            //     }
-            //     print!("{:02x} ", byte);
-            //     if i % 32 == 31 {
-            //         println!();
-            //     }
-            // }
-            // println!();
+            println!("Arena:");
+            let mut count = 0;
+            for (i, byte) in self.arena.memory.iter().enumerate() {
+                if i % 32 == 0 {
+                    print!("{:08x}  ", i);
+                }
+                print!("{:02x} ", byte);
+                if i % 32 == 31 {
+                    println!();
+                }
 
+                if count == 31 {
+                    break;
+                }
+                count += 1;
+            }
+            println!();
 
             self.cycle_count += 1;
             if self.cycle_count % self.cycles_to_die == 0 {
@@ -134,7 +141,7 @@ impl VirtualMachine {
         for process in &mut self.processes {
             println!("{} {}", red("running process"), i);
             i += 1;
-            let ch = process.execute_cycle(&mut self.arena);
+            let ch = process.execute_cycle(&mut self.arena, self.cycle_count);
             if ch.is_some() {
                 println!("we found a pregrnant process");
                 child_process.push(ch);

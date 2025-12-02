@@ -60,6 +60,7 @@ pub struct LiveStatus {
     pub executed: bool,
     pub player_id: i32,  // negative of the player ID as per Core War convention
     pub nbr_live: usize, // used with "Stop process execution"
+    pub last_live_cycle: usize,
 }
 /*
 // the information xv6 tracks about each process
@@ -121,6 +122,7 @@ impl Process {
                 executed: false,
                 player_id: 0,
                 nbr_live: 0,
+                last_live_cycle: 0,
             },
         };
         pro.registers[0] = player_id;
@@ -157,7 +159,7 @@ impl Process {
     // https://corewar-docs.readthedocs.io/en/latest/redcode/parser/
     // work on decoding an instruction
     // [Opcode] [Pcode?] [Param1] [Param2] [Param3]
-    pub fn execute_cycle(&mut self, arena: &mut Arena) -> Option<Process> {
+    pub fn execute_cycle(&mut self, arena: &mut Arena, current_cycle: usize) -> Option<Process> {
         let mut child: Option<Process> = None;
         match self.state() {
             State::Waiting => {
@@ -180,7 +182,7 @@ impl Process {
                         Some(save)
                     }
                     _ => {
-                        current_inst.execute(self, arena);
+                        current_inst.execute(self, arena, current_cycle);
                         None
                     }
                 };

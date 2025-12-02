@@ -5,7 +5,7 @@ use crate::Table;
 // arena.rs
 #[derive(Debug, Clone)]
 pub struct Arena {
-    memory: [u8; 4096],
+    pub memory: [u8; 4096],
 }
 
 impl Arena {
