@@ -12,7 +12,7 @@ impl Process {
     pub fn decode(&mut self, opcode: u8, arena: &mut Arena) -> Option<Instruction> {
         let inst_index = (opcode - 1) as usize;
         let inst_info = INSTRUCTION_TABLE[inst_index]; // instructions table is 1-indexed
-        self.remaining_cycles = inst_info.nb_cycles.saturating_sub(2);
+        self.remaining_cycles = inst_info.nb_cycles; //.saturating_sub);
 
         let opcode_addr = self.pc.get() - 1;
 

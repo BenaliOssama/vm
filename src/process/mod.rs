@@ -144,6 +144,11 @@ impl Process {
         if opcode >= 1 && opcode <= 16 {
             println!("address {} instruction : {:?}", self.pc.get(), opcode);
             let inst = self.decode(opcode, arena);
+            if inst.is_some() {
+                self.current_instruction_name = opcode_to_name(opcode);
+            } else {
+                self.current_instruction_name = "None".to_string();
+            }
             self.current_instruction = inst;
         }
     }
@@ -189,4 +194,28 @@ impl Process {
         thread::sleep(Duration::from_millis(60));
         return child;
     }
+}
+
+pub fn opcode_to_name(op: u8) -> String {
+    let name = match op {
+        1 => "live",
+        2 => "ld",
+        3 => "st",
+        4 => "add",
+        5 => "sub",
+        6 => "and",
+        7 => "or",
+        8 => "xor",
+        9 => "zjmp",
+        10 => "ldi",
+        11 => "sti",
+        12 => "fork",
+        13 => "lld",
+        14 => "lldi",
+        15 => "lfork",
+        16 => "nop",
+        _ => "invalid",
+    };
+
+    name.to_string()
 }
