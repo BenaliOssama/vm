@@ -109,12 +109,7 @@ impl VirtualMachine {
             // }
             // println!();
 
-            println!(
-                "{} ",
-                green(
-                    "------------------------------------------------------------------------------------"
-                )
-            );
+
             self.cycle_count += 1;
             if self.cycle_count % self.cycles_to_die == 0 {
                 println!("{} {}", vm::yellow("usual check: "), self.cycle_count);

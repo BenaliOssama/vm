@@ -142,7 +142,7 @@ impl Process {
         self.instction_pc = self.pc.get();
         self.pc.inc();
         if opcode >= 1 && opcode <= 16 {
-            println!("address {} instruction : {:?}", self.pc.get(), opcode);
+            //println!("address {} instruction : {:?}", self.pc.get(), opcode);
             let inst = self.decode(opcode, arena);
             if inst.is_some() {
                 self.current_instruction_name = opcode_to_name(opcode);
@@ -161,7 +161,7 @@ impl Process {
         let mut child: Option<Process> = None;
         match self.state() {
             State::Waiting => {
-                println!("waiting...");
+                //println!("waiting...");
                 self.remaining_cycles -= 1;
             }
             State::Ready => {
@@ -174,7 +174,7 @@ impl Process {
 
                         // in this case we should for the process
                         // use v
-                        println!("the process we are forking should have {:?}", self);
+                        // println!("the process we are forking should have {:?}", self);
                         let save = self.clone();
                         self.current_instruction = None;
                         Some(save)
