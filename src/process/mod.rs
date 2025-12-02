@@ -164,7 +164,7 @@ impl Process {
                 println!("waiting...");
                 self.remaining_cycles -= 1;
             }
-            State::Ready | State::NoInstruction => {
+            State::Ready => {
                 println!("executing...");
                 println!("instruction {:?}", self.current_instruction);
                 let current_inst = self.current_instruction.clone().take().unwrap();
@@ -186,7 +186,8 @@ impl Process {
                 };
             }
             State::NoInstruction => {
-                panic!("should not try to execute an process with empty instruction");
+                println!("should not try to execute an process with empty instruction");
+                self.current_instruction_name = "None".to_string();
                 // println!("free...");
                 // self.fetch_decode(arena);
             }

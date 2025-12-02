@@ -43,8 +43,11 @@ impl VirtualMachine {
 
     pub fn run(&mut self) {
         while self.processes_alive() {
-            self.cycle();
-            // debugging lines goew here
+            for process in &mut self.processes {
+                if process.state() == process::State::NoInstruction {
+                    process.fetch_decode(&mut self.arena);
+                }
+            }
             println!(
                 "{} ",
                 green(
@@ -61,13 +64,18 @@ impl VirtualMachine {
             println!("Processes:");
             println!("Id |Player Id |Pc   |Carry |Instr  |Wait |Registers");
             for p in self.processes.iter() {
+                let current_instruction_name: String = if p.state() == process::State::Ready {
+                    "___".to_string()
+                } else {
+                    p.current_instruction_name.clone()
+                };
                 print!(
                     "{:>2} |{:>9} |{:>4} |{:5} |{:<6} |{:>4} | ",
                     p.id,
                     &p.player_id.to_string(),
                     &p.instction_pc.to_string(),
                     &p.carry.to_string(),
-                    p.current_instruction_name,
+                    current_instruction_name,
                     &p.remaining_cycles.to_string()
                 );
 
@@ -77,6 +85,8 @@ impl VirtualMachine {
                 }
                 println!();
             }
+            self.cycle();
+            // debugging lines goew here
 
             // println!("Players:");
             // println!("Id |Last Live |Nb Live since last check");
@@ -123,24 +133,12 @@ impl VirtualMachine {
         }
     }
 
-    fn read_nbr_lives(&mut self) -> usize {
-        let mut count = 0;
-        for process in &mut self.processes {
-            count += process.live_status.nbr_live;
-            process.live_status.nbr_live = 0;
-        }
-        count
-    }
-
     pub fn cycle(&mut self) {
         let mut child_process = vec![];
         let mut i = 0;
         for process in &mut self.processes {
             println!("{} {}", red("running process"), i);
             i += 1;
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut self.arena);
-            }
             let ch = process.execute_cycle(&mut self.arena);
             if ch.is_some() {
                 println!("we found a pregrnant process");
@@ -171,6 +169,14 @@ impl VirtualMachine {
             println!("{} {:?}", red("current processes"), self.processes);
             println!("{}", self.arena);
         }
+    }
+    fn read_nbr_lives(&mut self) -> usize {
+        let mut count = 0;
+        for process in &mut self.processes {
+            count += process.live_status.nbr_live;
+            process.live_status.nbr_live = 0;
+        }
+        count
     }
 
     fn processes_alive(&self) -> bool {
