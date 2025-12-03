@@ -88,7 +88,7 @@ cycle [X]: The winner is player [X]: [NAME]!
   * [ ] If the instruction doesn't exist in the instruction set, the PC will move forward by 1 byte.
 
 * [ ] When a new process is forked, it will be placed at the end of the processes and start execution at the start of the next cycle (it will be first executed on the next cycle).
-* [ ] The VM assumes the binary is in big-endian.
+* [X] The VM assumes the binary is in big-endian.
 
 * [ ] Those are the cases where a file is considered corrupted:
   * Wrong signature code.
@@ -132,20 +132,20 @@ cycle [X]: The winner is player [X]: [NAME]!
 
 # Pcode field
 
-* [ ] Some instructions accept different kinds of parameters, which may require different sizes. The assembler uses a byte after the opcode to inform the VM.
-* [ ] Every two bits indicate parameter type:
+* [X] Some instructions accept different kinds of parameters, which may require different sizes. The assembler uses a byte after the opcode to inform the VM.
+* [X] Every two bits indicate parameter type:
 
   * `01` → register
   * `10` → direct
   * `11` → indirect
-* [ ] Example: `01111000` → first: register, second: indirect, third: direct.
-* [ ] Numbers are in binary (e.g., `10` binary = 2 decimal).
+* [X] Example: `01111000` → first: register, second: indirect, third: direct.
+* [X] Numbers are in binary (e.g., `10` binary = 2 decimal).
 
 ---
 
 # Has IDX field
 
-* [ ] Some instructions use 2-byte direct values instead of full 32-bit for addressing (when `Has Idx`).
+* [X] Some instructions use 2-byte direct values instead of full 32-bit for addressing (when `Has Idx`).
 
 ---
 
@@ -192,6 +192,5 @@ cycle [X]: The winner is player [X]: [NAME]!
 # Additional notes
 
 * [ ] use the constants instead of hardcoded values
-* [ ] Make use of the instruction file.
-* [ ] Work on multiple processes simultaneously (support 2+ files).
+* [ ] Make use of the instruction file. Work on multiple processes simultaneously (support 2+ files).
 * [ ] Read about how modern CPUs do the fetch-execute cycle: [https://corewar-docs.readthedocs.io/en/latest/redcode/parser/](https://corewar-docs.readthedocs.io/en/latest/redcode/parser/)
