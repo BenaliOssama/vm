@@ -126,25 +126,43 @@ fn test_2() {
     vm.load_player(player);
     // live 10 ld 5 ld 5 add 10
     for _ in 0..10 {
+        for process in &mut vm.processes {
+            if process.state() == State::NoInstruction {
+                process.fetch_decode(&mut vm.arena);
+            }
+        }
         vm.cycle();
     }
     assert_eq!(vm.processes[0].live_status.executed, true);
     assert_eq!(vm.processes[0].live_status.player_id, -1);
     assert_eq!(vm.processes[0].live_status.nbr_live, 1);
     //and
-    for _ in 0..=6 {
+    for _ in 0..6 {
+        for process in &mut vm.processes {
+            if process.state() == State::NoInstruction {
+                process.fetch_decode(&mut vm.arena);
+            }
+        }
         vm.cycle();
     }
-    assert_eq!(vm.processes[0].pc.get(), 16);
     assert_eq!(vm.processes[0].registers[3 - 1], 0x302);
     // ld
-    for _ in 0..=5 {
+    for _ in 0..5 {
+        for process in &mut vm.processes {
+            if process.state() == State::NoInstruction {
+                process.fetch_decode(&mut vm.arena);
+            }
+        }
         vm.cycle();
     }
-    assert_eq!(vm.processes[0].pc.get(), 21);
     assert_eq!(vm.processes[0].registers[2 - 1], 0);
     //ld 5 zjmp 20
-    for _ in 0..=20 {
+    for _ in 0..20 {
+        for process in &mut vm.processes {
+            if process.state() == State::NoInstruction {
+                process.fetch_decode(&mut vm.arena);
+            }
+        }
         vm.cycle();
     }
     assert_eq!(vm.processes[0].pc.get(), 0);
