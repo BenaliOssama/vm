@@ -18,7 +18,7 @@ this test should cover all instructions and make sure they do the job as should
 - [X] xor — bitwise XOR operation
 - [X] zjmp — conditional jump if carry is set
 - [X] ldi — load from computed address into a register
-- [ ] sti — store register value to computed address
+- [x] sti — store register value to computed address
 - [ ] fork — duplicate a process at a relative address
 - [ ] lld — long version of `ld` (no IDX_MOD)
 - [ ] lldi — long version of `ldi` (no IDX_MOD)
