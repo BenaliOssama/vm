@@ -8,9 +8,9 @@ this test should cover all instructions and make sure they do the job as should
  */
 /*
 ## Instruction Testing Progress
-- [x] live — announce that the process is alive
-- [x] ld — load a value into a register
-- [ ] st — store a register value into another register or memory
+- [X] live — announce that the process is alive
+- [X] ld — load a value into a register
+- [X] st — store a register value into another register or memory
 - [X] add — add two registers and store the result
 - [ ] sub — subtract two registers and store the result
 - [ ] and — bitwise AND operation
@@ -25,6 +25,7 @@ this test should cover all instructions and make sure they do the job as should
 - [ ] lfork — long version of `fork` (no IDX_MOD)
 - [ ] nop — no operation (timing test instruction)
  */
+
 #[test]
 fn test_1() {
     // This simulates what main() does
@@ -146,6 +147,71 @@ fn test_2() {
         vm.cycle();
     }
     assert_eq!(vm.processes[0].registers[3 - 1], 0x302);
+    // ld
+    for _ in 0..5 {
+        for process in &mut vm.processes {
+            if process.state() == State::NoInstruction {
+                process.fetch_decode(&mut vm.arena);
+            }
+        }
+        vm.cycle();
+    }
+    assert_eq!(vm.processes[0].registers[2 - 1], 0);
+    //ld 5 zjmp 20
+    for _ in 0..20 {
+        for process in &mut vm.processes {
+            if process.state() == State::NoInstruction {
+                process.fetch_decode(&mut vm.arena);
+            }
+        }
+        vm.cycle();
+    }
+    assert_eq!(vm.processes[0].pc.get(), 0);
+}
+
+#[test]
+fn test_3() {
+    // This simulates what main() does
+    let args = vec![
+        "vm".into(),
+        "playground/players_src/pierino_st_ind.cor".into(),
+    ];
+    let player = parse_arguments(args).expect("parse failed");
+
+    let arena = Arena::new();
+    let process = Process::new(player.id, 0);
+
+    println!("{player}");
+    println!("{}", process);
+    //println!("{}", arena);
+
+    let mut vm = VirtualMachine::create(arena, vec![process]);
+
+    vm.load_player(player);
+    // live 10 ld 5 ld 5 add 10
+    for _ in 0..10 {
+        for process in &mut vm.processes {
+            if process.state() == State::NoInstruction {
+                process.fetch_decode(&mut vm.arena);
+            }
+        }
+        vm.cycle();
+    }
+    assert_eq!(vm.processes[0].live_status.executed, true);
+    assert_eq!(vm.processes[0].live_status.player_id, -1);
+    assert_eq!(vm.processes[0].live_status.nbr_live, 1);
+    // st
+    for _ in 0..5 {
+        for process in &mut vm.processes {
+            if process.state() == State::NoInstruction {
+                process.fetch_decode(&mut vm.arena);
+            }
+        }
+        vm.cycle();
+    }
+    //let at_mem = vm.arena.read(vm.processes[0].instction_pc + 16, 4);
+    let at_mem = vm.arena.read(21, 4);
+    assert_eq!(vec![255, 255, 255, 255], at_mem);
     // ld
     for _ in 0..5 {
         for process in &mut vm.processes {

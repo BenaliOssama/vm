@@ -117,18 +117,8 @@ impl Instruction {
             }
             Parameter::Indirect(dist_memory) => {
                 // pub fn write(&mut self, pos: usize, data: &[u8]) {
-                println!(
-                    "current address {} to be increased by {}",
-                    process.pc.get(),
-                    dist_memory
-                );
-                println!(
-                    "st: m{} ← r{}",
-                    (process.pc.get() + dist_memory as usize) % MEM_SIZE,
-                    source_reg
-                );
                 arena.write(
-                    (process.pc.get() + dist_memory as usize) % MEM_SIZE,
+                    ( self.opcode_addr + dist_memory as usize) % MEM_SIZE,
                     &process.registers[source_reg - 1].to_be_bytes(),
                 );
                 println!("{}", process);
