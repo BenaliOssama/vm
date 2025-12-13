@@ -194,7 +194,7 @@ impl Process {
                 // self.fetch_decode(arena);
             }
         }
-        thread::sleep(Duration::from_millis(60));
+        //thread::sleep(Duration::from_millis(60));
         return child;
     }
 }

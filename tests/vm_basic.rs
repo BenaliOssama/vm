@@ -643,3 +643,74 @@ fn test_sti() {
     assert_eq!(vm.processes[0].registers[2 - 1], 0);
     assert_eq!(vm.processes[0].pc.get(), 0);
 }
+
+#[test]
+fn test_fork() {
+    // This simulates what main() does
+    let args = vec![
+        "vm".into(),
+        "playground/players_src/pierino_fork.cor".into(),
+    ];
+    let player = parse_arguments(args).expect("parse failed");
+
+    let arena = Arena::new();
+    let process = Process::new(player.id, 0);
+
+    println!("{player}");
+    println!("{}", process);
+    //println!("{}", arena);
+
+    let mut vm = VirtualMachine::create(arena.clone(), vec![process]);
+
+    vm.load_player(player);
+    // fork 800
+    for _ in 0..800 {
+        for process in &mut vm.processes {
+            if process.state() == State::NoInstruction {
+                process.fetch_decode(&mut vm.arena);
+            }
+        }
+        vm.cycle();
+    }
+    assert_eq!(vm.processes.len(), 2);
+    // live 10
+    for _ in 0..10 {
+        for process in &mut vm.processes {
+            if process.state() == State::NoInstruction {
+                process.fetch_decode(&mut vm.arena);
+            }
+        }
+        vm.cycle();
+    }
+    assert_eq!(vm.processes[0].live_status.executed, true);
+    assert_eq!(vm.processes[0].live_status.player_id, -1);
+    assert_eq!(vm.processes[0].live_status.nbr_live, 1);
+
+    assert_eq!(vm.processes[1].live_status.executed, true);
+    assert_eq!(vm.processes[1].live_status.player_id, -1);
+    assert_eq!(vm.processes[1].live_status.nbr_live, 1);
+
+    // ld
+    for _ in 0..5 {
+        for process in &mut vm.processes {
+            if process.state() == State::NoInstruction {
+                process.fetch_decode(&mut vm.arena);
+            }
+        }
+        vm.cycle();
+    }
+    // zjmp 20
+    for _ in 0..20 {
+        for process in &mut vm.processes {
+            if process.state() == State::NoInstruction {
+                process.fetch_decode(&mut vm.arena);
+            }
+        }
+        vm.cycle();
+    }
+    assert_eq!(vm.processes[0].registers[2 - 1], 0);
+    assert_eq!(vm.processes[0].pc.get(), 3);
+
+    assert_eq!(vm.processes[1].registers[2 - 1], 0);
+    assert_eq!(vm.processes[1].pc.get(), 3);
+}
