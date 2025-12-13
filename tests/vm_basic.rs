@@ -11,7 +11,7 @@ this test should cover all instructions and make sure they do the job as should
 - [x] live — announce that the process is alive
 - [x] ld — load a value into a register
 - [ ] st — store a register value into another register or memory
-- [ ] add — add two registers and store the result
+- [X] add — add two registers and store the result
 - [ ] sub — subtract two registers and store the result
 - [ ] and — bitwise AND operation
 - [ ] or — bitwise OR operation
