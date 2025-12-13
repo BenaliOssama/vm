@@ -16,8 +16,8 @@ this test should cover all instructions and make sure they do the job as should
 - [X] and — bitwise AND operation
 - [X] or — bitwise OR operation
 - [X] xor — bitwise XOR operation
-- [z] zjmp — conditional jump if carry is set
-- [ ] ldi — load from computed address into a register
+- [X] zjmp — conditional jump if carry is set
+- [X] ldi — load from computed address into a register
 - [ ] sti — store register value to computed address
 - [ ] fork — duplicate a process at a relative address
 - [ ] lld — long version of `ld` (no IDX_MOD)
@@ -170,7 +170,7 @@ fn test_2() {
 }
 
 #[test]
-fn test_3() {
+fn test_st_ind() {
     // This simulates what main() does
     let args = vec![
         "vm".into(),
@@ -201,6 +201,8 @@ fn test_3() {
     assert_eq!(vm.processes[0].live_status.player_id, -1);
     assert_eq!(vm.processes[0].live_status.nbr_live, 1);
     // st
+    // 01 ff ff ff ff 03 70 01 00 10 02 90 00 00 00 00 02 09 ff ef 00 ff ff ff ff 00 00 00 00 00 00 00
+    // 01 FF FF FF FF 03 70 01 00 10 02 90 00 00 00 00 02 09 FF EF 00 FF FF FF FF 00 00 00 00 00 00 00
     for _ in 0..5 {
         for process in &mut vm.processes {
             if process.state() == State::NoInstruction {
@@ -209,6 +211,7 @@ fn test_3() {
         }
         vm.cycle();
     }
+    println!("{}", vm.arena);
     //let at_mem = vm.arena.read(vm.processes[0].instction_pc + 16, 4);
     let at_mem = vm.arena.read(21, 4);
     assert_eq!(vec![255, 255, 255, 255], at_mem);
@@ -235,7 +238,7 @@ fn test_3() {
 }
 
 #[test]
-fn test_4() {
+fn test_sub() {
     // This simulates what main() does
     let args = vec!["vm".into(), "playground/players_src/pierino_sub.cor".into()];
     let player = parse_arguments(args).expect("parse failed");
@@ -553,6 +556,82 @@ fn test_ldi() {
         vm.cycle();
     }
     //ld 5 zjmp 20
+    for _ in 0..20 {
+        for process in &mut vm.processes {
+            if process.state() == State::NoInstruction {
+                process.fetch_decode(&mut vm.arena);
+            }
+        }
+        vm.cycle();
+    }
+    assert_eq!(vm.processes[0].registers[2 - 1], 0);
+    assert_eq!(vm.processes[0].pc.get(), 0);
+}
+
+#[test]
+fn test_sti() {
+    // This simulates what main() does
+    let args = vec![
+        "vm".into(),
+        "playground/players_src/pierino_sti_reg_ind_dir.cor".into(),
+    ];
+    let player = parse_arguments(args).expect("parse failed");
+
+    let arena = Arena::new();
+    let process = Process::new(player.id, 0);
+
+    println!("{player}");
+    println!("{}", process);
+    //println!("{}", arena);
+
+    let mut vm = VirtualMachine::create(arena.clone(), vec![process]);
+
+    vm.load_player(player);
+    // live 10
+    for _ in 0..10 {
+        for process in &mut vm.processes {
+            if process.state() == State::NoInstruction {
+                process.fetch_decode(&mut vm.arena);
+            }
+        }
+        vm.cycle();
+    }
+    assert_eq!(vm.processes[0].live_status.executed, true);
+    assert_eq!(vm.processes[0].live_status.player_id, -1);
+    assert_eq!(vm.processes[0].live_status.nbr_live, 1);
+    // ld
+    for _ in 0..5 {
+        for process in &mut vm.processes {
+            if process.state() == State::NoInstruction {
+                process.fetch_decode(&mut vm.arena);
+            }
+        }
+        vm.cycle();
+    }
+    //sti 25
+    for _ in 0..25 {
+        for process in &mut vm.processes {
+            if process.state() == State::NoInstruction {
+                process.fetch_decode(&mut vm.arena);
+            }
+        }
+        vm.cycle();
+    }
+    //println!("{}", vm.arena);
+    //01 ff ff ff ff 02 90 00 00 00 7b 02 ff ff ff ff
+    //01 FF FF FF FF 02 90 00 00 00 7B 02 FF FF FF FF
+    let at_mem = vm.arena.read(12, 4);
+    assert_eq!(vec![255, 255, 255, 255], at_mem);
+    // ld
+    for _ in 0..5 {
+        for process in &mut vm.processes {
+            if process.state() == State::NoInstruction {
+                process.fetch_decode(&mut vm.arena);
+            }
+        }
+        vm.cycle();
+    }
+    // zjmp 20
     for _ in 0..20 {
         for process in &mut vm.processes {
             if process.state() == State::NoInstruction {

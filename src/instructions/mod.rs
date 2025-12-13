@@ -338,25 +338,26 @@ impl Instruction {
                 return;
             }
         };
+        //01 ff ff ff ff 02 90 00 00 00 7b 02 ff ff ff ff f5 00 01 02 90 00 00 00 00 02 09 ff e6 00 00 
+        //01 FF FF FF FF 02 90 00 00 00 7B 02 FF FF FF FF 
         // ---------- 2) Resolve parameter values ----------
         // ldi always applies IDX_MOD to its addressing
-        let val1 = helper::get_value(p2, process, arena, true); // apply IDX_MOD for INDIRECT
-        let val2 = helper::get_value(p3, process, arena, true);
+        let val1 = helper::get_value(p2, process, arena, false); // apply IDX_MOD for INDIRECT
+        let val2 = helper::get_value(p3, process, arena, false);
         // ---------- 3) Compute address offset ----------
+        println!("value 1 sti important 777: {} ", val1);
+        println!("value 2 sti important 777: {} ", val2);
         let sum = val1 + val2;
-        let addr_offset = sum % IDX_MOD as i32;
-        println!("addr offset {}", addr_offset);
         //---
-        let mut new_pc = process.pc.get() as i32 + addr_offset - 7; // cont for the paramiter size
+        let mut new_pc = self.opcode_addr as i32 + sum; // cont for the paramiter size
         //+ INSTRUCTION_TABLE[self.opcode as usize - 1].direct_size as i32;
 
-        println!("new addr {}", new_pc);
         // Step 3: wrap around circular memory
         new_pc %= MEM_SIZE as i32;
         if new_pc < 0 {
             new_pc += MEM_SIZE as i32;
         }
-        println!("new addr  after module {}", new_pc);
+        println!("value f sti important 777: {} ", new_pc);
         //---
         // Final effective address is PC + offset (wrapped)
 
