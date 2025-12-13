@@ -43,14 +43,7 @@ fn test_1() {
 
     vm.load_player(player);
     // live 10
-    for _ in 0..10 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 10);
     assert_eq!(vm.processes[0].live_status.executed, true);
     assert_eq!(vm.processes[0].live_status.player_id, -1);
     assert_eq!(vm.processes[0].live_status.nbr_live, 1);
@@ -64,44 +57,14 @@ fn test_1() {
         vm.cycle();
     }
     assert_eq!(vm.processes[0].registers[2 - 1], 2);
-    // ld
-    for _ in 0..5 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 5);
     assert_eq!(vm.processes[0].registers[3 - 1], 3);
     // add
-    for _ in 0..10 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 10);
     assert_eq!(vm.processes[0].registers[4 - 1], 5);
-    // ld
-    for _ in 0..5 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 5);
     //ld 5 zjmp 20
-    for _ in 0..20 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 20);
     assert_eq!(vm.processes[0].registers[3 - 1], 0);
     assert_eq!(vm.processes[0].pc.get(), 0);
 }
@@ -126,46 +89,17 @@ fn test_2() {
 
     vm.load_player(player);
     // live 10 ld 5 ld 5 add 10
-    for _ in 0..10 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 10);
     assert_eq!(vm.processes[0].live_status.executed, true);
     assert_eq!(vm.processes[0].live_status.player_id, -1);
     assert_eq!(vm.processes[0].live_status.nbr_live, 1);
     //and
-    for _ in 0..6 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 6);
     assert_eq!(vm.processes[0].registers[3 - 1], 0x302);
-    // ld
-    for _ in 0..5 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 5);
     assert_eq!(vm.processes[0].registers[2 - 1], 0);
     //ld 5 zjmp 20
-    for _ in 0..20 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 20);
     assert_eq!(vm.processes[0].pc.get(), 0);
 }
 
@@ -189,14 +123,7 @@ fn test_st_ind() {
 
     vm.load_player(player);
     // live 10 ld 5 ld 5 add 10
-    for _ in 0..10 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 10);
     assert_eq!(vm.processes[0].live_status.executed, true);
     assert_eq!(vm.processes[0].live_status.player_id, -1);
     assert_eq!(vm.processes[0].live_status.nbr_live, 1);
@@ -215,25 +142,10 @@ fn test_st_ind() {
     //let at_mem = vm.arena.read(vm.processes[0].instction_pc + 16, 4);
     let at_mem = vm.arena.read(21, 4);
     assert_eq!(vec![255, 255, 255, 255], at_mem);
-    // ld
-    for _ in 0..5 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 5);
     assert_eq!(vm.processes[0].registers[2 - 1], 0);
     //ld 5 zjmp 20
-    for _ in 0..20 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 20);
     assert_eq!(vm.processes[0].pc.get(), 0);
 }
 
@@ -254,14 +166,7 @@ fn test_sub() {
 
     vm.load_player(player);
     // live 10
-    for _ in 0..10 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 10);
     assert_eq!(vm.processes[0].live_status.executed, true);
     assert_eq!(vm.processes[0].live_status.player_id, -1);
     assert_eq!(vm.processes[0].live_status.nbr_live, 1);
@@ -275,44 +180,14 @@ fn test_sub() {
         vm.cycle();
     }
     assert_eq!(vm.processes[0].registers[2 - 1], 2);
-    // ld
-    for _ in 0..5 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 5);
     assert_eq!(vm.processes[0].registers[3 - 1], 3);
     // sub
-    for _ in 0..10 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 10);
     assert_eq!(vm.processes[0].registers[4 - 1], -1);
-    // ld
-    for _ in 0..5 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 5);
     //ld 5 zjmp 20
-    for _ in 0..20 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 20);
     assert_eq!(vm.processes[0].registers[2 - 1], 0);
     assert_eq!(vm.processes[0].pc.get(), 0);
 }
@@ -336,45 +211,16 @@ fn test_and() {
 
     vm.load_player(player);
     // live 10
-    for _ in 0..10 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 10);
     assert_eq!(vm.processes[0].live_status.executed, true);
     assert_eq!(vm.processes[0].live_status.player_id, -1);
     assert_eq!(vm.processes[0].live_status.nbr_live, 1);
     //and 6
-    for _ in 0..6 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 6);
     assert_eq!(vm.processes[0].registers[3 - 1], 770);
-    // ld
-    for _ in 0..5 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 5);
     //ld 5 zjmp 20
-    for _ in 0..20 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 20);
     assert_eq!(vm.processes[0].registers[2 - 1], 0);
     assert_eq!(vm.processes[0].pc.get(), 0);
 }
@@ -399,45 +245,16 @@ fn test_or() {
 
     vm.load_player(player);
     // live 10
-    for _ in 0..10 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 10);
     assert_eq!(vm.processes[0].live_status.executed, true);
     assert_eq!(vm.processes[0].live_status.player_id, -1);
     assert_eq!(vm.processes[0].live_status.nbr_live, 1);
     //or 6
-    for _ in 0..6 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 6);
     assert_eq!(vm.processes[0].registers[3 - 1], 914);
-    // ld
-    for _ in 0..5 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 5);
     //ld 5 zjmp 20
-    for _ in 0..20 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 20);
     assert_eq!(vm.processes[0].registers[2 - 1], 0);
     assert_eq!(vm.processes[0].pc.get(), 0);
 }
@@ -462,45 +279,16 @@ fn test_xor() {
 
     vm.load_player(player);
     // live 10
-    for _ in 0..10 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 10);
     assert_eq!(vm.processes[0].live_status.executed, true);
     assert_eq!(vm.processes[0].live_status.player_id, -1);
     assert_eq!(vm.processes[0].live_status.nbr_live, 1);
     //xor 6
-    for _ in 0..6 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 6);
     assert_eq!(vm.processes[0].registers[3 - 1], 247);
-    // ld
-    for _ in 0..5 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 5);
     //ld 5 zjmp 20
-    for _ in 0..20 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 20);
     assert_eq!(vm.processes[0].registers[2 - 1], 0);
     assert_eq!(vm.processes[0].pc.get(), 0);
 }
@@ -525,45 +313,16 @@ fn test_ldi() {
 
     vm.load_player(player);
     // live 10
-    for _ in 0..10 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 10);
     assert_eq!(vm.processes[0].live_status.executed, true);
     assert_eq!(vm.processes[0].live_status.player_id, -1);
     assert_eq!(vm.processes[0].live_status.nbr_live, 1);
     //ldi 25
-    for _ in 0..25 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 25);
     assert_eq!(vm.processes[0].registers[3 - 1], 182779900); // ae4fffc
-    // ld
-    for _ in 0..5 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 5);
     //ld 5 zjmp 20
-    for _ in 0..20 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 20);
     assert_eq!(vm.processes[0].registers[2 - 1], 0);
     assert_eq!(vm.processes[0].pc.get(), 0);
 }
@@ -588,58 +347,21 @@ fn test_sti() {
 
     vm.load_player(player);
     // live 10
-    for _ in 0..10 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 10);
     assert_eq!(vm.processes[0].live_status.executed, true);
     assert_eq!(vm.processes[0].live_status.player_id, -1);
     assert_eq!(vm.processes[0].live_status.nbr_live, 1);
-    // ld
-    for _ in 0..5 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 5);
     //sti 25
-    for _ in 0..25 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 25);
     //println!("{}", vm.arena);
     //01 ff ff ff ff 02 90 00 00 00 7b 02 ff ff ff ff
     //01 FF FF FF FF 02 90 00 00 00 7B 02 FF FF FF FF
     let at_mem = vm.arena.read(12, 4);
     assert_eq!(vec![255, 255, 255, 255], at_mem);
-    // ld
-    for _ in 0..5 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 5);
     // zjmp 20
-    for _ in 0..20 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 20);
     assert_eq!(vm.processes[0].registers[2 - 1], 0);
     assert_eq!(vm.processes[0].pc.get(), 0);
 }
@@ -664,24 +386,10 @@ fn test_fork() {
 
     vm.load_player(player);
     // fork 800
-    for _ in 0..800 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 800);
     assert_eq!(vm.processes.len(), 2);
     // live 10
-    for _ in 0..10 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 10);
     assert_eq!(vm.processes[0].live_status.executed, true);
     assert_eq!(vm.processes[0].live_status.player_id, -1);
     assert_eq!(vm.processes[0].live_status.nbr_live, 1);
@@ -690,27 +398,24 @@ fn test_fork() {
     assert_eq!(vm.processes[1].live_status.player_id, -1);
     assert_eq!(vm.processes[1].live_status.nbr_live, 1);
 
-    // ld
-    for _ in 0..5 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 5);
     // zjmp 20
-    for _ in 0..20 {
-        for process in &mut vm.processes {
-            if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
-            }
-        }
-        vm.cycle();
-    }
+    run_for(&mut vm, 20);
     assert_eq!(vm.processes[0].registers[2 - 1], 0);
     assert_eq!(vm.processes[0].pc.get(), 3);
 
     assert_eq!(vm.processes[1].registers[2 - 1], 0);
     assert_eq!(vm.processes[1].pc.get(), 3);
+}
+
+fn run_for(vm: &mut VirtualMachine, n: usize) {
+    // zjmp 20
+    for _ in 0..n {
+        for process in &mut vm.processes {
+            if process.state() == State::NoInstruction {
+                process.fetch_decode(&mut vm.arena);
+            }
+        }
+        vm.cycle();
+    }
 }
