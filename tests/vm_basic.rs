@@ -18,16 +18,16 @@ this test should cover all instructions and make sure they do the job as should
 - [X] xor — bitwise XOR operation
 - [X] zjmp — conditional jump if carry is set
 - [X] ldi — load from computed address into a register
-- [x] sti — store register value to computed address
-- [ ] fork — duplicate a process at a relative address
-- [ ] lld — long version of `ld` (no IDX_MOD)
+- [X] sti — store register value to computed address
+- [X] fork — duplicate a process at a relative address
+- [X] lld — long version of `ld` (no IDX_MOD)
 - [ ] lldi — long version of `ldi` (no IDX_MOD)
 - [ ] lfork — long version of `fork` (no IDX_MOD)
 - [ ] nop — no operation (timing test instruction)
  */
 
 #[test]
-fn test_1() {
+fn test_add() {
     // This simulates what main() does
     let args = vec!["vm".into(), "playground/players_src/pierino_add.cor".into()];
     let player = parse_arguments(args).expect("parse failed");
@@ -70,7 +70,7 @@ fn test_1() {
 }
 
 #[test]
-fn test_2() {
+fn test_add_ind_ind() {
     // This simulates what main() does
     let args = vec![
         "vm".into(),
@@ -418,4 +418,76 @@ fn run_for(vm: &mut VirtualMachine, n: usize) {
         }
         vm.cycle();
     }
+}
+
+#[test]
+fn test_lld() {
+    // This simulates what main() does
+    let args = vec![
+        "vm".into(),
+        "playground/players_src/pierino_lld_ind_reg.cor".into(),
+    ];
+    let player = parse_arguments(args).expect("parse failed");
+
+    let arena = Arena::new();
+    let process = Process::new(player.id, 0);
+
+    println!("{player}");
+    println!("{}", process);
+    //println!("{}", arena);
+
+    let mut vm = VirtualMachine::create(arena.clone(), vec![process]);
+
+    vm.load_player(player);
+    // live 10
+    run_for(&mut vm, 10);
+    assert_eq!(vm.processes[0].live_status.executed, true);
+    assert_eq!(vm.processes[0].live_status.player_id, -1);
+    assert_eq!(vm.processes[0].live_status.nbr_live, 1);
+
+    //lld 10
+    run_for(&mut vm, 10);
+    assert_eq!(vm.processes[0].registers[2 - 1], -1); // ae4fffc
+
+    //ld
+    run_for(&mut vm, 5);
+    //ld 5 zjmp 20
+    run_for(&mut vm, 20);
+    assert_eq!(vm.processes[0].registers[2 - 1], 0);
+    assert_eq!(vm.processes[0].pc.get(), 0);
+}
+
+#[test]
+fn test_lldi() {
+    // This simulates what main() does
+    let args = vec![
+        "vm".into(),
+        "playground/players_src/pierino_lldi_ind_dir_reg.cor".into(),
+    ];
+    let player = parse_arguments(args).expect("parse failed");
+
+    let arena = Arena::new();
+    let process = Process::new(player.id, 0);
+
+    println!("{player}");
+    println!("{}", process);
+    //println!("{}", arena);
+
+    let mut vm = VirtualMachine::create(arena.clone(), vec![process]);
+
+    vm.load_player(player);
+    // live 10
+    run_for(&mut vm, 10);
+    assert_eq!(vm.processes[0].live_status.executed, true);
+    assert_eq!(vm.processes[0].live_status.player_id, -1);
+    assert_eq!(vm.processes[0].live_status.nbr_live, 1);
+    //lldi 50
+    run_for(&mut vm, 50);
+    assert_eq!(vm.processes[0].registers[3 - 1], 133631); // 209ff //209FFED
+
+    run_for(&mut vm, 5);
+    //ld 5 zjmp 20
+    run_for(&mut vm, 20);
+    assert_eq!(vm.processes[0].registers[2 - 1], 0);
+    assert_eq!(vm.processes[0].pc.get(), 0);
 }

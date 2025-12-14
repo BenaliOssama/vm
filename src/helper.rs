@@ -39,6 +39,7 @@ pub fn get_value(p: &Parameter, process: &Process, arena: &Arena, apply_idx_mod:
             // match what read_indirect does:
             // helper::wrap_address(process.pc.get(), off as i16)
             let addr = wrap_address(process.instction_pc, off as i16);
+            // let addr = wrap_address(process.pc.get(), off as i16);
 
             // arena.read() returns &[u8] of length 4
             let bytes = arena.read(addr, 4);
