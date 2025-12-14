@@ -196,6 +196,7 @@ fn lldi_ind_dir_reg() {
 
     vm.load_player(player);
     // live 10
+    println!("{}", vm.arena);
     run_for(&mut vm, 10);
     assert_eq!(vm.processes[0].live_status.executed, true);
     assert_eq!(vm.processes[0].live_status.player_id, -1);

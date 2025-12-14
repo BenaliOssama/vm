@@ -17,7 +17,7 @@ pub fn get_value(p: &Parameter, process: &Process, arena: &Arena, apply_idx_mod:
         // ----------------------------
         // 1) REGISTER
         // ----------------------------
-        Parameter::Register(reg) => process.registers[*reg] as i32,
+        Parameter::Register(reg) => process.registers[*reg - 1] as i32,
 
         // ----------------------------
         // 2) DIRECT
@@ -38,10 +38,10 @@ pub fn get_value(p: &Parameter, process: &Process, arena: &Arena, apply_idx_mod:
 
             // match what read_indirect does:
             let addr = wrap_address(process.instction_pc, off as i16);
-
+            println!("reading at address {}", addr);
             // arena.read() returns &[u8] of length 4
-            let bytes = arena.read(addr, 4);
-
+            let bytes = arena.read(addr, 2);
+            println!("bytes read {:?}", bytes);
             bytes_to_i32(&bytes)
         }
 

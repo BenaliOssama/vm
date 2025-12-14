@@ -139,7 +139,7 @@ impl VirtualMachine {
         let mut child_process = vec![];
         let mut i = 0;
         for process in &mut self.processes {
-            println!("{} {}", red("running process"), i);
+            //println!("{} {}", red("running process"), i);
             i += 1;
             let ch = process.execute_cycle(&mut self.arena, self.cycle_count);
             if ch.is_some() {
