@@ -298,7 +298,7 @@ impl Instruction {
         let addr_offset = sum % IDX_MOD as i32;
         println!("addr offset {}", addr_offset);
         //---
-        let mut new_pc = process.pc.get() as i32 + addr_offset - 7; // cont for the paramiter size
+        let mut new_pc = process.instction_pc as i32 + addr_offset ; // cont for the paramiter size
         //+ INSTRUCTION_TABLE[self.opcode as usize - 1].direct_size as i32;
 
         println!("new addr {}", new_pc);
