@@ -15,17 +15,17 @@ pub fn parse_arguments(args: Vec<String>) -> Result<Player, String> {
         panic!("{}", red("bad file extention!"));
     }
 
-    let mut file = File::open(file_name)
-            .map_err(|e| red(&format!("Error Opening the file, {e}")))?;
+    let mut file =
+        File::open(file_name).map_err(|e| red(&format!("Error Opening the file, {e}")))?;
 
     let mut buffer = Vec::new();
 
     file.read_to_end(&mut buffer)
-            .map_err(|e| red(&format!("Error reading the file, {e}")))?;
+        .map_err(|e| red(&format!("Error reading the file, {e}")))?;
 
-    if buffer.len() < config::HEADERS_SIZE {
-        return Err(red("the file are too smaaaaal"));
-    }
+    // if buffer.len() < config::HEADERS_SIZE {
+    //     return Err(red("the file are too smaaaaal"));
+    // }
 
     let mut prev = 0;
     let mut next = 4;
@@ -39,8 +39,8 @@ pub fn parse_arguments(args: Vec<String>) -> Result<Player, String> {
     prev = next;
     next = next + 128;
 
-    let name = std::str::from_utf8(&buffer[prev..next])
-                .map_err(|e| red(&format!("small file {e}")))?;
+    let name =
+        std::str::from_utf8(&buffer[prev..next]).map_err(|e| red(&format!("small file {e}")))?;
     let name: String = name.chars().filter(|&c| c != '\0').collect();
 
     prev = next + 4; // skip 4 bytes 
@@ -56,7 +56,8 @@ pub fn parse_arguments(args: Vec<String>) -> Result<Player, String> {
     next = prev + 2048;
 
     let disc = std::str::from_utf8(&buffer[prev..next])
-                                    .map_err(|e| red(&format!("small file {e}")))?.trim();
+        .map_err(|e| red(&format!("small file {e}")))?
+        .trim();
     let disc: String = disc.chars().filter(|&c| c != '\0').collect();
 
     prev = next + 4; // skip 4 bytes 
@@ -77,4 +78,3 @@ pub fn parse_arguments(args: Vec<String>) -> Result<Player, String> {
 
     return Ok(player);
 }
-
