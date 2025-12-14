@@ -1,9 +1,9 @@
 //use vm::{blue, red};
-use crate::arena::{self, Arena};
+use crate::arena::Arena;
 use crate::config::{CYCLE_DELTA, CYCLE_TO_DIE, MAX_CHECKS, NBR_LIVE};
 use crate::helper;
 use crate::player::Player;
-use crate::process::{Process, State};
+use crate::process::Process;
 use crate::*;
 /*
 [X] create
@@ -57,7 +57,7 @@ impl VirtualMachine {
             println!(
                 "Cycle {} || Cycles before life check: {} || Cycles between checks: {}",
                 self.cycle_count,
-                self.cycle_to_die - self.cycle_count,
+                self.cycle_to_die.checked_sub(self.cycle_count).unwrap_or(0),
                 self.cycle_to_die
             );
 
@@ -123,7 +123,7 @@ impl VirtualMachine {
                 self.check_lives();
                 self.nbr_checks += 1;
                 if self.read_nbr_lives() >= NBR_LIVE || self.nbr_checks % MAX_CHECKS == 0 {
-                    self.cycle_to_die -= CYCLE_DELTA;
+                    self.cycle_to_die.checked_sub(CYCLE_DELTA).unwrap_or(0);
                     self.nbr_checks = 0;
                     println!(
                         "{}  {}",
