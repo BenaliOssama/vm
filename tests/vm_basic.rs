@@ -1208,7 +1208,34 @@ fn xor_reg_ind() {
 }
 #[test]
 fn ld() {
-    todo!()
+    // This simulates what main() does
+    let args = vec!["vm".into(), "playground/players_src/pierino_ld.cor".into()];
+    let player = parse_arguments(args).expect("parse failed");
+
+    let arena = Arena::new();
+    let process = Process::new(player.id, 0);
+
+    println!("{player}");
+    println!("{}", process);
+    //println!("{}", arena);
+
+    let mut vm = VirtualMachine::create(arena.clone(), vec![process]);
+
+    vm.load_player(player);
+    // live 10
+    run_for(&mut vm, 10);
+    assert_eq!(vm.processes[0].live_status.executed, true);
+    assert_eq!(vm.processes[0].live_status.player_id, -1);
+    assert_eq!(vm.processes[0].live_status.nbr_live, 1);
+    //ld 5
+    run_for(&mut vm, 5);
+    assert_eq!(vm.processes[0].registers[2 - 1], 517); // ae4fffc
+    // ld
+    run_for(&mut vm, 5);
+    //zjmp
+    run_for(&mut vm, 20);
+    assert_eq!(vm.processes[0].registers[2 - 1], 0);
+    assert_eq!(vm.processes[0].pc.get(), 0);
 }
 
 #[test]
