@@ -1178,7 +1178,7 @@ fn xor_reg_ind() {
     // This simulates what main() does
     let args = vec![
         "vm".into(),
-        "playground/players_src/pierino_xor_ind_ind.cor".into(),
+        "playground/players_src/pierino_xor_reg_ind.cor".into(),
     ];
     let player = parse_arguments(args).expect("parse failed");
 
@@ -1199,13 +1199,12 @@ fn xor_reg_ind() {
     assert_eq!(vm.processes[0].live_status.nbr_live, 1);
     //xor 6
     run_for(&mut vm, 6);
-    assert_eq!(vm.processes[0].registers[3 - 1], 247);
+    assert_eq!(vm.processes[0].registers[3 - 1], -2165);
     run_for(&mut vm, 5);
     //ld 5 zjmp 20
     run_for(&mut vm, 20);
     assert_eq!(vm.processes[0].registers[2 - 1], 0);
     assert_eq!(vm.processes[0].pc.get(), 0);
-    todo!()
 }
 #[test]
 fn ld() {
