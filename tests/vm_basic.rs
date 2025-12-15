@@ -991,7 +991,7 @@ fn ldi_ind_reg() {
     // This simulates what main() does
     let args = vec![
         "vm".into(),
-        "playground/players_src/pierino_ldi_reg_dir.cor".into(),
+        "playground/players_src/pierino_ldi_ind_reg.cor".into(),
     ];
     let player = parse_arguments(args).expect("parse failed");
 
@@ -1014,14 +1014,13 @@ fn ldi_ind_reg() {
     run_for(&mut vm, 5);
     //ldi 25
     run_for(&mut vm, 25);
-    assert_eq!(vm.processes[0].registers[3 - 1], 133631); // ae4fffc
+    assert_eq!(vm.processes[0].registers[3 - 1], 521); // ae4fffc
     // ld
     run_for(&mut vm, 5);
     //zjmp
     run_for(&mut vm, 20);
     assert_eq!(vm.processes[0].registers[2 - 1], 0);
     assert_eq!(vm.processes[0].pc.get(), 0);
-    todo!()
 }
 #[test]
 fn or_ind_reg() {
