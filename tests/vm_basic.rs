@@ -472,7 +472,7 @@ fn and_reg_reg() {
     // This simulates what main() does
     let args = vec![
         "vm".into(),
-        "playground/players_src/pierino_and_ind_ind.cor".into(),
+        "playground/players_src/pierino_and_reg_reg.cor".into(),
     ];
     let player = parse_arguments(args).expect("parse failed");
 
@@ -487,19 +487,21 @@ fn and_reg_reg() {
 
     vm.load_player(player);
     // live 10
+
     run_for(&mut vm, 10);
     assert_eq!(vm.processes[0].live_status.executed, true);
     assert_eq!(vm.processes[0].live_status.player_id, -1);
     assert_eq!(vm.processes[0].live_status.nbr_live, 1);
+    // ld
+    run_for(&mut vm, 5);
     //and 6
     run_for(&mut vm, 6);
-    assert_eq!(vm.processes[0].registers[3 - 1], 770);
+    assert_eq!(vm.processes[0].registers[3 - 1], 16);
     run_for(&mut vm, 5);
     //ld 5 zjmp 20
     run_for(&mut vm, 20);
     assert_eq!(vm.processes[0].registers[2 - 1], 0);
     assert_eq!(vm.processes[0].pc.get(), 0);
-    todo!()
 }
 #[test]
 fn lldi_ind_reg_reg() {
