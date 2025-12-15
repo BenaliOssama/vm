@@ -103,11 +103,12 @@ fn lld_dir_reg() {
     assert_eq!(vm.processes[0].registers[2 - 1], 0);
     assert_eq!(vm.processes[0].pc.get(), 0);
 }
+
 #[test]
-#[ignore]
 fn sti_reg_dir_dir() {
     todo!()
 }
+
 #[test]
 fn and_ind_ind() {
     // This simulates what main() does
@@ -591,9 +592,40 @@ fn xor_ind_ind() {
     assert_eq!(vm.processes[0].pc.get(), 0);
 }
 #[test]
-#[ignore]
 fn ldi_reg_dir() {
-    todo!()
+    // This simulates what main() does
+    let args = vec![
+        "vm".into(),
+        "playground/players_src/pierino_ldi_reg_dir.cor".into(),
+    ];
+    let player = parse_arguments(args).expect("parse failed");
+
+    let arena = Arena::new();
+    let process = Process::new(player.id, 0);
+
+    println!("{player}");
+    println!("{}", process);
+    //println!("{}", arena);
+
+    let mut vm = VirtualMachine::create(arena.clone(), vec![process]);
+
+    vm.load_player(player);
+    // live 10
+    run_for(&mut vm, 10);
+    assert_eq!(vm.processes[0].live_status.executed, true);
+    assert_eq!(vm.processes[0].live_status.player_id, -1);
+    assert_eq!(vm.processes[0].live_status.nbr_live, 1);
+    // ld
+    run_for(&mut vm, 5);
+    //ldi 25
+    run_for(&mut vm, 25);
+    assert_eq!(vm.processes[0].registers[3 - 1], 133631); // ae4fffc
+    // ld
+    run_for(&mut vm, 5);
+    //zjmp
+    run_for(&mut vm, 20);
+    assert_eq!(vm.processes[0].registers[2 - 1], 0);
+    assert_eq!(vm.processes[0].pc.get(), 0);
 }
 #[test]
 #[ignore]
@@ -608,7 +640,39 @@ fn xor_ind_reg() {
 #[test]
 #[ignore]
 fn ldi_reg_reg() {
-    todo!()
+    // This simulates what main() does
+    let args = vec![
+        "vm".into(),
+        "playground/players_src/pierino_ldi_reg_reg.cor".into(),
+    ];
+    let player = parse_arguments(args).expect("parse failed");
+
+    let arena = Arena::new();
+    let process = Process::new(player.id, 0);
+
+    println!("{player}");
+    println!("{}", process);
+    //println!("{}", arena);
+
+    let mut vm = VirtualMachine::create(arena.clone(), vec![process]);
+
+    vm.load_player(player);
+    // live 10
+    run_for(&mut vm, 10);
+    assert_eq!(vm.processes[0].live_status.executed, true);
+    assert_eq!(vm.processes[0].live_status.player_id, -1);
+    assert_eq!(vm.processes[0].live_status.nbr_live, 1);
+    // ld
+    run_for(&mut vm, 5);
+    //ldi 25
+    run_for(&mut vm, 25);
+    assert_eq!(vm.processes[0].registers[3 - 1], 521); // ae4fffc
+    // ld
+    run_for(&mut vm, 5);
+    //zjmp
+    run_for(&mut vm, 20);
+    assert_eq!(vm.processes[0].registers[2 - 1], 0);
+    assert_eq!(vm.processes[0].pc.get(), 0);
 }
 #[test]
 #[ignore]
