@@ -178,9 +178,39 @@ fn and_ind_ind() {
 }
 
 #[test]
-#[ignore]
 fn lldi_dir_dir_reg() {
-    todo!()
+    // This simulates what main() does
+    let args = vec![
+        "vm".into(),
+        "playground/players_src/pierino_lldi_dir_dir_reg.cor".into(),
+    ];
+    let player = parse_arguments(args).expect("parse failed");
+
+    let arena = Arena::new();
+    let process = Process::new(player.id, 0);
+
+    println!("{player}");
+    println!("{}", process);
+    //println!("{}", arena);
+
+    let mut vm = VirtualMachine::create(arena.clone(), vec![process]);
+
+    vm.load_player(player);
+    // live 10
+    println!("{}", vm.arena);
+    run_for(&mut vm, 10);
+    assert_eq!(vm.processes[0].live_status.executed, true);
+    assert_eq!(vm.processes[0].live_status.player_id, -1);
+    assert_eq!(vm.processes[0].live_status.nbr_live, 1);
+    //lldi 50
+    run_for(&mut vm, 50);
+    assert_eq!(vm.processes[0].registers[3 - 1], 521); // 209ff //209FFED
+
+    run_for(&mut vm, 5);
+    //ld 5 zjmp 20
+    run_for(&mut vm, 20);
+    assert_eq!(vm.processes[0].registers[2 - 1], 0);
+    assert_eq!(vm.processes[0].pc.get(), 0);
 }
 #[test]
 fn sti_reg_dir_reg() {
@@ -226,8 +256,39 @@ fn and_ind_reg() {
     todo!()
 }
 #[test]
-#[ignore]
 fn lldi_dir_reg_reg() {
+    // This simulates what main() does
+    let args = vec![
+        "vm".into(),
+        "playground/players_src/pierino_lldi_ind_dir_reg.cor".into(),
+    ];
+    let player = parse_arguments(args).expect("parse failed");
+
+    let arena = Arena::new();
+    let process = Process::new(player.id, 0);
+
+    println!("{player}");
+    println!("{}", process);
+    //println!("{}", arena);
+
+    let mut vm = VirtualMachine::create(arena.clone(), vec![process]);
+
+    vm.load_player(player);
+    // live 10
+    println!("{}", vm.arena);
+    run_for(&mut vm, 10);
+    assert_eq!(vm.processes[0].live_status.executed, true);
+    assert_eq!(vm.processes[0].live_status.player_id, -1);
+    assert_eq!(vm.processes[0].live_status.nbr_live, 1);
+    //lldi 50
+    run_for(&mut vm, 50);
+    assert_eq!(vm.processes[0].registers[3 - 1], 133631); // 209ff //209FFED
+
+    run_for(&mut vm, 5);
+    //ld 5 zjmp 20
+    run_for(&mut vm, 20);
+    assert_eq!(vm.processes[0].registers[2 - 1], 0);
+    assert_eq!(vm.processes[0].pc.get(), 0);
     todo!()
 }
 
@@ -354,8 +415,39 @@ fn and_reg_reg() {
     todo!()
 }
 #[test]
-#[ignore]
 fn lldi_ind_reg_reg() {
+    // This simulates what main() does
+    let args = vec![
+        "vm".into(),
+        "playground/players_src/pierino_lldi_ind_dir_reg.cor".into(),
+    ];
+    let player = parse_arguments(args).expect("parse failed");
+
+    let arena = Arena::new();
+    let process = Process::new(player.id, 0);
+
+    println!("{player}");
+    println!("{}", process);
+    //println!("{}", arena);
+
+    let mut vm = VirtualMachine::create(arena.clone(), vec![process]);
+
+    vm.load_player(player);
+    // live 10
+    println!("{}", vm.arena);
+    run_for(&mut vm, 10);
+    assert_eq!(vm.processes[0].live_status.executed, true);
+    assert_eq!(vm.processes[0].live_status.player_id, -1);
+    assert_eq!(vm.processes[0].live_status.nbr_live, 1);
+    //lldi 50
+    run_for(&mut vm, 50);
+    assert_eq!(vm.processes[0].registers[3 - 1], 133631); // 209ff //209FFED
+
+    run_for(&mut vm, 5);
+    //ld 5 zjmp 20
+    run_for(&mut vm, 20);
+    assert_eq!(vm.processes[0].registers[2 - 1], 0);
+    assert_eq!(vm.processes[0].pc.get(), 0);
     todo!()
 }
 #[test]
@@ -547,8 +639,39 @@ fn ldi_dir_dir() {
     assert_eq!(vm.processes[0].pc.get(), 0);
 }
 #[test]
-#[ignore]
 fn lldi_reg_dir_reg() {
+    // This simulates what main() does
+    let args = vec![
+        "vm".into(),
+        "playground/players_src/pierino_lldi_ind_dir_reg.cor".into(),
+    ];
+    let player = parse_arguments(args).expect("parse failed");
+
+    let arena = Arena::new();
+    let process = Process::new(player.id, 0);
+
+    println!("{player}");
+    println!("{}", process);
+    //println!("{}", arena);
+
+    let mut vm = VirtualMachine::create(arena.clone(), vec![process]);
+
+    vm.load_player(player);
+    // live 10
+    println!("{}", vm.arena);
+    run_for(&mut vm, 10);
+    assert_eq!(vm.processes[0].live_status.executed, true);
+    assert_eq!(vm.processes[0].live_status.player_id, -1);
+    assert_eq!(vm.processes[0].live_status.nbr_live, 1);
+    //lldi 50
+    run_for(&mut vm, 50);
+    assert_eq!(vm.processes[0].registers[3 - 1], 133631); // 209ff //209FFED
+
+    run_for(&mut vm, 5);
+    //ld 5 zjmp 20
+    run_for(&mut vm, 20);
+    assert_eq!(vm.processes[0].registers[2 - 1], 0);
+    assert_eq!(vm.processes[0].pc.get(), 0);
     todo!()
 }
 #[test]
@@ -593,8 +716,39 @@ fn ldi_dir_reg() {
     assert_eq!(vm.processes[0].pc.get(), 0);
 }
 #[test]
-#[ignore]
 fn lldi_reg_reg_reg() {
+    // This simulates what main() does
+    let args = vec![
+        "vm".into(),
+        "playground/players_src/pierino_lldi_ind_dir_reg.cor".into(),
+    ];
+    let player = parse_arguments(args).expect("parse failed");
+
+    let arena = Arena::new();
+    let process = Process::new(player.id, 0);
+
+    println!("{player}");
+    println!("{}", process);
+    //println!("{}", arena);
+
+    let mut vm = VirtualMachine::create(arena.clone(), vec![process]);
+
+    vm.load_player(player);
+    // live 10
+    println!("{}", vm.arena);
+    run_for(&mut vm, 10);
+    assert_eq!(vm.processes[0].live_status.executed, true);
+    assert_eq!(vm.processes[0].live_status.player_id, -1);
+    assert_eq!(vm.processes[0].live_status.nbr_live, 1);
+    //lldi 50
+    run_for(&mut vm, 50);
+    assert_eq!(vm.processes[0].registers[3 - 1], 133631); // 209ff //209FFED
+
+    run_for(&mut vm, 5);
+    //ld 5 zjmp 20
+    run_for(&mut vm, 20);
+    assert_eq!(vm.processes[0].registers[2 - 1], 0);
+    assert_eq!(vm.processes[0].pc.get(), 0);
     todo!()
 }
 
