@@ -479,7 +479,7 @@ fn sti_reg_reg_reg() {
     // This simulates what main() does
     let args = vec![
         "vm".into(),
-        "playground/players_src/pierino_sti_reg_ind_dir.cor".into(),
+        "playground/players_src/pierino_sti_reg_reg_reg.cor".into(),
     ];
     let player = parse_arguments(args).expect("parse failed");
 
@@ -504,14 +504,13 @@ fn sti_reg_reg_reg() {
     //println!("{}", vm.arena);
     //01 ff ff ff ff 02 90 00 00 00 7b 02 ff ff ff ff
     //01 FF FF FF FF 02 90 00 00 00 7B 02 FF FF FF FF
-    let at_mem = vm.arena.read(12, 4);
+    let at_mem = vm.arena.read(135, 4);
     assert_eq!(vec![255, 255, 255, 255], at_mem);
     run_for(&mut vm, 5);
     // zjmp 20
     run_for(&mut vm, 20);
     assert_eq!(vm.processes[0].registers[2 - 1], 0);
     assert_eq!(vm.processes[0].pc.get(), 0);
-    todo!()
 }
 #[test]
 fn ldi_dir_dir() {
