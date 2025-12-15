@@ -766,9 +766,40 @@ fn lldi_reg_dir_reg() {
     assert_eq!(vm.processes[0].pc.get(), 0);
 }
 #[test]
-#[ignore]
 fn st_reg() {
-    todo!()
+    // This simulates what main() does
+    let args = vec![
+        "vm".into(),
+        "playground/players_src/pierino_st_reg.cor".into(),
+    ];
+    let player = parse_arguments(args).expect("parse failed");
+
+    let arena = Arena::new();
+    let process = Process::new(player.id, 0);
+
+    println!("{player}");
+    println!("{}", process);
+    //println!("{}", arena);
+
+    let mut vm = VirtualMachine::create(arena, vec![process]);
+
+    vm.load_player(player);
+    // live 10 ld 5 ld 5 add 10
+    run_for(&mut vm, 10);
+    assert_eq!(vm.processes[0].live_status.executed, true);
+    assert_eq!(vm.processes[0].live_status.player_id, -1);
+    assert_eq!(vm.processes[0].live_status.nbr_live, 1);
+
+    // st
+    run_for(&mut vm, 5);
+    assert_eq!(vm.processes[0].registers[2 - 1], -1);
+
+    // ld
+    run_for(&mut vm, 5);
+    assert_eq!(vm.processes[0].registers[2 - 1], 0);
+    //ld 5 zjmp 20
+    run_for(&mut vm, 20);
+    assert_eq!(vm.processes[0].pc.get(), 0);
 }
 #[test]
 fn ldi_dir_reg() {
