@@ -315,7 +315,7 @@ fn sti_reg_ind_reg() {
     // This simulates what main() does
     let args = vec![
         "vm".into(),
-        "playground/players_src/pierino_sti_reg_ind_dir.cor".into(),
+        "playground/players_src/pierino_sti_reg_ind_reg.cor".into(),
     ];
     let player = parse_arguments(args).expect("parse failed");
 
@@ -347,7 +347,6 @@ fn sti_reg_ind_reg() {
     run_for(&mut vm, 20);
     assert_eq!(vm.processes[0].registers[2 - 1], 0);
     assert_eq!(vm.processes[0].pc.get(), 0);
-    todo!()
 }
 #[test]
 #[ignore]
