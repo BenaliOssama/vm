@@ -68,7 +68,7 @@ pub fn parse_arguments(args: Vec<String>) -> Result<Player, String> {
         return Err(red("the size is the header not the actual program size "));
     }
     let player = Player::new(
-        -1,
+        -1, //todo!()
         name.to_string(),
         disc.to_string(),
         program.to_vec(),

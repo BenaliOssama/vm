@@ -1450,3 +1450,47 @@ fn run_for(vm: &mut VirtualMachine, n: usize) {
         vm.cycle();
     }
 }
+
+#[test]
+fn crab() {
+    todo!()
+}
+
+#[test]
+fn empty_player() {
+    // This simulates what main() does
+    let args = vec![
+        "vm".into(),
+        "playground/players_src/empty_player.cor".into(),
+    ];
+    let player = parse_arguments(args).expect("parse failed");
+
+    let arena = Arena::new();
+    let process = Process::new(player.id, 0);
+
+    println!("{player}");
+    println!("{}", process);
+    //println!("{}", arena);
+
+    let mut vm = VirtualMachine::create(arena.clone(), vec![process]);
+
+    vm.load_player(player);
+    // live 10 ld 5 ld 5 add 10
+    run_for(&mut vm, 10);
+    assert_eq!(vm.processes[0].registers[0], -1); // for example
+}
+
+#[test]
+fn pierino() {
+    todo!()
+}
+
+#[test]
+fn pierino_test() {
+    todo!()
+}
+
+#[test]
+fn zjmp() {
+    todo!()
+}
