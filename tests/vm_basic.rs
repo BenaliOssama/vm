@@ -724,7 +724,7 @@ fn lldi_reg_reg_reg() {
     // This simulates what main() does
     let args = vec![
         "vm".into(),
-        "playground/players_src/pierino_lldi_ind_dir_reg.cor".into(),
+        "playground/players_src/pierino_lldi_reg_reg_reg.cor".into(),
     ];
     let player = parse_arguments(args).expect("parse failed");
 
@@ -744,16 +744,17 @@ fn lldi_reg_reg_reg() {
     assert_eq!(vm.processes[0].live_status.executed, true);
     assert_eq!(vm.processes[0].live_status.player_id, -1);
     assert_eq!(vm.processes[0].live_status.nbr_live, 1);
+    //ld
+    run_for(&mut vm, 5);
     //lldi 50
     run_for(&mut vm, 50);
-    assert_eq!(vm.processes[0].registers[3 - 1], 133631); // 209ff //209FFED
-
+    assert_eq!(vm.processes[0].registers[3 - 1], 521); // 209ff //209FFED
+    //ld
     run_for(&mut vm, 5);
     //ld 5 zjmp 20
     run_for(&mut vm, 20);
     assert_eq!(vm.processes[0].registers[2 - 1], 0);
     assert_eq!(vm.processes[0].pc.get(), 0);
-    todo!()
 }
 
 #[test]
