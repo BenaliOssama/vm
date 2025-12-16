@@ -68,7 +68,7 @@ impl Instruction {
             );
         }
 
-        println!("heeeey!!! i'm alive :)");
+        println!("heeeey!!! i'm alive :) {}", process.live_status.player_id);
     }
     fn ld(&self, process: &mut Process, arena: &mut Arena) {
         println!("{}", blue("LD"));
@@ -409,60 +409,6 @@ impl Instruction {
 
         println!("{}", process);
     }
-
-    // fn lldi(&self, process: &mut Process, arena: &mut Arena) {
-    //     println!("{}", blue("LLDI"));
-
-    //     // Extract parameters
-    //     let p1 = &self.parameters[0];
-    //     let p2 = &self.parameters[1];
-    //     let p3 = &self.parameters[2];
-
-    //     // ---------- 1) Validate that the 3rd parameter is a register ----------
-    //     let dest_reg = match p3 {
-    //         Parameter::Register(r) => *r,
-    //         _ => {
-    //             eprintln!("LDI: invalid destination register");
-    //             return;
-    //         }
-    //     };
-    //     // ---------- 2) Resolve parameter values ----------
-    //     // ldi always applies IDX_MOD to its addressing
-    //     let val1 = helper::get_value(p1, process, arena, false); // apply IDX_MOD for INDIRECT
-    //     let val2 = helper::get_value(p2, process, arena, false);
-    //     println!("value 1 {}", val1);
-    //     println!("value 2 {}", val2);
-    //     // ---------- 3) Compute address offset ----------
-    //     let mut sum = val1 + val2;
-    //     //let addr_offset = sum % IDX_MOD as i32;
-    //     println!("addr offset {}", sum);
-    //     //---
-    //     // let mut new_pc = self.opcode_addr as i32 + sum ; // cont for the paramiter size
-    //     //+ INSTRUCTION_TABLE[self.opcode as usize - 1].direct_size as i32;
-        
-    //     // println!("current addr {}", self.opcode_addr);
-    //     // println!("new addr {}", new_pc);
-    //     // Step 3: wrap around circular memory
-    //     sum %= MEM_SIZE as i32;
-    //     if sum < 0 {
-    //         sum += MEM_SIZE as i32;
-    //     }
-    //     // 2573 
-    //     // println!("new addr  after module {}", new_pc);
-    //     //---
-    //     // Final effective address is PC + offset (wrapped)
-
-    //     // ---------- 4) Read 4 bytes from arena ----------
-    //     let value = arena.read(sum  as usize    , 4);
-    //     println!("bytes read {:?}", value);
-    //     let value = bytes_to_i32(&value);
-    //     println!("r{} <- {}", dest_reg, value);
-
-    //     // ---------- 5) Store into the destination register ----------
-    //     process.registers[dest_reg - 1] = value;
-    //     // LDI does NOT change carry
-    //     println!("{}", process);
-    // }
 
     fn lldi(&self, process: &mut Process, arena: &mut Arena) {
         println!("{}", blue("LLDI"));
