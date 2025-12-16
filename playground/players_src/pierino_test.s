@@ -12,4 +12,3 @@ a:  live %-1
     or r5, r5, r7   # r7 = 0 | 0 = 0 -> carry becomes true
 
     zjmp %:a        # Will jump back because carry is now true
-
