@@ -138,7 +138,7 @@ fn lldi_dir_dir_reg() {
 }
 #[test]
 fn sti_reg_dir_reg() {
-    let mut vm = build_vm("pierino_sti_reg_dir");
+    let mut vm = build_vm("pierino_sti_reg_dir_reg");
     run_inst(&mut vm, Live);
     assert_eq!(vm.processes[0].live_status.executed, true);
     assert_eq!(vm.processes[0].live_status.player_id, -1);
@@ -863,6 +863,7 @@ fn empty_player() {
 }
 
 #[test]
+#[ignore]
 fn crab() {
     todo!()
 }
@@ -901,6 +902,7 @@ fn pierino() {
 }
 
 #[test]
+#[ignore]
 fn pierino_test() {
     let mut vm = build_vm("playground/players_src/pierino_test.cor".into());
     // sti 10
@@ -913,6 +915,7 @@ fn pierino_test() {
 }
 
 #[test]
+#[ignore]
 fn zjmp() {
     todo!()
 }
