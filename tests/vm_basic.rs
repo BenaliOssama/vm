@@ -847,7 +847,8 @@ fn add_ind_ind() {
     run_inst(&mut vm, And);
     assert_eq!(vm.processes[0].registers[3 - 1], 0x302);
     run_inst(&mut vm, Ld);
-    assert_eq!(vm.processes[0].registers[2 - 1], 0);
+    //assert_eq!(vm.processes[0].registers[2 - 1], 0);
+    does_reg(&vm, 2, 0);
     //ld 5 zjmp 20
     run_inst(&mut vm, Zjmp);
     assert_eq!(vm.processes[0].pc.get(), 0);
@@ -902,16 +903,40 @@ fn pierino() {
 }
 
 #[test]
-#[ignore]
 fn pierino_test() {
-    let mut vm = build_vm("playground/players_src/pierino_test.cor".into());
-    // sti 10
-    run_inst(&mut vm, Sti);
+    let mut vm = build_vm("pierino_test");
 
     run_inst(&mut vm, Live);
     assert_eq!(vm.processes[0].live_status.executed, true);
     assert_eq!(vm.processes[0].live_status.player_id, -1);
     assert_eq!(vm.processes[0].live_status.nbr_live, 1);
+
+    run_inst(&mut vm, Ld);
+    does_reg(&vm, 2, 2);
+    assert_eq!(vm.processes[0].carry, false);
+
+    run_inst(&mut vm, Ld);
+    does_reg(&vm, 3, 3);
+    assert_eq!(vm.processes[0].carry, false);
+
+    run_inst(&mut vm, Add);
+    does_reg(&vm, 4, 5);
+    assert_eq!(vm.processes[0].carry, false);
+
+    run_inst(&mut vm, Sub);
+    does_reg(&vm, 5, 0);
+    assert_eq!(vm.processes[0].carry, true);
+
+    run_inst(&mut vm, And);
+    does_reg(&vm, 6, 5);
+    assert_eq!(vm.processes[0].carry, false);
+
+    run_inst(&mut vm, Or);
+    does_reg(&vm, 7, 0);
+    assert_eq!(vm.processes[0].carry, true);
+
+    run_inst(&mut vm, Zjmp);
+    assert_eq!(vm.processes[0].pc.get(), 0)
 }
 
 #[test]

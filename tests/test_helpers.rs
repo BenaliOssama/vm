@@ -73,3 +73,8 @@ pub fn build_vm(file_name: &str) -> VirtualMachine {
     vm.load_player(player);
     vm
 }
+
+#[track_caller]
+pub fn does_reg(vm: &VirtualMachine, n: usize, has: i32) {
+    assert_eq!(vm.processes[0].registers[n - 1], has);
+}
