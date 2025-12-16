@@ -495,20 +495,7 @@ fn lldi_reg_reg_reg() {
 
 #[test]
 fn sub() {
-    // This simulates what main() does
-    let args = vec!["vm".into(), "playground/players_src/pierino_sub.cor".into()];
-    let player = parse_arguments(args).expect("parse failed");
-
-    let arena = Arena::new();
-    let process = Process::new(player.id, 0);
-
-    println!("{player}");
-    println!("{}", process);
-    //println!("{}", arena);
-
-    let mut vm = VirtualMachine::create(arena.clone(), vec![process]);
-
-    vm.load_player(player);
+    let mut vm = build_vm("pierino_sub");
     run_inst(&mut vm, Live);
     assert_eq!(vm.processes[0].live_status.executed, true);
     assert_eq!(vm.processes[0].live_status.player_id, -1);
@@ -738,20 +725,7 @@ fn xor_reg_ind() {
 }
 #[test]
 fn ld() {
-    // This simulates what main() does
-    let args = vec!["vm".into(), "playground/players_src/pierino_ld.cor".into()];
-    let player = parse_arguments(args).expect("parse failed");
-
-    let arena = Arena::new();
-    let process = Process::new(player.id, 0);
-
-    println!("{player}");
-    println!("{}", process);
-    //println!("{}", arena);
-
-    let mut vm = VirtualMachine::create(arena.clone(), vec![process]);
-
-    vm.load_player(player);
+    let mut vm = build_vm("pierino_ld");
     run_inst(&mut vm, Live);
     assert_eq!(vm.processes[0].live_status.executed, true);
     assert_eq!(vm.processes[0].live_status.player_id, -1);
@@ -842,19 +816,7 @@ fn empty_player() {
 #[test]
 fn pierino() {
     // This simulates what main() does
-    let args = vec!["vm".into(), "playground/players_src/pierino.cor".into()];
-    let player = parse_arguments(args).expect("parse failed");
-
-    let arena = Arena::new();
-    let process = Process::new(player.id, 0);
-
-    println!("{player}");
-    println!("{}", process);
-    //println!("{}", arena);
-
-    let mut vm = VirtualMachine::create(arena.clone(), vec![process]);
-
-    vm.load_player(player);
+    let mut vm = build_vm("pierino");
     // sti 10
     run_inst(&mut vm, Sti);
 

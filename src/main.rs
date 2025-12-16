@@ -11,20 +11,20 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // the main() function, i.e., argc and the argv array.
     let args: Vec<String> = env::args().collect();
 
-    let player = parse_arguments(args)?;
+    let players = parse_arguments(args)?;
     let arena = Arena::new();
     // the loading process is done eagerly as old days
     // To understand how lazy loading of pieces of code and data works,
     // you’ll have to understand the machinery of paging and swapping,
-    let process = Process::new(player.id, 0);
+    let process = Process::new(players[0].clone().id, 0);
 
-    println!("{player}");
+    println!("{}", players[0]);
     println!("{}", process);
     //println!("{}", arena);
 
     let mut vm = VirtualMachine::create(arena.clone(), vec![process]);
 
-    vm.load_player(player);
+    vm.load_player(players[0].clone());
     vm.run();
     Ok(())
     // end of the game, declare winner or no winner
