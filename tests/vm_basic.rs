@@ -1,34 +1,9 @@
-//////////////////use corewar::{Arena, Process, VirtualMachine, parse_arguments};
 use vm::State;
 use vm::helper::*;
 use vm::*;
 mod test_helpers;
 use Instruction::*;
-use test_helpers::*; // or specific imports
-/*
-the idea behine this test is to have specific compiled files (.cor) to run
-and check the behaviour of the vm at certain steps.
-this test should cover all instructions and make sure they do the job as should
- */
-/*
-## Instruction Testing Progress
-- [X] live — announce that the process is alive
-- [X] ld — load a value into a register
-- [X] st — store a register value into another register or memory
-- [X] add — add two registers and store the result
-- [X] sub — subtract two registers and store the result
-- [X] and — bitwise AND operation
-- [X] or — bitwise OR operation
-- [X] xor — bitwise XOR operation
-- [X] zjmp — conditional jump if carry is set
-- [X] ldi — load from computed address into a register
-- [X] sti — store register value to computed address
-- [X] fork — duplicate a process at a relative address
-- [X] lld — long version of `ld` (no IDX_MOD)
-- [ ] lldi — long version of `ldi` (no IDX_MOD)
-- [ ] lfork — long version of `fork` (no IDX_MOD)
-- [ ] nop — no operation (timing test instruction)
- */
+use test_helpers::*;
 
 #[test]
 fn add() {
@@ -1017,8 +992,4 @@ fn zjmp() {
 
     run_inst(&mut vm, Ld);
     does_reg(&vm, 4, 99);
-    // run_inst(&mut vm, And);
-    // does_reg(&vm, 5, 15);
-    // run_inst(&mut vm, Sub);
-    // does_reg(&vm, 6, 5);
 }
