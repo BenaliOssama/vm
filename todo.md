@@ -1,59 +1,6 @@
-# Note
-
-The provided VM has an extra flag `-v` which you can use to print the state of the VM at every cycle, this should greatly help you during development and debugging.
- 
---- 
-## Instruction Implementation Progress
-- [x] live — announce that the process is alive  
-- [x] ld — load a value into a register  
-- [x] st — store a register value into another register or memory  
-- [x] add — add two registers and store the result  
-- [x] sub — subtract two registers and store the result  
-- [x] and — bitwise AND operation  
-- [x] or — bitwise OR operation  
-- [x] xor — bitwise XOR operation  
-- [x] zjmp — conditional jump if carry is set  
-- [x] ldi — load from computed address into a register  
-- [x] sti — store register value to computed address  
-- [x] fork — duplicate a process at a relative address  
-- [x] lld — long version of `ld` (no IDX_MOD)  
-- [x] lldi — long version of `ldi` (no IDX_MOD)  
-- [x] lfork — long version of `fork` (no IDX_MOD)  
-- [x] nop — no operation (timing test instruction)
-
-### 💡 Steps
-
-* [x] Finish memory write logic for `st`
-* [x] Implement arithmetic/logic operators (`sub`, `and`, `or`, `xor`)
-* [x] Add address-based instructions (`ldi`, `sti`, `fork`, `lfork`)
-* [x] Complete “long” variants (`lld`, `lldi`)
-* [ ] Finalize instruction decoding tests and cycle timing
----
-
-# General instruction
-
-* [x] During a cycle the VM will load the instruction at the current PC and wait N cycles before executing it (N being the cost of the instruction).
-
----
-
 # Game dynamics
 
 * [ ] Use 2 or more players.
-
----
-
-# Structure of the game
-
----
-
-# End game
-
-* [X] Notify the VM that the player is live.
-* [X] Live check during VM checks and remove dead processes.
-* [X] Decrease the elapsed time since last check according to the algorithm.
----
-
-# The assembler
 
 ---
 
@@ -82,11 +29,6 @@ cycle [X]: The winner is player [X]: [NAME]!
 * [ ] The VM must handle a `-d [NB_CYCLES]` flag (dump). If specified, the VM stops execution at `NB_CYCLES` and dumps the arena memory in hexadecimal (32 bytes per row).
 * [ ] The last program passed will be the first one executed during the cycle.
 
-* [ ] worry about the integrety of the instruction's arguments
-  * [ ] Only when executing the instruction, the VM will check parameters. If incorrect, it will print an error on stderr and continue.
-  * [ ] If an instruction has incorrect parameters, the PC will be moved forward according to the size of the parameters.
-  * [ ] If the instruction doesn't exist in the instruction set, the PC will move forward by 1 byte.
-
 * [ ] When a new process is forked, it will be placed at the end of the processes and start execution at the start of the next cycle (it will be first executed on the next cycle).
 * [X] The VM assumes the binary is in big-endian.
 
@@ -97,13 +39,6 @@ cycle [X]: The winner is player [X]: [NAME]!
   * The total file size is smaller than the minimum size.
 
 * [ ] The entire execution is deterministic: same inputs → same outputs.
-
----
-
-# Circular memory space of the arena
-
-* [x] The memory where the players will fight is circular. Moving forward from the last address (e.g., 4095) wraps to address 0.
-* [X] Moving backward from 0 wraps to address 4095.
 
 ---
 
@@ -126,57 +61,10 @@ cycle [X]: The winner is player [X]: [NAME]!
 
 ---
 
-# Labels
-
----
-
-# Pcode field
-
-* [X] Some instructions accept different kinds of parameters, which may require different sizes. The assembler uses a byte after the opcode to inform the VM.
-* [X] Every two bits indicate parameter type:
-
-  * `01` → register
-  * `10` → direct
-  * `11` → indirect
-* [X] Example: `01111000` → first: register, second: indirect, third: direct.
-* [X] Numbers are in binary (e.g., `10` binary = 2 decimal).
-
----
-
-# Has IDX field
-
-* [X] Some instructions use 2-byte direct values instead of full 32-bit for addressing (when `Has Idx`).
-
----
-
-# The Carry flag
-
-* [ ] Commands modifying carry: `ld`, `add`, `sub`, `and`, `or`, `xor`.
-* [ ] Carry = `true` if value written = 0; otherwise `false`.
-* [ ] Only `zjmp` reads carry: jumps if `true`, does nothing otherwise.
-
----
-
-# The file signature
-
----
-
 # Your player
 
 * [ ] Provide a basic player able to fight and win against `ameba.s`.
 * [ ] A config file provides constants for both Assembler and VM (language-agnostic, easy to translate).
-
----
-
-# A basic player
-
----
-
-# Testing environment
-
----
-
-# Some advices for the road
 
 ---
 

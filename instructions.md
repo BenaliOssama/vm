@@ -17,12 +17,12 @@ Each task should include:
 
 ### 🔹 `live` (opcode 1)
 
-* [ ] Parse 1 direct parameter
-* [ ] Notify VM that player `-param` is alive
-* [ ] Increment global `nbr_live` counter
-* [ ] Mark current process as “alive this cycle”
-* [ ] No carry modification
-* [ ] Advance PC by instruction size
+* [X] Parse 1 direct parameter
+* [X] Notify VM that player `-param` is alive
+* [X] Increment global `nbr_live` counter
+* [X] Mark current process as “alive this cycle”
+* [X] No carry modification
+* [X] Advance PC by instruction size
 
 ---
 
