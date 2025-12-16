@@ -156,8 +156,11 @@ impl Instruction {
             }
         };
         println!("add : r{} ← r{} + r{}", reg3, reg1, reg2);
-        process.registers[reg3 - 1] = process.registers[reg1 - 1] + process.registers[reg2 - 1];
+        let value = process.registers[reg1 - 1] + process.registers[reg2 - 1];
+        process.registers[reg3 - 1] = value ;
         println!("{}", process);
+        // --- Set the carry ---
+        process.carry = value == 0;
     }
     fn sub(&self, process: &mut Process, _arena: &mut Arena) {
         println!("{}", blue("SUB"));
@@ -184,8 +187,11 @@ impl Instruction {
             }
         };
         println!("sub : r{} ← r{} - r{}", reg3, reg1, reg2);
-        process.registers[reg3 - 1] = process.registers[reg1 - 1] - process.registers[reg2 - 1];
+        let value = process.registers[reg1 - 1] - process.registers[reg2 - 1];
+        process.registers[reg3 - 1] = value ;
         println!("{}", process);
+        // --- Set the carry ---
+        process.carry = value == 0;
     }
 
     fn betwise(&self, process: &mut Process, arena: &mut Arena) {
