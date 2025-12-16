@@ -864,12 +864,6 @@ fn empty_player() {
 }
 
 #[test]
-#[ignore]
-fn crab() {
-    todo!()
-}
-
-#[test]
 fn pierino() {
     // This simulates what main() does
     let args = vec!["vm".into(), "playground/players_src/pierino.cor".into()];
@@ -940,7 +934,49 @@ fn pierino_test() {
 }
 
 #[test]
-#[ignore]
+fn crab() {
+    let mut vm = build_vm("crab");
+
+    run_inst(&mut vm, St);
+    does_reg(&vm, 8, -1);
+
+    run_inst(&mut vm, Sti);
+    run_inst(&mut vm, Sti);
+    run_inst(&mut vm, Nop);
+    run_inst(&mut vm, Nop);
+    run_inst(&mut vm, Sti);
+    run_inst(&mut vm, Sti);
+    run_inst(&mut vm, Sti);
+    run_inst(&mut vm, Sti);
+}
+
+#[test]
 fn zjmp() {
-    todo!()
+    let mut vm = build_vm("zjmp");
+
+    run_inst(&mut vm, Ld);
+    does_reg(&vm, 2, 5);
+
+    run_inst(&mut vm, Ld);
+    does_reg(&vm, 3, 10);
+
+    run_inst(&mut vm, And);
+    does_reg(&vm, 4, 0);
+
+    let current_pc = vm.processes[0].pc.get();
+    run_inst(&mut vm, Zjmp);
+    assert_eq!(vm.processes[0].pc.get(), current_pc + 4);
+
+    //run_inst(&mut vm, Ld); shoujd be skipped
+
+    let current_pc = vm.processes[0].pc.get();
+    println!("this is the headach current pc  {}", current_pc);
+    run_inst(&mut vm, Zjmp); // jump back by 6
+    println!("this is the pc after zjmp  {}", current_pc);
+    assert_eq!(vm.processes[0].pc.get(), current_pc - 6);
+
+    // run_inst(&mut vm, And);
+    // does_reg(&vm, 5, 15);
+    // run_inst(&mut vm, Sub);
+    // does_reg(&vm, 6, 5);
 }

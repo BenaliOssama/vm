@@ -152,6 +152,8 @@ impl Process {
                 self.current_instruction_name = "None".to_string();
             }
             self.current_instruction = inst;
+        } else {
+            println!("{} not a valid instruction passing to the next", opcode);
         }
     }
     //Opcode ->

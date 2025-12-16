@@ -3,7 +3,7 @@
 
 # Start with some initial instructions
 ld %5, r2        # r2 = 5
-ld %10, r3       # r2 = 10
+ld %10, r3       # r3 = 10
 and r2, r3, r4   # r3 = r1 & r2 = 0b101 & 0b1010 = 0
                  # Carry will be set to true because result is 0
 

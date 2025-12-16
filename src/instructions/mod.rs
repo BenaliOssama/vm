@@ -249,13 +249,13 @@ impl Instruction {
 
     fn zjmp(&self, process: &mut Process, _arena: &mut Arena) {
         println!("{}", blue("ZJMP"));
-        println!("{} {}", yellow("befor jump :"), process.pc.get());
-
+        println!("{} {}", yellow("befor jump :"), self.opcode_addr);
+       // todo!()
         if let Parameter::Direct(offset) = self.parameters[0] {
             if process.carry {
                 let offset = offset % IDX_MOD as i32;
                 // Step 2: calculate new PC as signed i32
-                let mut new_pc = process.pc.get() as i32 + offset - 3; // -3 is the size of opcode + direct_size;
+                let mut new_pc = self.opcode_addr as i32 + offset ; 
 
                 // Step 3: wrap around circular memory
                 new_pc %= MEM_SIZE as i32;
@@ -263,7 +263,7 @@ impl Instruction {
                     new_pc += MEM_SIZE as i32;
                 }
                 process.pc.set(new_pc as usize, false); // offset relative to PC, handled in set
-            } else {
+            } else { // currupted instruction should just pass it// there is always direct regarding this
                 process
                     .pc
                     .add(INSTRUCTION_TABLE[(self.opcode - 1) as usize].direct_size);
