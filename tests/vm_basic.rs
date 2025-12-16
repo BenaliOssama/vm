@@ -965,16 +965,18 @@ fn zjmp() {
 
     let current_pc = vm.processes[0].pc.get();
     run_inst(&mut vm, Zjmp);
-    assert_eq!(vm.processes[0].pc.get(), current_pc + 4);
-
+    assert_eq!(vm.processes[0].pc.get(), current_pc + 10);
+    // after this you go to the add instruction,
     //run_inst(&mut vm, Ld); shoujd be skipped
 
     let current_pc = vm.processes[0].pc.get();
     println!("this is the headach current pc  {}", current_pc);
     run_inst(&mut vm, Zjmp); // jump back by 6
     println!("this is the pc after zjmp  {}", current_pc);
-    assert_eq!(vm.processes[0].pc.get(), current_pc - 6);
+    assert_eq!(vm.processes[0].pc.get(), current_pc - 7);
 
+    run_inst(&mut vm, Ld);
+    does_reg(&vm, 4, 99);
     // run_inst(&mut vm, And);
     // does_reg(&vm, 5, 15);
     // run_inst(&mut vm, Sub);
