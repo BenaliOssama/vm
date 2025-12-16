@@ -2,10 +2,13 @@ use crate::player::Player;
 use crate::*;
 use std::fs::File;
 use std::io::Read;
+use std::process;
+
 pub fn parse_arguments(args: Vec<String>) -> Result<Player, String> {
     /*_____________read arguments___________________ */
     if args.len() != 2 {
-        panic!("{}", red("not enought argumentsh!"));
+        eprintln!("Usage: {} <file1.cor> [file2.cor ... up to 4]", args[0]);
+        process::exit(1); // exit with an error code
     }
     let file_name = args[1].as_str();
 
