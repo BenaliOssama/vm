@@ -74,6 +74,50 @@ pub fn build_vm(file_name: &str) -> VirtualMachine {
     vm.load_player(player, 0);
     vm
 }
+pub fn build_vm_more(file_names: Vec<&str>) -> VirtualMachine {
+    // Prepare arguments for all files
+    let args: Vec<String> = std::iter::once("vm".to_string())
+        .chain(
+            file_names
+                .iter()
+                .map(|file_name| format!("playground/players_src/{file_name}.cor")),
+        )
+        .collect();
+
+    // Parse players from arguments
+    let players = parse_arguments(args).expect("parse failed");
+    let players_count = players.len();
+    // Create arena
+    let arena = Arena::new();
+
+    // Create a process for each player, keeping their index
+    let processes: Vec<Process> = players
+        .iter()
+        .enumerate()
+        .map(|(i, player)| {
+            println!("Loading player {} at index {}", player.name, i);
+            Process::new(player.id, 0, MEM_SIZE % players_count * i)
+        })
+        .collect();
+
+    // Print players and processes for debugging
+    for player in &players {
+        println!("{player}");
+    }
+    for process in &processes {
+        println!("{}", process);
+    }
+
+    // Create the VM with arena and processes
+    let mut vm = VirtualMachine::create(arena.clone(), processes);
+
+    // Load each player into the arena
+    for (i, player) in players.iter().enumerate() {
+        vm.load_player(player.clone(), MEM_SIZE % players_count * i);
+    }
+
+    vm
+}
 
 #[track_caller]
 pub fn does_reg(vm: &VirtualMachine, n: usize, has: i32) {
