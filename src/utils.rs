@@ -6,7 +6,7 @@ use std::process;
 
 pub fn parse_arguments(args: Vec<String>) -> Result<Vec<Player>, String> {
     /*_____________read arguments___________________ */
-    if args.len() < 1 || args.len() > 4 {
+    if args.len() < 2 || args.len() > 5 {
         eprintln!("Usage: {} <file1.cor> [file2.cor ... up to 4]", args[0]);
         process::exit(1); // exit with an error code
     }
