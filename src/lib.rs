@@ -1,5 +1,5 @@
 mod arena;
-mod config;
+pub mod config;
 mod counter;
 pub mod helper;
 mod instructions;
@@ -7,8 +7,8 @@ mod player;
 mod process;
 mod utils;
 mod vm;
-
 pub use arena::*;
+pub use config::*;
 pub use helper::*;
 pub use process::*;
 pub use utils::parse_arguments;

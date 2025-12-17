@@ -71,7 +71,7 @@ pub fn build_vm(file_name: &str) -> VirtualMachine {
 
     let mut vm = VirtualMachine::create(arena.clone(), vec![process]);
 
-    vm.load_player(player);
+    vm.load_player(player, 0);
     vm
 }
 

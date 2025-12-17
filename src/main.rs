@@ -1,7 +1,7 @@
 // use process::*;
 use std::env;
+use vm::config::*;
 use vm::*;
-
 // use utils::*;
 // use vm::VirtualMachine;
 
@@ -11,20 +11,27 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // the main() function, i.e., argc and the argv array.
     let args: Vec<String> = env::args().collect();
 
-    let players = parse_arguments(args)?;
     let arena = Arena::new();
+    let mut players = parse_arguments(args)?;
+    let players_count = players.len();
     // the loading process is done eagerly as old days
     // To understand how lazy loading of pieces of code and data works,
     // you’ll have to understand the machinery of paging and swapping,
-    let process = Process::new(players[0].clone().id, 0);
+    let mut processes = vec![];
+    for (i, player) in players.clone().iter().enumerate() {
+        let process = Process::new(player.clone().id, i);
 
-    println!("{}", players[0]);
-    println!("{}", process);
-    //println!("{}", arena);
+        println!("{}", players[0]);
+        println!("{}", process);
+        //println!("{}", arena);
+        processes.push(process)
+    }
 
-    let mut vm = VirtualMachine::create(arena.clone(), vec![process]);
-
-    vm.load_player(players[0].clone());
+    let mut vm = VirtualMachine::create(arena.clone(), processes);
+    players.reverse();
+    for (i, player) in players.iter().enumerate() {
+        vm.load_player(player.clone(), MEM_SIZE % players_count * i);
+    }
     vm.run();
     Ok(())
     // end of the game, declare winner or no winner
