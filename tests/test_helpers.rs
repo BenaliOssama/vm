@@ -96,7 +96,7 @@ pub fn build_vm_more(file_names: Vec<&str>) -> VirtualMachine {
         .enumerate()
         .map(|(i, player)| {
             println!("Loading player {} at index {}", player.name, i);
-            Process::new(player.id, 0, MEM_SIZE % players_count * i)
+            Process::new(player.id, i, MEM_SIZE / players_count * i)
         })
         .collect();
 
@@ -113,7 +113,7 @@ pub fn build_vm_more(file_names: Vec<&str>) -> VirtualMachine {
 
     // Load each player into the arena
     for (i, player) in players.iter().enumerate() {
-        vm.load_player(player.clone(), MEM_SIZE % players_count * i);
+        vm.load_player(player.clone(), MEM_SIZE / players_count * i);
     }
 
     vm
