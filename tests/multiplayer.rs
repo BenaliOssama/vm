@@ -132,3 +132,4 @@ fn four() {
     assert_eq!(vm.processes[0].registers[3 - 1], 0);
     assert_eq!(vm.processes[0].pc.get(), 0);
 }
+

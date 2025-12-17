@@ -107,7 +107,7 @@ impl VirtualMachine {
                 }
                 print!("{:02x} ", byte);
                 if i % 32 == 31 {
-                    println!();
+                    println!("");
                 }
 
                 if count == 31 {
