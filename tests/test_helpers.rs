@@ -63,7 +63,7 @@ pub fn build_vm(file_name: &str) -> VirtualMachine {
     let player = players[0].clone();
 
     let arena = Arena::new();
-    let process = Process::new(player.id, 0);
+    let process = Process::new(player.id, 0, 0);
 
     println!("{player}");
     println!("{}", process);

@@ -107,11 +107,11 @@ pub struct Process {
 }
 
 impl Process {
-    pub fn new(player_id: i32, id: usize) -> Self {
+    pub fn new(player_id: i32, id: usize, pc: usize) -> Self {
         let mut pro = Self {
             id: id,
             player_id: player_id * -1,
-            pc: PC::new(),
+            pc: PC::new(pc),
             registers: [0; REG_NUMBER],
             remaining_cycles: 0,
             current_instruction: None,

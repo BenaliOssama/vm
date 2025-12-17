@@ -83,5 +83,6 @@ pub fn parse_arguments(args: Vec<String>) -> Result<Vec<Player>, String> {
         );
         players.push(player);
     }
+    players.reverse();
     return Ok(players);
 }

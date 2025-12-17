@@ -1,5 +1,3 @@
-use std::{fs::Metadata, mem::offset_of, os::unix::process};
-
 use crate::config::{IDX_MOD, MEM_SIZE};
 
 #[derive(Debug, Clone)]
@@ -8,8 +6,8 @@ pub struct PC {
 }
 
 impl PC {
-    pub fn new() -> Self {
-        Self { addr: 0 }
+    pub fn new(pc: usize) -> Self {
+        Self { addr: pc }
     }
 
     pub fn inc(&mut self) {
@@ -65,7 +63,7 @@ mod tests {
     fn test_relative_jump() {
         // no idx mod
         // inc
-        let mut pc = PC::new();
+        let mut pc = PC::new(0);
         pc.relative_jump(1, false);
         assert_eq!(pc.get(), 1);
         pc.relative_jump(1, false);
@@ -98,7 +96,7 @@ mod tests {
     #[test]
     fn test_counter_set() {
         // no idx mod
-        let mut pc = PC::new();
+        let mut pc = PC::new(0);
         pc.set(1, false);
         assert_eq!(pc.get(), 1);
         pc.set(MEM_SIZE - 1, false);
@@ -112,7 +110,7 @@ mod tests {
 
     #[test]
     fn test_counter_reset() {
-        let mut pc = PC::new();
+        let mut pc = PC::new(0);
         pc.add(1);
         pc._reset();
         assert_eq!(pc.get(), 0);
@@ -120,7 +118,7 @@ mod tests {
 
     #[test]
     fn test_counter_inc() {
-        let mut pc = PC::new();
+        let mut pc = PC::new(0);
         pc.inc();
         assert_eq!(pc.get(), 1);
 
@@ -137,7 +135,7 @@ mod tests {
 
     #[test]
     fn test_counter_add() {
-        let mut pc = PC::new();
+        let mut pc = PC::new(0);
         pc.add(1);
         assert_eq!(pc.get(), 1);
         pc.add(MEM_SIZE);
@@ -148,7 +146,7 @@ mod tests {
 
     #[test]
     fn test_couter_initialization() {
-        let pc = PC::new();
+        let pc = PC::new(0);
         assert_eq!(pc.get(), 0);
     }
 }

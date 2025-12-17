@@ -12,23 +12,25 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args: Vec<String> = env::args().collect();
 
     let arena = Arena::new();
+
     let mut players = parse_arguments(args)?;
+
     let players_count = players.len();
+
     // the loading process is done eagerly as old days
     // To understand how lazy loading of pieces of code and data works,
     // you’ll have to understand the machinery of paging and swapping,
     let mut processes = vec![];
     for (i, player) in players.clone().iter().enumerate() {
-        let process = Process::new(player.clone().id, i);
+        let process = Process::new(player.clone().id, 0, MEM_SIZE % players_count * i);
 
-        println!("{}", players[0]);
+        println!("{}", players[i]);
         println!("{}", process);
         //println!("{}", arena);
         processes.push(process)
     }
 
     let mut vm = VirtualMachine::create(arena.clone(), processes);
-    players.reverse();
     for (i, player) in players.iter().enumerate() {
         vm.load_player(player.clone(), MEM_SIZE % players_count * i);
     }
