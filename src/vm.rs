@@ -42,6 +42,7 @@ impl VirtualMachine {
     }
 
     pub fn run(&mut self) {
+        let mut cycles_since_last_check = 0; // 1. New accumulator
         while self.processes_alive() {
             for process in &mut self.processes {
                 if process.state() == process::State::NoInstruction {
@@ -117,20 +118,32 @@ impl VirtualMachine {
             }
             println!();
 
+            // Every CYCLE_TO_DIE the VM will check every process and kill all the processes
+            // that did not successfully execute any live instruction.
+            // 2. Increment counters
             self.cycle_count += 1;
             if self.cycle_count % self.cycles_to_die == 0 {
                 println!("{} {}", vm::yellow("usual check: "), self.cycle_count);
                 self.check_lives();
                 self.nbr_checks += 1;
+                // To avoid infinite games, CYCLES_TO_DIE will be decremented by CYCLE_DELTA under certain conditions:
+                //   - If during the last life loop there were at least NBR_LIVE successfully executed by the players.
+                //   - If it has been MAX_CHECKS life loops since it was decremented last time.
                 if self.read_nbr_lives() >= NBR_LIVE || self.nbr_checks % MAX_CHECKS == 0 {
-                    self.cycle_to_die.checked_sub(CYCLE_DELTA).unwrap_or(0);
-                    self.nbr_checks = 0;
+                    self.cycle_to_die = self.cycle_to_die.checked_sub(CYCLE_DELTA).unwrap_or(0);
+                    //self.cycle_to_die = self.cycle_to_die - CYCLE_DELTA; //.checked_sub(CYCLE_DELTA).unwrap_or(0);
+                    if self.nbr_checks % MAX_CHECKS == 0 {
+                        self.nbr_checks = 0;
+                    }
                     println!(
                         "{}  {}",
                         vm::green("reduce check cycle:"),
                         self.cycle_to_die
                     );
                 }
+            }
+            if self.cycle_to_die == 0 {
+                return;
             }
         }
     }
@@ -176,11 +189,16 @@ impl VirtualMachine {
         let mut count = 0;
         for process in &mut self.processes {
             count += process.live_status.nbr_live;
-            process.live_status.nbr_live = 0;
+            //process.live_status.nbr_live = 0;
         }
         count
     }
 
+    fn rest_nbr_lives(&mut self) {
+        for process in &mut self.processes {
+            process.live_status.nbr_live = 0;
+        }
+    }
     fn processes_alive(&self) -> bool {
         self.processes.len() > 0
     }
