@@ -49,66 +49,11 @@ impl VirtualMachine {
                     process.fetch_decode(&mut self.arena);
                 }
             }
-            self.debug();
+            self.debug1();
             self.cycle();
             // debugging lines goew here
-
-            println!("Players:");
-            println!("Id |Last Live |Nb Live since last check");
-            for pl in self.processes.iter() {
-                println!(
-                    "{:>2} |{:>9} |{:>3}",
-                    pl.live_status.player_id,
-                    pl.live_status.last_live_cycle,
-                    pl.live_status.nbr_live
-                );
-            }
-
-            println!("Arena:");
-            let mut count = 0;
-            for (i, byte) in self.arena.memory.iter().enumerate() {
-                if i % 32 == 0 {
-                    print!("{:08x}  ", i);
-                }
-                print!("{:02x} ", byte);
-                if i % 32 == 31 {
-                    println!("");
-                }
-
-                if count == 31 {
-                    break;
-                }
-                count += 1;
-            }
-            println!();
-
-            // Every CYCLE_TO_DIE the VM will check every process and kill all the processes
-            // that did not successfully execute any live instruction.
-            // 2. Increment counters
-            self.cycle_count += 1;
-            if self.cycle_count % self.cycles_to_die == 0 {
-                println!("{} {}", vm::yellow("usual check: "), self.cycle_count);
-                self.check_lives();
-                self.nbr_checks += 1;
-                // To avoid infinite games, CYCLES_TO_DIE will be decremented by CYCLE_DELTA under certain conditions:
-                //   - If during the last life loop there were at least NBR_LIVE successfully executed by the players.
-                //   - If it has been MAX_CHECKS life loops since it was decremented last time.
-                if self.read_nbr_lives() >= NBR_LIVE || self.nbr_checks % MAX_CHECKS == 0 {
-                    self.cycle_to_die = self.cycle_to_die.checked_sub(CYCLE_DELTA).unwrap_or(0);
-                    //self.cycle_to_die = self.cycle_to_die - CYCLE_DELTA; //.checked_sub(CYCLE_DELTA).unwrap_or(0);
-                    if self.nbr_checks % MAX_CHECKS == 0 {
-                        self.nbr_checks = 0;
-                    }
-                    println!(
-                        "{}  {}",
-                        vm::green("reduce check cycle:"),
-                        self.cycle_to_die
-                    );
-                }
-            }
-            if self.cycle_to_die == 0 {
-                return;
-            }
+            self.debug2();
+            self.cycle_logic();
         }
     }
     pub fn cycle(&mut self) {
@@ -150,7 +95,36 @@ impl VirtualMachine {
         }
     }
 
-    fn debug(&self) {
+    fn cycle_logic(&mut self) {
+        // Every CYCLE_TO_DIE the VM will check every process and kill all the processes
+        // that did not successfully execute any live instruction.
+        // 2. Increment counters
+        self.cycle_count += 1;
+        if self.cycle_count % self.cycles_to_die == 0 {
+            println!("{} {}", vm::yellow("usual check: "), self.cycle_count);
+            self.check_lives();
+            self.nbr_checks += 1;
+            // To avoid infinite games, CYCLES_TO_DIE will be decremented by CYCLE_DELTA under certain conditions:
+            //   - If during the last life loop there were at least NBR_LIVE successfully executed by the players.
+            //   - If it has been MAX_CHECKS life loops since it was decremented last time.
+            if self.read_nbr_lives() >= NBR_LIVE || self.nbr_checks % MAX_CHECKS == 0 {
+                self.cycle_to_die = self.cycle_to_die.checked_sub(CYCLE_DELTA).unwrap_or(0);
+                //self.cycle_to_die = self.cycle_to_die - CYCLE_DELTA; //.checked_sub(CYCLE_DELTA).unwrap_or(0);
+                if self.nbr_checks % MAX_CHECKS == 0 {
+                    self.nbr_checks = 0;
+                }
+                println!(
+                    "{}  {}",
+                    vm::green("reduce check cycle:"),
+                    self.cycle_to_die
+                );
+            }
+        }
+        if self.cycle_to_die == 0 {
+            return;
+        }
+    }
+    fn debug1(&self) {
         println!(
             "{} ",
             green(
@@ -188,6 +162,34 @@ impl VirtualMachine {
             }
             println!();
         }
+    }
+    fn debug2(&self) {
+        println!("Players:");
+        println!("Id |Last Live |Nb Live since last check");
+        for pl in self.processes.iter() {
+            println!(
+                "{:>2} |{:>9} |{:>3}",
+                pl.live_status.player_id, pl.live_status.last_live_cycle, pl.live_status.nbr_live
+            );
+        }
+
+        println!("Arena:");
+        let mut count = 0;
+        for (i, byte) in self.arena.memory.iter().enumerate() {
+            if i % 32 == 0 {
+                print!("{:08x}  ", i);
+            }
+            print!("{:02x} ", byte);
+            if i % 32 == 31 {
+                println!("");
+            }
+
+            if count == 31 {
+                break;
+            }
+            count += 1;
+        }
+        println!();
     }
     fn read_nbr_lives(&mut self) -> usize {
         let mut count = 0;
