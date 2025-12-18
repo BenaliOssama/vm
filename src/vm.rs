@@ -49,43 +49,7 @@ impl VirtualMachine {
                     process.fetch_decode(&mut self.arena);
                 }
             }
-            println!(
-                "{} ",
-                green(
-                    "------------------------------------------------------------------------------------"
-                )
-            );
-            println!(
-                "Cycle {} || Cycles before life check: {} || Cycles between checks: {}",
-                self.cycle_count,
-                self.cycle_to_die.checked_sub(self.cycle_count).unwrap_or(0),
-                self.cycle_to_die
-            );
-
-            println!("Processes:");
-            println!("Id |Player Id |Pc   |Carry |Instr  |Wait |Registers");
-            for p in self.processes.iter() {
-                let current_instruction_name: String = if p.state() == process::State::Ready {
-                    "___".to_string()
-                } else {
-                    p.current_instruction_name.clone()
-                };
-                print!(
-                    "{:>2} |{:>9} |{:>4} |{:5} |{:<6} |{:>4} | ",
-                    p.id,
-                    &p.player_id.to_string(),
-                    &p.instction_pc.to_string(),
-                    &p.carry.to_string(),
-                    current_instruction_name,
-                    &p.remaining_cycles.to_string()
-                );
-
-                // Registers print
-                for (i, reg) in p.registers.iter().enumerate() {
-                    print!("{}:{:x}  ", i + 1, reg);
-                }
-                println!();
-            }
+            self.debug();
             self.cycle();
             // debugging lines goew here
 
@@ -147,7 +111,6 @@ impl VirtualMachine {
             }
         }
     }
-
     pub fn cycle(&mut self) {
         let mut child_process = vec![];
         let mut i = 0;
@@ -160,6 +123,7 @@ impl VirtualMachine {
                 child_process.push(ch);
             }
         }
+
         if !child_process.is_empty() {
             for child in child_process {
                 let mut c = child.unwrap();
@@ -183,6 +147,46 @@ impl VirtualMachine {
             }
             println!("{} {:?}", red("current processes"), self.processes);
             println!("{}", self.arena);
+        }
+    }
+
+    fn debug(&self) {
+        println!(
+            "{} ",
+            green(
+                "------------------------------------------------------------------------------------"
+            )
+        );
+        println!(
+            "Cycle {} || Cycles before life check: {} || Cycles between checks: {}",
+            self.cycle_count,
+            self.cycle_to_die.checked_sub(self.cycle_count).unwrap_or(0),
+            self.cycle_to_die
+        );
+
+        println!("Processes:");
+        println!("Id |Player Id |Pc   |Carry |Instr  |Wait |Registers");
+        for p in self.processes.iter() {
+            let current_instruction_name: String = if p.state() == process::State::Ready {
+                "___".to_string()
+            } else {
+                p.current_instruction_name.clone()
+            };
+            print!(
+                "{:>2} |{:>9} |{:>4} |{:5} |{:<6} |{:>4} | ",
+                p.id,
+                &p.player_id.to_string(),
+                &p.instction_pc.to_string(),
+                &p.carry.to_string(),
+                current_instruction_name,
+                &p.remaining_cycles.to_string()
+            );
+
+            // Registers print
+            for (i, reg) in p.registers.iter().enumerate() {
+                print!("{}:{:x}  ", i + 1, reg);
+            }
+            println!();
         }
     }
     fn read_nbr_lives(&mut self) -> usize {

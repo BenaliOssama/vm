@@ -169,8 +169,8 @@ impl Process {
                 self.remaining_cycles -= 1;
             }
             State::Ready => {
-                println!("executing...");
-                println!("instruction {:?}", self.current_instruction);
+                //println!("executing...");
+                //println!("instruction {:?}", self.current_instruction);
                 let current_inst = self.current_instruction.clone().take().unwrap();
                 child = match current_inst.opcode {
                     12 | 15 => {
