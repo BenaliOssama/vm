@@ -41,7 +41,14 @@ impl VirtualMachine {
         self.arena.write(i, &player.code);
         ////////println!("{}", self.arena);
     }
-
+    fn simple_debug(&self) {
+        for player in &self.processes {
+            println!(
+                "cycle {}: Player {} {} is alive",
+                self.cycle_count, player.id, player.name
+            );
+        }
+    }
     pub fn run(&mut self) {
         let mut cycles_since_last_check = 0; // 1. New accumulator
         while self.processes_alive() {
@@ -50,7 +57,8 @@ impl VirtualMachine {
                     process.fetch_decode(&mut self.arena);
                 }
             }
-            self.debug1();
+            self.simple_debug();
+            //self.debug1();
             self.cycle();
             // debugging lines goew here
             //self.debug2();
@@ -114,7 +122,12 @@ impl VirtualMachine {
             //   - If during the last life loop there were at least NBR_LIVE successfully executed by the players.
             //   - If it has been MAX_CHECKS life loops since it was decremented last time.
             if self.read_nbr_lives() >= NBR_LIVE || self.nbr_checks >= MAX_CHECKS {
+                let befor = self.cycles_to_die;
                 self.cycle_to_die = self.cycle_to_die.checked_sub(CYCLE_DELTA).unwrap_or(0);
+                println!(
+                    "cycle {}: Cycle to die decreased: {} -> {}",
+                    self.cycle_count, befor, self.cycle_to_die
+                );
                 //self.cycle_to_die = self.cycle_to_die - CYCLE_DELTA; //.checked_sub(CYCLE_DELTA).unwrap_or(0);
                 if self.nbr_checks >= MAX_CHECKS {
                     self.nbr_checks = 0;

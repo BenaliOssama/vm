@@ -63,7 +63,7 @@ pub fn build_vm(file_name: &str) -> VirtualMachine {
     let player = players[0].clone();
 
     let arena = Arena::new();
-    let process = Process::new(player.id, 0, 0);
+    let process = Process::new(player.id, player.name.clone(), 0, 0);
 
     //println!("{player}");
     ////println!("{}", process);
@@ -96,7 +96,12 @@ pub fn build_vm_more(file_names: Vec<&str>) -> VirtualMachine {
         .enumerate()
         .map(|(i, player)| {
             //println!("Loading player {} at index {}", player.name, i);
-            Process::new(player.id, i, MEM_SIZE / players_count * i)
+            Process::new(
+                player.id,
+                player.name.clone(),
+                i,
+                MEM_SIZE / players_count * i,
+            )
         })
         .collect();
 
