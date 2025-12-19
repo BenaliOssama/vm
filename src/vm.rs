@@ -50,14 +50,14 @@ impl VirtualMachine {
             }
             //self.simple_debug();
             //self.debug1();
-            self.cycle_logic();
+            self.cycle_count += 1;
             self.cycle();
+            self.cycle_logic();
             // debugging lines goew here
             //self.debug2();
         }
     }
     pub fn cycle(&mut self) {
-        self.cycle_count += 1;
         let mut child_process = vec![];
         for process in &mut self.processes {
             let ch = process.execute_cycle(&mut self.arena, self.cycle_count);
@@ -88,7 +88,7 @@ impl VirtualMachine {
             }
         }
     }
-    fn cycle_logic(&mut self) {
+    pub fn cycle_logic(&mut self) {
         // DO NOT increment cycle_count here
         self.cycles_since_check += 1;
 

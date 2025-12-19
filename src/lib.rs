@@ -4,7 +4,7 @@ mod counter;
 pub mod helper;
 mod instructions;
 mod player;
-mod process;
+pub mod process;
 mod utils;
 mod vm;
 pub use arena::*;
