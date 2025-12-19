@@ -14,11 +14,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let arena = Arena::new();
 
     let mut players = parse_arguments(args)?;
-    //println!("For this match the players will be:");
+    println!("For this match the players will be:");
     for (i, player) in players.iter().enumerate() {
         println!(
-            "Player {i} ({} bytes): {} ({})",
-            player.size, player.name, player.comment
+            "Player {} ({} bytes): {} ({})",
+            i + 1,
+            player.size,
+            player.name,
+            player.comment
         );
     }
     let players_count = players.len();

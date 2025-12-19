@@ -52,7 +52,12 @@ impl Instruction {
         }
         process.current_instruction = None;
     }
-
+    fn simple_debug(&self, process : &mut Process, current_cyle: usize) {
+            println!(
+                "cycle {}: Player {} {} is alive",
+                current_cyle, process.id + 1, process.name
+            );
+    }
     fn live(&self, process: &mut Process, _arena: &mut Arena,current_cyle: usize) {
         //println!("{}", blue("LIVE"));
         // Implement live instruction
@@ -67,7 +72,7 @@ impl Instruction {
                 self.parameters
             );
         }
-
+        self.simple_debug(process, current_cyle);
         //println!("heeeey!!! i'm alive :) {}", process.live_status.player_id);
     }
     fn ld(&self, process: &mut Process, arena: &mut Arena) {

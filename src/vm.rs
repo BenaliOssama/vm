@@ -41,14 +41,7 @@ impl VirtualMachine {
         self.arena.write(i, &player.code);
         ////////println!("{}", self.arena);
     }
-    fn simple_debug(&self) {
-        for player in &self.processes {
-            println!(
-                "cycle {}: Player {} {} is alive",
-                self.cycle_count, player.id, player.name
-            );
-        }
-    }
+
     pub fn run(&mut self) {
         let mut cycles_since_last_check = 0; // 1. New accumulator
         while self.processes_alive() {
@@ -57,7 +50,7 @@ impl VirtualMachine {
                     process.fetch_decode(&mut self.arena);
                 }
             }
-            self.simple_debug();
+            //self.simple_debug();
             //self.debug1();
             self.cycle();
             // debugging lines goew here
@@ -110,10 +103,9 @@ impl VirtualMachine {
 
         // 2. Increment counters
         self.cycle_count += 1;
-
-        if self.cycle_count >= self.cycles_to_die {
+        // todo!
+        if (self.cycle_count - 1) % self.cycles_to_die == 0 {
             //println!("{} {}", vm::yellow("usual check: "), self.cycle_count);
-            self.cycle_count = 0;
 
             self.check_lives();
 
