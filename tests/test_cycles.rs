@@ -1,10 +1,7 @@
-use vm::State;
-use vm::helper::*;
 use vm::process;
-use vm::*;
-mod test_helpers;
-use Instruction::*;
-use test_helpers::*;
+
+mod common;
+use common::*;
 
 #[test]
 fn add_cycles() {

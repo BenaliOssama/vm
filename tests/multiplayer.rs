@@ -1,9 +1,6 @@
-use vm::State;
-use vm::helper::*;
-use vm::*;
-mod test_helpers;
-use Instruction::*;
-use test_helpers::*;
+mod common;
+use common::Instruction::*;
+use common::*;
 
 #[test]
 fn two() {
@@ -132,4 +129,3 @@ fn four() {
     assert_eq!(vm.processes[0].registers[3 - 1], 0);
     assert_eq!(vm.processes[0].pc.get(), 0);
 }
-

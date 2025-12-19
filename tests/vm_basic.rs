@@ -1,9 +1,9 @@
+mod common;
+use common::Instruction::*;
+use common::*;
+
 use vm::State;
 use vm::helper::*;
-use vm::*;
-mod test_helpers;
-use Instruction::*;
-use test_helpers::*;
 
 #[test]
 fn add() {
