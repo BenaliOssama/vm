@@ -5,6 +5,7 @@ use crate::helper;
 use crate::player::Player;
 use crate::process::Process;
 use crate::*;
+use std::process as os;
 /*
 [X] create
 [ ] destroy
@@ -98,19 +99,24 @@ impl VirtualMachine {
     fn cycle_logic(&mut self) {
         // Every CYCLE_TO_DIE the VM will check every process and kill all the processes
         // that did not successfully execute any live instruction.
+
         // 2. Increment counters
         self.cycle_count += 1;
-        if self.cycle_count % self.cycles_to_die == 0 {
+
+        if self.cycle_count >= self.cycles_to_die {
             println!("{} {}", vm::yellow("usual check: "), self.cycle_count);
+            self.cycle_count = 0;
+
             self.check_lives();
+
             self.nbr_checks += 1;
             // To avoid infinite games, CYCLES_TO_DIE will be decremented by CYCLE_DELTA under certain conditions:
             //   - If during the last life loop there were at least NBR_LIVE successfully executed by the players.
             //   - If it has been MAX_CHECKS life loops since it was decremented last time.
-            if self.read_nbr_lives() >= NBR_LIVE || self.nbr_checks % MAX_CHECKS == 0 {
+            if self.read_nbr_lives() >= NBR_LIVE || self.nbr_checks >= MAX_CHECKS {
                 self.cycle_to_die = self.cycle_to_die.checked_sub(CYCLE_DELTA).unwrap_or(0);
                 //self.cycle_to_die = self.cycle_to_die - CYCLE_DELTA; //.checked_sub(CYCLE_DELTA).unwrap_or(0);
-                if self.nbr_checks % MAX_CHECKS == 0 {
+                if self.nbr_checks >= MAX_CHECKS {
                     self.nbr_checks = 0;
                 }
                 println!(
@@ -121,9 +127,11 @@ impl VirtualMachine {
             }
         }
         if self.cycle_to_die == 0 {
-            return;
+            println!("cycle to dies is 0");
+            os::exit(0);
         }
     }
+
     fn debug1(&self) {
         println!(
             "{} ",
