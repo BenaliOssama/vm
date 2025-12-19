@@ -22,7 +22,7 @@ pub struct VirtualMachine {
     pub cycle_count: usize,
     pub cycles_to_die: usize,
     nbr_checks: usize,
-    cycle_to_die: usize,
+    cycles_since_check: usize,
 }
 
 impl VirtualMachine {
@@ -30,20 +30,18 @@ impl VirtualMachine {
         Self {
             arena,
             processes,
-            cycle_count: 1,
+            cycle_count: 0,
             cycles_to_die: CYCLE_TO_DIE,
             nbr_checks: 0,
-            cycle_to_die: CYCLE_TO_DIE,
+            cycles_since_check: 0,
         }
     }
 
     pub fn load_player(&mut self, player: Player, i: usize) {
         self.arena.write(i, &player.code);
-        ////////println!("{}", self.arena);
     }
 
     pub fn run(&mut self) {
-        let mut cycles_since_last_check = 0; // 1. New accumulator
         while self.processes_alive() {
             for process in &mut self.processes {
                 if process.state() == process::State::NoInstruction {
@@ -62,11 +60,9 @@ impl VirtualMachine {
         let mut child_process = vec![];
         let mut i = 0;
         for process in &mut self.processes {
-            //////println!("{} {}", red("running process"), i);
             i += 1;
             let ch = process.execute_cycle(&mut self.arena, self.cycle_count);
             if ch.is_some() {
-                //println!("we found a pregrnant process");
                 child_process.push(ch);
             }
         }
@@ -89,50 +85,47 @@ impl VirtualMachine {
                     c.pc.set(value as usize, true);
                 }
                 c.current_instruction = None;
-                //println!("{} {}", red("add process to vm at address: "), c.pc.get());
                 self.processes.push(c);
             }
-            //println!("{} {:?}", red("current processes"), self.processes);
-            //println!("{}", self.arena);
         }
-    }
-
-    fn cycle_logic(&mut self) {
-        // Every CYCLE_TO_DIE the VM will check every process and kill all the processes
-        // that did not successfully execute any live instruction.
-
-        // 2. Increment counters
         self.cycle_count += 1;
-        // todo!
-        if (self.cycle_count - 1) % self.cycles_to_die == 0 {
-            //println!("{} {}", vm::yellow("usual check: "), self.cycle_count);
+    }
+    fn cycle_logic(&mut self) {
+        // DO NOT increment cycle_count here
+        self.cycles_since_check += 1;
+
+        if self.cycles_since_check >= self.cycles_to_die {
+            self.cycles_since_check = 0;
 
             self.check_lives();
 
-            self.nbr_checks += 1;
-            // To avoid infinite games, CYCLES_TO_DIE will be decremented by CYCLE_DELTA under certain conditions:
-            //   - If during the last life loop there were at least NBR_LIVE successfully executed by the players.
-            //   - If it has been MAX_CHECKS life loops since it was decremented last time.
-            if self.read_nbr_lives() >= NBR_LIVE || self.nbr_checks >= MAX_CHECKS {
-                let befor = self.cycles_to_die;
-                self.cycle_to_die = self.cycle_to_die.checked_sub(CYCLE_DELTA).unwrap_or(0);
+            let nbr_lives = self.read_nbr_lives();
+
+            if nbr_lives >= NBR_LIVE {
+                let before = self.cycles_to_die;
+                self.cycles_to_die = self.cycles_to_die.saturating_sub(CYCLE_DELTA);
                 println!(
                     "cycle {}: Cycle to die decreased: {} -> {}",
-                    self.cycle_count, befor, self.cycle_to_die
+                    self.cycle_count, before, self.cycles_to_die
                 );
-                //self.cycle_to_die = self.cycle_to_die - CYCLE_DELTA; //.checked_sub(CYCLE_DELTA).unwrap_or(0);
+                self.nbr_checks = 0;
+            } else {
+                self.nbr_checks += 1;
                 if self.nbr_checks >= MAX_CHECKS {
+                    let before = self.cycles_to_die;
+                    self.cycles_to_die = self.cycles_to_die.saturating_sub(CYCLE_DELTA);
+                    println!(
+                        "cycle {}: Cycle to die decreased: {} -> {}",
+                        self.cycle_count, before, self.cycles_to_die
+                    );
                     self.nbr_checks = 0;
                 }
-                //println!(
-                //     "{}  {}",
-                //     vm::green("reduce check cycle:"),
-                //     self.cycle_to_die
-                // );
             }
+
+            self.rest_nbr_lives();
         }
-        if self.cycle_to_die == 0 {
-            //println!("cycle to dies is 0");
+
+        if self.cycles_to_die == 0 {
             os::exit(0);
         }
     }
@@ -144,12 +137,13 @@ impl VirtualMachine {
         //         "------------------------------------------------------------------------------------"
         //     )
         // );
-        println!(
-            "Cycle {} || Cycles before life check: {} || Cycles between checks: {}",
-            self.cycle_count,
-            self.cycle_to_die.checked_sub(self.cycle_count).unwrap_or(0),
-            self.cycle_to_die
-        );
+        // println!(
+        //     "Cycle {} || Cycles before life check: {} || Cycles between checks: {}",
+        //     self.cycle_count,
+        //     0,
+        //     //self.cycle_to_die.checked_sub(self.cycle_count).unwrap_or(0),todo!
+        //     self.cycle_to_die
+        // );
 
         // //println!("Processes:");
         // //println!("Id |Player Id |Pc   |Carry |Instr  |Wait |Registers");
