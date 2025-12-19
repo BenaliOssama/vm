@@ -38,7 +38,7 @@ pub fn parse_arguments(args: Vec<String>) -> Result<Vec<Player>, String> {
 
         let magic = &buffer[prev..next];
         if magic != [0x00, 0xea, 0x83, 0xf3] {
-            println!("invalid magic number: {:?}", magic);
+            ////println!("invalid magic number: {:?}", magic);
             return Err(format!("invalid magic number: {:?}", magic));
         }
         // 128 + 4

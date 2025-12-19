@@ -39,7 +39,7 @@ impl VirtualMachine {
 
     pub fn load_player(&mut self, player: Player, i: usize) {
         self.arena.write(i, &player.code);
-        println!("{}", self.arena);
+        ////////println!("{}", self.arena);
     }
 
     pub fn run(&mut self) {
@@ -53,7 +53,7 @@ impl VirtualMachine {
             self.debug1();
             self.cycle();
             // debugging lines goew here
-            self.debug2();
+            //self.debug2();
             self.cycle_logic();
         }
     }
@@ -61,11 +61,11 @@ impl VirtualMachine {
         let mut child_process = vec![];
         let mut i = 0;
         for process in &mut self.processes {
-            //println!("{} {}", red("running process"), i);
+            //////println!("{} {}", red("running process"), i);
             i += 1;
             let ch = process.execute_cycle(&mut self.arena, self.cycle_count);
             if ch.is_some() {
-                println!("we found a pregrnant process");
+                //println!("we found a pregrnant process");
                 child_process.push(ch);
             }
         }
@@ -88,11 +88,11 @@ impl VirtualMachine {
                     c.pc.set(value as usize, true);
                 }
                 c.current_instruction = None;
-                println!("{} {}", red("add process to vm at address: "), c.pc.get());
+                //println!("{} {}", red("add process to vm at address: "), c.pc.get());
                 self.processes.push(c);
             }
-            println!("{} {:?}", red("current processes"), self.processes);
-            println!("{}", self.arena);
+            //println!("{} {:?}", red("current processes"), self.processes);
+            //println!("{}", self.arena);
         }
     }
 
@@ -104,7 +104,7 @@ impl VirtualMachine {
         self.cycle_count += 1;
 
         if self.cycle_count >= self.cycles_to_die {
-            println!("{} {}", vm::yellow("usual check: "), self.cycle_count);
+            //println!("{} {}", vm::yellow("usual check: "), self.cycle_count);
             self.cycle_count = 0;
 
             self.check_lives();
@@ -119,26 +119,26 @@ impl VirtualMachine {
                 if self.nbr_checks >= MAX_CHECKS {
                     self.nbr_checks = 0;
                 }
-                println!(
-                    "{}  {}",
-                    vm::green("reduce check cycle:"),
-                    self.cycle_to_die
-                );
+                //println!(
+                //     "{}  {}",
+                //     vm::green("reduce check cycle:"),
+                //     self.cycle_to_die
+                // );
             }
         }
         if self.cycle_to_die == 0 {
-            println!("cycle to dies is 0");
+            //println!("cycle to dies is 0");
             os::exit(0);
         }
     }
 
     fn debug1(&self) {
-        println!(
-            "{} ",
-            green(
-                "------------------------------------------------------------------------------------"
-            )
-        );
+        // //println!(
+        //     "{} ",
+        //     green(
+        //         "------------------------------------------------------------------------------------"
+        //     )
+        // );
         println!(
             "Cycle {} || Cycles before life check: {} || Cycles between checks: {}",
             self.cycle_count,
@@ -146,34 +146,34 @@ impl VirtualMachine {
             self.cycle_to_die
         );
 
-        println!("Processes:");
-        println!("Id |Player Id |Pc   |Carry |Instr  |Wait |Registers");
-        for p in self.processes.iter() {
-            let current_instruction_name: String = if p.state() == process::State::Ready {
-                "___".to_string()
-            } else {
-                p.current_instruction_name.clone()
-            };
-            print!(
-                "{:>2} |{:>9} |{:>4} |{:5} |{:<6} |{:>4} | ",
-                p.id,
-                &p.player_id.to_string(),
-                &p.instction_pc.to_string(),
-                &p.carry.to_string(),
-                current_instruction_name,
-                &p.remaining_cycles.to_string()
-            );
+        // //println!("Processes:");
+        // //println!("Id |Player Id |Pc   |Carry |Instr  |Wait |Registers");
+        // for p in self.processes.iter() {
+        //     let current_instruction_name: String = if p.state() == process::State::Ready {
+        //         "___".to_string()
+        //     } else {
+        //         p.current_instruction_name.clone()
+        //     };
+        //     //print!(
+        //         "{:>2} |{:>9} |{:>4} |{:5} |{:<6} |{:>4} | ",
+        //         p.id,
+        //         &p.player_id.to_string(),
+        //         &p.instction_pc.to_string(),
+        //         &p.carry.to_string(),
+        //         current_instruction_name,
+        //         &p.remaining_cycles.to_string()
+        //     );
 
-            // Registers print
-            for (i, reg) in p.registers.iter().enumerate() {
-                print!("{}:{:x}  ", i + 1, reg);
-            }
-            println!();
-        }
+        //     // Registers //print
+        //     for (i, reg) in p.registers.iter().enumerate() {
+        //         //print!("{}:{:x}  ", i + 1, reg);
+        //     }
+        //     //println!();
+        // }
     }
     fn debug2(&self) {
-        println!("Players:");
-        println!("Id |Last Live |Nb Live since last check");
+        //println!("Players:");
+        //println!("Id |Last Live |Nb Live since last check");
         for pl in self.processes.iter() {
             println!(
                 "{:>2} |{:>9} |{:>3}",
@@ -181,15 +181,15 @@ impl VirtualMachine {
             );
         }
 
-        println!("Arena:");
+        //println!("Arena:");
         let mut count = 0;
         for (i, byte) in self.arena.memory.iter().enumerate() {
             if i % 32 == 0 {
-                print!("{:08x}  ", i);
+                //print!("{:08x}  ", i);
             }
-            print!("{:02x} ", byte);
+            //print!("{:02x} ", byte);
             if i % 32 == 31 {
-                println!("");
+                //println!("");
             }
 
             if count == 31 {
@@ -197,7 +197,7 @@ impl VirtualMachine {
             }
             count += 1;
         }
-        println!();
+        //println!();
     }
     fn read_nbr_lives(&mut self) -> usize {
         let mut count = 0;

@@ -46,9 +46,9 @@ impl Display for Process {
         ]);
         table2.add_row(&vec![registers_str]);
 
-        // print the table
-        println!("{table}");
-        println!("{table2}");
+        // //print the table
+        //println!("{table}");
+        //println!("{table2}");
 
         Ok(())
     }

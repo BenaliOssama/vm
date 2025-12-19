@@ -11,15 +11,15 @@ def read_cor(path):
         f.read(4)  # skip null separator
         code = f.read(size)
 
-    print("Magic:", hex(magic))
-    print("Name:", name)
-    print("Size:", size)
-    print("Comment:", comment)
-    print("Code bytes:", code.hex())
+    //print("Magic:", hex(magic))
+    //print("Name:", name)
+    //print("Size:", size)
+    //print("Comment:", comment)
+    //print("Code bytes:", code.hex())
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print(f"Usage: {sys.argv[0]} path/to/file.cor")
+        //print(f"Usage: {sys.argv[0]} path/to/file.cor")
         sys.exit(1)
 
     read_cor(sys.argv[1])

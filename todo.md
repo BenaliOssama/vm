@@ -6,9 +6,9 @@
 
 # The virtual machine
 
-* [ ] If no parameters are passed it will print a help message.
-* [ ] If one of the `.cor` files is corrupted, the VM should exit with an error code, print a message on stderr, and do not execute the programs.
-* [ ] At the start of the battle the VM will print a welcome message as shown in the example:
+* [ ] If no parameters are passed it will //print a help message.
+* [ ] If one of the `.cor` files is corrupted, the VM should exit with an error code, //print a message on stderr, and do not execute the programs.
+* [ ] At the start of the battle the VM will //print a welcome message as shown in the example:
 
 ```
 For this match the players will be:

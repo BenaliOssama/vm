@@ -54,7 +54,7 @@ impl Display for Arena {
             table.add_row(&row);
         }
 
-        println!("{table}");
+        //////println!("{table}");
         Ok(())
     }
 }

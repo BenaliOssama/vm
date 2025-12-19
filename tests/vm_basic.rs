@@ -62,7 +62,7 @@ fn sti_reg_dir_dir() {
     run_inst(&mut vm, Ld);
     //sti 25
     run_inst(&mut vm, Sti);
-    //println!("{}", vm.arena);
+    ////println!("{}", vm.arena);
     //01 ff ff ff ff 02 90 00 00 00 7b 02 ff ff ff ff
     //01 FF FF FF FF 02 90 00 00 00 7B 02 FF FF FF FF
     let at_mem = vm.arena.read(36, 4);
@@ -97,7 +97,7 @@ fn and_ind_ind() {
 fn lldi_dir_dir_reg() {
     let mut vm = build_vm("pierino_lldi_dir_dir_reg");
     // live 10
-    println!("{}", vm.arena);
+    //println!("{}", vm.arena);
     run_inst(&mut vm, Live);
     assert_eq!(vm.processes[0].live_status.executed, true);
     assert_eq!(vm.processes[0].live_status.player_id, -1);
@@ -122,7 +122,7 @@ fn sti_reg_dir_reg() {
     run_inst(&mut vm, Ld);
     //sti 25
     run_inst(&mut vm, Sti);
-    //println!("{}", vm.arena);
+    ////println!("{}", vm.arena);
     //01 ff ff ff ff 02 90 00 00 00 7b 02 ff ff ff ff
     //01 FF FF FF FF 02 90 00 00 00 7B 02 FF FF FF FF
     let at_mem = vm.arena.read(158, 4);
@@ -185,7 +185,7 @@ fn sti_reg_ind_dir() {
     run_inst(&mut vm, Ld);
     //sti 25
     run_inst(&mut vm, Sti);
-    //println!("{}", vm.arena);
+    ////println!("{}", vm.arena);
     //01 ff ff ff ff 02 90 00 00 00 7b 02 ff ff ff ff
     //01 FF FF FF FF 02 90 00 00 00 7B 02 FF FF FF FF
     let at_mem = vm.arena.read(12, 4);
@@ -219,7 +219,7 @@ fn lldi_ind_dir_reg() {
     // This simulates what main() does
     let mut vm = build_vm("pierino_lldi_ind_dir_reg");
     // live 10
-    println!("{}", vm.arena);
+    //println!("{}", vm.arena);
     run_inst(&mut vm, Live);
     assert_eq!(vm.processes[0].live_status.executed, true);
     assert_eq!(vm.processes[0].live_status.player_id, -1);
@@ -245,7 +245,7 @@ fn sti_reg_ind_reg() {
     run_inst(&mut vm, Ld);
     //sti 25
     run_inst(&mut vm, Sti);
-    //println!("{}", vm.arena);
+    ////println!("{}", vm.arena);
     //01 ff ff ff ff 02 90 00 00 00 7b 02 ff ff ff ff
     //01 FF FF FF FF 02 90 00 00 00 7B 02 FF FF FF FF
     let at_mem = vm.arena.read(12, 4);
@@ -281,7 +281,7 @@ fn lldi_ind_reg_reg() {
     // This simulates what main() does
     let mut vm = build_vm("pierino_lldi_ind_reg_reg");
     // live 10
-    println!("{}", vm.arena);
+    //println!("{}", vm.arena);
     run_inst(&mut vm, Live);
     assert_eq!(vm.processes[0].live_status.executed, true);
     assert_eq!(vm.processes[0].live_status.player_id, -1);
@@ -309,7 +309,7 @@ fn sti_reg_reg_dir() {
     run_inst(&mut vm, Ld);
     //sti 25
     run_inst(&mut vm, Sti);
-    //println!("{}", vm.arena);
+    ////println!("{}", vm.arena);
     //01 ff ff ff ff 02 90 00 00 00 7b 02 ff ff ff ff
     //01 FF FF FF FF 02 90 00 00 00 7B 02 FF FF FF FF
     let at_mem = vm.arena.read(136, 4);
@@ -378,7 +378,7 @@ fn sti_reg_reg_reg() {
     run_inst(&mut vm, Ld);
     //sti 25
     run_inst(&mut vm, Sti);
-    //println!("{}", vm.arena);
+    ////println!("{}", vm.arena);
     //01 ff ff ff ff 02 90 00 00 00 7b 02 ff ff ff ff
     //01 FF FF FF FF 02 90 00 00 00 7B 02 FF FF FF FF
     let at_mem = vm.arena.read(135, 4);
@@ -412,7 +412,7 @@ fn lldi_reg_dir_reg() {
     // This simulates what main() does
     let mut vm = build_vm("pierino_lldi_reg_dir_reg");
     // live 10
-    println!("{}", vm.arena);
+    //println!("{}", vm.arena);
     run_inst(&mut vm, Live);
     assert_eq!(vm.processes[0].live_status.executed, true);
     assert_eq!(vm.processes[0].live_status.player_id, -1);
@@ -475,7 +475,7 @@ fn lldi_reg_reg_reg() {
     // This simulates what main() does
     let mut vm = build_vm("pierino_lldi_reg_reg_reg");
     // live 10
-    println!("{}", vm.arena);
+    //println!("{}", vm.arena);
     run_inst(&mut vm, Live);
     assert_eq!(vm.processes[0].live_status.executed, true);
     assert_eq!(vm.processes[0].live_status.player_id, -1);
@@ -754,7 +754,7 @@ fn st_ind() {
     // 01 ff ff ff ff 03 70 01 00 10 02 90 00 00 00 00 02 09 ff ef 00 ff ff ff ff 00 00 00 00 00 00 00
     // 01 FF FF FF FF 03 70 01 00 10 02 90 00 00 00 00 02 09 FF EF 00 FF FF FF FF 00 00 00 00 00 00 00
     run_inst(&mut vm, St);
-    println!("{}", vm.arena);
+    //println!("{}", vm.arena);
     //let at_mem = vm.arena.read(vm.processes[0].instction_pc + 16, 4);
     let at_mem = vm.arena.read(21, 4);
     assert_eq!(vec![255, 255, 255, 255], at_mem);
@@ -947,9 +947,9 @@ fn zjmp() {
     //run_inst(&mut vm, Ld); shoujd be skipped
 
     let current_pc = vm.processes[0].pc.get();
-    println!("this is the headach current pc  {}", current_pc);
+    //println!("this is the headach current pc  {}", current_pc);
     run_inst(&mut vm, Zjmp); // jump back by 6
-    println!("this is the pc after zjmp  {}", current_pc);
+    //println!("this is the pc after zjmp  {}", current_pc);
     assert_eq!(vm.processes[0].pc.get(), current_pc - 7);
 
     run_inst(&mut vm, Ld);

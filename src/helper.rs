@@ -8,7 +8,7 @@ use crate::process::*;
 // [ ]  account for the case of negative indirect
 pub fn read_indirect(process: &mut Process, arena: &mut Arena, opcode_addr: usize, at: i32) -> i32 {
     let read_from = wrap_address(opcode_addr, at as i16);
-    println!("reading value from address: {}", read_from);
+    //println!("reading value from address: {}", read_from);
     bytes_to_i32(&arena.read(read_from, 2).clone())
 }
 
@@ -28,7 +28,7 @@ pub fn get_value(p: &Parameter, process: &Process, arena: &Arena, apply_idx_mod:
         // 3) INDIRECT
         // ----------------------------
         Parameter::Indirect(offset) => {
-            println!("reading indirect");
+            //println!("reading indirect");
             let mut off = *offset;
 
             // apply IDX_MOD if instruction requires it
@@ -38,10 +38,10 @@ pub fn get_value(p: &Parameter, process: &Process, arena: &Arena, apply_idx_mod:
 
             // match what read_indirect does:
             let addr = wrap_address(process.instction_pc, off as i16);
-            println!("reading at address {}", addr);
+            //println!("reading at address {}", addr);
             // arena.read() returns &[u8] of length 4
             let bytes = arena.read(addr, 2);
-            println!("bytes read {:?}", bytes);
+            //println!("bytes read {:?}", bytes);
             bytes_to_i32(&bytes)
         }
 

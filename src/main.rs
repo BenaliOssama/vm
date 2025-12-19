@@ -14,7 +14,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let arena = Arena::new();
 
     let mut players = parse_arguments(args)?;
-    println!("For this match the players will be:");
+    //println!("For this match the players will be:");
     for (i, player) in players.iter().enumerate() {
         println!(
             "Player {i} ({} bytes): {} ({})",
@@ -30,9 +30,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     for (i, player) in players.clone().iter().enumerate() {
         let process = Process::new(player.clone().id, 0, MEM_SIZE % players_count * i);
 
-        println!("{}", players[i]);
-        println!("{}", process);
-        //println!("{}", arena);
+        //println!("{}", players[i]);
+        ////println!("{}", process);
+        //////println!("{}", arena);
         processes.push(process)
     }
 

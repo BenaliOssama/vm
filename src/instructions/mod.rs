@@ -54,7 +54,7 @@ impl Instruction {
     }
 
     fn live(&self, process: &mut Process, _arena: &mut Arena,current_cyle: usize) {
-        println!("{}", blue("LIVE"));
+        //println!("{}", blue("LIVE"));
         // Implement live instruction
         process.live_status.executed = true;
         process.live_status.nbr_live += 1;
@@ -68,16 +68,16 @@ impl Instruction {
             );
         }
 
-        println!("heeeey!!! i'm alive :) {}", process.live_status.player_id);
+        //println!("heeeey!!! i'm alive :) {}", process.live_status.player_id);
     }
     fn ld(&self, process: &mut Process, arena: &mut Arena) {
-        println!("{}", blue("LD"));
+        //println!("{}", blue("LD"));
 
         let value = match self.parameters[0] {
             Parameter::Direct(v) => v,
             Parameter::Indirect(v) => helper::read_indirect(process, arena,self.opcode_addr, v),
             _ => {
-                eprintln!("Invalid first parameter for ld");
+                //println!("Invalid first parameter for ld");
                 return;
             }
         };
@@ -85,34 +85,34 @@ impl Instruction {
         let reg = match self.parameters[1] {
             Parameter::Register(r) => r,
             _ => {
-                eprintln!("Invalid second parameter for ld");
+                //println!("Invalid second parameter for ld");
                 return;
             }
         };
 
-        println!("ld: r{} ← {}", reg, value);
+        //println!("ld: r{} ← {}", reg, value);
         process.registers[reg - 1] = value;
 
         // --- Set the carry ---
         process.carry = value == 0;
 
-        println!("{}", process);
+        ////println!("{}", process);
     }
 
     fn st(&self, process: &mut Process, arena: &mut Arena) {
-        println!("{}", blue("ST"));
-        println!("{:?}", self.parameters);
+        //println!("{}", blue("ST"));
+        // //println!("{:?}", self.parameters);
         let source_reg = match self.parameters[0] {
             Parameter::Register(r) => r,
             _ => {
-                eprintln!("Invalid second parameter for st");
+                //println!("Invalid second parameter for st");
                 return;
             }
         };
 
         match self.parameters[1] {
             Parameter::Register(dist_reg) => {
-                println!("st: r{} ← r{}", dist_reg, source_reg);
+                //println!("st: r{} ← r{}", dist_reg, source_reg);
                 process.registers[dist_reg - 1] = process.registers[source_reg - 1];
             }
             Parameter::Indirect(dist_memory) => {
@@ -121,22 +121,22 @@ impl Instruction {
                     ( self.opcode_addr + dist_memory as usize) % MEM_SIZE,
                     &process.registers[source_reg - 1].to_be_bytes(),
                 );
-                println!("{}", process);
+                ////println!("{}", process);
             }
             _ => {
-                eprintln!("Invalid first parameter for st");
+                //println!("Invalid first parameter for st");
                 return;
             }
         };
-        println!("{}", process);
-        println!("{}", arena);
+        ////println!("{}", process);
+        ////println!("{}", arena);
     }
     fn add(&self, process: &mut Process, _arena: &mut Arena) {
-        println!("{}", blue("ADD"));
+        //println!("{}", blue("ADD"));
         let reg1 = match self.parameters[0] {
             Parameter::Register(r) => r,
             _ => {
-                eprintln!("Invalid second parameter for add");
+                //println!("Invalid second parameter for add");
                 return;
             }
         };
@@ -144,30 +144,30 @@ impl Instruction {
         let reg2 = match self.parameters[1] {
             Parameter::Register(r) => r,
             _ => {
-                eprintln!("Invalid second parameter for add");
+                //println!("Invalid second parameter for add");
                 return;
             }
         };
         let reg3 = match self.parameters[2] {
             Parameter::Register(r) => r,
             _ => {
-                eprintln!("Invalid second parameter for add");
+                //println!("Invalid second parameter for add");
                 return;
             }
         };
-        println!("add : r{} ← r{} + r{}", reg3, reg1, reg2);
+        //println!("add : r{} ← r{} + r{}", reg3, reg1, reg2);
         let value = process.registers[reg1 - 1] + process.registers[reg2 - 1];
         process.registers[reg3 - 1] = value ;
-        println!("{}", process);
+        ////println!("{}", process);
         // --- Set the carry ---
         process.carry = value == 0;
     }
     fn sub(&self, process: &mut Process, _arena: &mut Arena) {
-        println!("{}", blue("SUB"));
+        //println!("{}", blue("SUB"));
         let reg1 = match self.parameters[0] {
             Parameter::Register(r) => r,
             _ => {
-                eprintln!("Invalid second parameter for add");
+                //println!("Invalid second parameter for add");
                 return;
             }
         };
@@ -175,21 +175,21 @@ impl Instruction {
         let reg2 = match self.parameters[1] {
             Parameter::Register(r) => r,
             _ => {
-                eprintln!("Invalid second parameter for add");
+                //println!("Invalid second parameter for add");
                 return;
             }
         };
         let reg3 = match self.parameters[2] {
             Parameter::Register(r) => r,
             _ => {
-                eprintln!("Invalid second parameter for add");
+                //println!("Invalid second parameter for add");
                 return;
             }
         };
-        println!("sub : r{} ← r{} - r{}", reg3, reg1, reg2);
+        //println!("sub : r{} ← r{} - r{}", reg3, reg1, reg2);
         let value = process.registers[reg1 - 1] - process.registers[reg2 - 1];
         process.registers[reg3 - 1] = value ;
-        println!("{}", process);
+        ////println!("{}", process);
         // --- Set the carry ---
         process.carry = value == 0;
     }
@@ -200,7 +200,7 @@ impl Instruction {
             Parameter::Indirect(v) => helper::read_indirect(process, arena, self.opcode_addr, v),
             Parameter::Register(v) => process.registers[v - 1],
             _ => {
-                eprintln!("Invalid first parameter for ld");
+                //println!("Invalid first parameter for ld");
                 return;
             }
         };
@@ -209,51 +209,51 @@ impl Instruction {
             Parameter::Indirect(v) => helper::read_indirect(process, arena,self.opcode_addr, v),
             Parameter::Register(v) => process.registers[v - 1],
             _ => {
-                eprintln!("Invalid first parameter for ld");
+                //println!("Invalid first parameter for ld");
                 return;
             }
         };
         let reg = match self.parameters[2] {
             Parameter::Register(r) => r,
             _ => {
-                eprintln!("Invalid second parameter for ld");
+                //println!("Invalid second parameter for ld");
                 return;
             }
         };
-        println!("{} {} {} {}", red("debugging v1 v2 reg :"), value1,  value2 ,reg);
+        //println!("{} {} {} {}", red("debugging v1 v2 reg :"), value1,  value2 ,reg);
         let result = match self.opcode {
             6 => {
-                println!("{}", blue("AND"));
-                println!("r{} <- {} AND {}", reg, value1, value2);
+                //println!("{}", blue("AND"));
+                //println!("r{} <- {} AND {}", reg, value1, value2);
                 value1 & value2
             }
             7 => {
-                println!("{}", blue("OR"));
-                println!("r{} <- {} OR {}", reg, value1, value2);
+                //println!("{}", blue("OR"));
+                //println!("r{} <- {} OR {}", reg, value1, value2);
                 value1 | value2
             }
             8 => {
-                println!("{}", blue("XOR"));
-                println!("values {} {}", value1, value2);
-                println!("r{} <- {} XOR {}", reg, value1, value2);
+                //println!("{}", blue("XOR"));
+                //println!("values {} {}", value1, value2);
+                //println!("r{} <- {} XOR {}", reg, value1, value2);
 
                 value1 ^ value2
             }
             _ => return,
         };
-        println!("result of betwise {}", result);
+        ////println!("result of betwise {}", result);
         process.registers[reg - 1] = result;
         process.carry = result == 0;
-        println!("{}", process);
+        ////println!("{}", process);
     }
 
     fn zjmp(&self, process: &mut Process, _arena: &mut Arena) {
-        println!("{}", blue("ZJMP"));
-        println!("{} {}", yellow("befor jump :"), self.opcode_addr);
+        //println!("{}", blue("ZJMP"));
+        ////println!("{} {}", yellow("befor jump :"), self.opcode_addr);
        // todo!()
         if let Parameter::Direct(offset) = self.parameters[0] {
             if process.carry {
-                println!("{} {}", yellow("carry true jump by :"), offset);
+                //println!("{} {}", yellow("carry true jump by :"), offset);
                 let offset = offset % IDX_MOD as i32;
                 // Step 2: calculate new PC as signed i32
                 let mut new_pc = self.opcode_addr as i32 + offset ; 
@@ -276,12 +276,12 @@ impl Instruction {
             );
         }
 
-        println!("{} {}", yellow("after jump :"), process.pc.get());
-        println!("heeeey!!! i jumped or didn't :)");
+        ////println!("{} {}", yellow("after jump :"), process.pc.get());
+        ////println!("heeeey!!! i jumped or didn't :)");
     }
 
     fn ldi(&self, process: &mut Process, arena: &mut Arena) {
-        println!("{}", blue("LDI"));
+        //println!("{}", blue("LDI"));
         // Extract parameters
         let p1 = &self.parameters[0];
         let p2 = &self.parameters[1];
@@ -291,7 +291,7 @@ impl Instruction {
         let dest_reg = match p3 {
             Parameter::Register(r) => *r,
             _ => {
-                eprintln!("LDI: invalid destination register");
+                //println!("LDI: invalid destination register");
                 return;
             }
         };
@@ -303,34 +303,34 @@ impl Instruction {
         // ---------- 3) Compute address offset ----------
         let sum = val1 + val2;
         let addr_offset = sum % IDX_MOD as i32;
-        println!("addr offset {}", addr_offset);
+        ////println!("addr offset {}", addr_offset);
         //---
         let mut new_pc = process.instction_pc as i32 + addr_offset ; 
 
-        println!("new addr {}", new_pc);
+        ////println!("new addr {}", new_pc);
         // Step 3: wrap around circular memory
         new_pc %= MEM_SIZE as i32;
         if new_pc < 0 {
             new_pc += MEM_SIZE as i32;
         }
-        println!("new addr  after module {}", new_pc);
+        ////println!("new addr  after module {}", new_pc);
         //---
         // Final effective address is PC + offset (wrapped)
 
         // ---------- 4) Read 4 bytes from arena ----------
         let value = arena.read(new_pc as usize, 4);
-        println!("bytes read {:?}", value);
+        ////println!("bytes read {:?}", value);
         let value = bytes_to_i32(&value);
-        println!("r{} <- {}", dest_reg, value);
+        ////println!("r{} <- {}", dest_reg, value);
 
         // ---------- 5) Store into the destination register ----------
         process.registers[dest_reg - 1] = value;
         // LDI does NOT change carry
-        println!("{}", process);
+        ////println!("{}", process);
     }
 
     fn sti(&self, process: &mut Process, arena: &mut Arena) {
-        println!("{}", blue("STI"));
+        //println!("{}", blue("STI"));
 
         let p1 = &self.parameters[0];
         let p2 = &self.parameters[1];
@@ -340,7 +340,7 @@ impl Instruction {
         let from_reg = match p1 {
             Parameter::Register(r) => *r,
             _ => {
-                eprintln!("STI: invalid destination register");
+                //println!("STI: invalid destination register");
                 return;
             }
         };
@@ -351,8 +351,8 @@ impl Instruction {
         let val1 = helper::get_value(p2, process, arena, false); // apply IDX_MOD for INDIRECT
         let val2 = helper::get_value(p3, process, arena, false);
         // ---------- 3) Compute address offset ----------
-        println!("value 1 sti important 777: {} ", val1);
-        println!("value 2 sti important 777: {} ", val2);
+        // //println!("value 1 sti important 777: {} ", val1);
+        // //println!("value 2 sti important 777: {} ", val2);
         let sum = val1 + val2;
         //---
         let mut new_pc = self.opcode_addr as i32 + sum; // cont for the paramiter size
@@ -363,22 +363,22 @@ impl Instruction {
         if new_pc < 0 {
             new_pc += MEM_SIZE as i32;
         }
-        println!("value f sti important 777: {} ", new_pc);
+        // //println!("value f sti important 777: {} ", new_pc);
         //---
         // Final effective address is PC + offset (wrapped)
 
         // ---------- 4) Read 4 bytes from arena ----------
         let value = process.registers[from_reg-1];
         arena.write(new_pc as usize, &(value).to_be_bytes());
-        println!("m{} <- {}",new_pc,  value);
+        //println!("m{} <- {}",new_pc,  value);
 
         // ---------- 5) Store into the destination register ----------
         // LDI does NOT change carry
-        println!("{}", arena);
+        ////println!("{}", arena);
     }
 
     fn fork(&self, process: &mut Process, _arena: &mut Arena) {
-        // println!("{}", blue("FORK"));
+        // //println!("{}", blue("FORK"));
         // let mut new_process = process.clone();
         // new_process.pc.add(100);
         
@@ -387,7 +387,7 @@ impl Instruction {
     }
 
     fn lld(&self, process: &mut Process, arena: &mut Arena) {
-        println!("{}", blue("LLD"));
+        //println!("{}", blue("LLD"));
         let p1 = &self.parameters[0];
         let p2 = &self.parameters[1];
 
@@ -395,7 +395,7 @@ impl Instruction {
             Parameter::Direct(v) => v,
             Parameter::Indirect(v) => helper::get_value( p1, process, arena, false),
             _ => {
-                eprintln!("Invalid first parameter for ld");
+                //println!("Invalid first parameter for ld");
                 return;
             }
         };
@@ -403,22 +403,22 @@ impl Instruction {
         let reg = match self.parameters[1] {
             Parameter::Register(r) => r,
             _ => {
-                eprintln!("Invalid second parameter for lld");
+                //println!("Invalid second parameter for lld");
                 return;
             }
         };
 
-        println!("ld: r{} ← {}", reg, value);
+        //println!("ld: r{} ← {}", reg, value);
         process.registers[reg - 1] = value;
 
         // --- Set the carry ---
         process.carry = value == 0;
 
-        println!("{}", process);
+        ////println!("{}", process);
     }
 
     fn lldi(&self, process: &mut Process, arena: &mut Arena) {
-        println!("{}", blue("LLDI"));
+        //println!("{}", blue("LLDI"));
         // Extract parameters
         let p1 = &self.parameters[0];
         let p2 = &self.parameters[1];
@@ -428,7 +428,7 @@ impl Instruction {
         let dest_reg = match p3 {
             Parameter::Register(r) => *r,
             _ => {
-                eprintln!("LDI: invalid destination register");
+                //println!("LDI: invalid destination register");
                 return;
             }
         };
@@ -437,12 +437,12 @@ impl Instruction {
         // ldi always applies IDX_MOD to its addressing
         let val1 = helper::get_value(p1, process, arena, false); 
         let val2 = helper::get_value(p2, process, arena, false);
-        println!("val1 {}", val1);
-        println!("val2 {}", val2);
+        // //println!("val1 {}", val1);
+        // //println!("val2 {}", val2);
         // ---------- 3) Compute address offset ----------
         let sum = val1 + val2;
         let addr_offset = sum ;//% IDX_MOD as i32;
-        println!("addr offset {}", addr_offset);
+        // //println!("addr offset {}", addr_offset);
         //---
         let mut new_pc = process.instction_pc as i32 + addr_offset ; 
 
@@ -451,30 +451,30 @@ impl Instruction {
         if new_pc < 0 {
             new_pc += MEM_SIZE as i32;
         }
-        println!("new addr {}", new_pc);
+        // //println!("new addr {}", new_pc);
         //---
         // Final effective address is PC + offset (wrapped)
 
         // ---------- 4) Read 4 bytes from arena ----------
         let value = arena.read(new_pc as usize   , 4);
-        println!("bytes read {:?}", value);
+        // //println!("bytes read {:?}", value);
         let value = bytes_to_i32(&value);
-        println!("r{} <- {}", dest_reg, value);
+        // //println!("r{} <- {}", dest_reg, value);
 
         // ---------- 5) Store into the destination register ----------
         process.registers[dest_reg - 1] = value;
         // LDI does NOT change carry
-        println!("{}", process);
+        ////println!("{}", process);
         process.carry = if value == 0 { true } else { false }; // LDI updates carry!
     }
 
     fn lfork(&self, _process: &mut Process, _arena: &mut Arena) {
-        // println!("{}", blue("LFORK"));
+        // //println!("{}", blue("LFORK"));
         // todo!()
     }
 
     fn nop(&self, _process: &mut Process, _arena: &mut Arena) {
-        println!("{}", blue("NOP"));
+        // //println!("{}", blue("NOP"));
         return;
     }
 }

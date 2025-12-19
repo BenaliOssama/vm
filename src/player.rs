@@ -58,7 +58,7 @@ impl Display for Player {
             self.size.to_string(),
             hex_string,
         ]);
-        println!("{table}");
+        ////println!("{table}");
 
         Ok(())
     }

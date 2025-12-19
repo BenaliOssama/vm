@@ -144,7 +144,7 @@ impl Process {
         self.instction_pc = self.pc.get();
         self.pc.inc();
         if opcode >= 1 && opcode <= 16 {
-            //println!("address {} instruction : {:?}", self.pc.get(), opcode);
+            ////println!("address {} instruction : {:?}", self.pc.get(), opcode);
             let inst = self.decode(opcode, arena);
             if inst.is_some() {
                 self.current_instruction_name = opcode_to_name(opcode);
@@ -153,7 +153,7 @@ impl Process {
             }
             self.current_instruction = inst;
         } else {
-            println!("{} not a valid instruction passing to the next", opcode);
+            //println!("{} not a valid instruction passing to the next", opcode);
         }
     }
     //Opcode ->
@@ -165,20 +165,20 @@ impl Process {
         let mut child: Option<Process> = None;
         match self.state() {
             State::Waiting => {
-                //println!("waiting...");
+                ////println!("waiting...");
                 self.remaining_cycles -= 1;
             }
             State::Ready => {
-                //println!("executing...");
-                //println!("instruction {:?}", self.current_instruction);
+                ////println!("executing...");
+                ////println!("instruction {:?}", self.current_instruction);
                 let current_inst = self.current_instruction.clone().take().unwrap();
                 child = match current_inst.opcode {
                     12 | 15 => {
-                        println!("{}", red("FORK"));
+                        //println!("{}", red("FORK"));
 
                         // in this case we should for the process
                         // use v
-                        // println!("the process we are forking should have {:?}", self);
+                        // //println!("the process we are forking should have {:?}", self);
                         let save = self.clone();
                         self.current_instruction = None;
                         Some(save)
@@ -190,9 +190,9 @@ impl Process {
                 };
             }
             State::NoInstruction => {
-                println!("should not try to execute an process with empty instruction");
+                //println!("should not try to execute an process with empty instruction");
                 self.current_instruction_name = "None".to_string();
-                // println!("free...");
+                // //println!("free...");
                 // self.fetch_decode(arena);
             }
         }
