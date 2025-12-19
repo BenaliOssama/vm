@@ -92,7 +92,7 @@ impl VirtualMachine {
         // DO NOT increment cycle_count here
         self.cycles_since_check += 1;
 
-        if self.cycles_since_check >= self.cycles_to_die {
+        if self.cycles_since_check > self.cycles_to_die {
             self.cycles_since_check = 0;
 
             self.check_lives();
@@ -103,17 +103,17 @@ impl VirtualMachine {
                 let before = self.cycles_to_die;
                 self.cycles_to_die = self.cycles_to_die.saturating_sub(CYCLE_DELTA);
                 println!(
-                    "cycle {}: Cycle to die decreased: {} -> {}",
+                    "cycle {}: Cycles to die decreased: {} -> {}",
                     self.cycle_count, before, self.cycles_to_die
                 );
                 self.nbr_checks = 0;
             } else {
                 self.nbr_checks += 1;
-                if self.nbr_checks >= MAX_CHECKS {
+                if self.nbr_checks > MAX_CHECKS {
                     let before = self.cycles_to_die;
                     self.cycles_to_die = self.cycles_to_die.saturating_sub(CYCLE_DELTA);
                     println!(
-                        "cycle {}: Cycle to die decreased: {} -> {}",
+                        "cycle {}: Cycles to die decreased: {} -> {}",
                         self.cycle_count, before, self.cycles_to_die
                     );
                     self.nbr_checks = 0;

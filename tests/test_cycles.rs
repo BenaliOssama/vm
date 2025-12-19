@@ -52,6 +52,7 @@ fn add_cycles() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
+            vm.cycle_count += 1;
             vm.cycle();
             vm.cycle_logic();
         }
