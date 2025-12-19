@@ -45,22 +45,21 @@ impl VirtualMachine {
         while self.processes_alive() {
             for process in &mut self.processes {
                 if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut self.arena);
+                    process.fetch_decode(&mut self.arena, self.cycle_count);
                 }
             }
             //self.simple_debug();
             //self.debug1();
+            self.cycle_logic();
             self.cycle();
             // debugging lines goew here
             //self.debug2();
-            self.cycle_logic();
         }
     }
     pub fn cycle(&mut self) {
+        self.cycle_count += 1;
         let mut child_process = vec![];
-        let mut i = 0;
         for process in &mut self.processes {
-            i += 1;
             let ch = process.execute_cycle(&mut self.arena, self.cycle_count);
             if ch.is_some() {
                 child_process.push(ch);
@@ -88,7 +87,6 @@ impl VirtualMachine {
                 self.processes.push(c);
             }
         }
-        self.cycle_count += 1;
     }
     fn cycle_logic(&mut self) {
         // DO NOT increment cycle_count here
@@ -124,7 +122,6 @@ impl VirtualMachine {
 
             self.rest_nbr_lives();
         }
-
         if self.cycles_to_die == 0 {
             os::exit(0);
         }

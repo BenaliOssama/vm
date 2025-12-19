@@ -48,7 +48,7 @@ pub fn run_inst(vm: &mut VirtualMachine, inst: Instruction) {
     for _ in 0..n_cycles {
         for process in &mut vm.processes {
             if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
+                process.fetch_decode(&mut vm.arena, vm.cycle_count);
             }
         }
         vm.cycle();

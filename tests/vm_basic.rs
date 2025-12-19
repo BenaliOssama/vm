@@ -504,7 +504,7 @@ fn sub() {
     for _ in 0..5 {
         for process in &mut vm.processes {
             if process.state() == State::NoInstruction {
-                process.fetch_decode(&mut vm.arena);
+                process.fetch_decode(&mut vm.arena, vm.cycle_count);
             }
         }
         vm.cycle();

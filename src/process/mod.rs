@@ -141,7 +141,7 @@ impl Process {
         }
     }
 
-    pub fn fetch_decode(&mut self, arena: &mut Arena) {
+    pub fn fetch_decode(&mut self, arena: &mut Arena, cycle: usize) {
         let opcode = arena.read(self.pc.get(), 1)[0];
         self.instction_pc = self.pc.get();
         self.pc.inc();
@@ -155,7 +155,10 @@ impl Process {
             }
             self.current_instruction = inst;
         } else {
-            //println!("{} not a valid instruction passing to the next", opcode);
+            eprintln!(
+                "cycle {}: Opcode {} is not a valid instruction",
+                cycle, opcode
+            );
         }
     }
     //Opcode ->
