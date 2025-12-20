@@ -52,9 +52,18 @@ impl VirtualMachine {
             }
             //self.simple_debug();
             //self.debug1();
-            self.cycle_logic();
+            let before = self.cycles_to_die;
+            let decreased = self.cycle_logic();
             self.cycle_count += 1;
             self.cycle();
+            // this is for convinience to look exactly like the reference vm giving.
+            // otherwise it is not important to do the printing before the cycle or after!
+            if decreased {
+                println!(
+                    "cycle {}: Cycles to die decreased: {} -> {}",
+                    self.cycle_count, before, self.cycles_to_die
+                );
+            }
             // debugging lines goew here
             //self.debug2();
         }
@@ -102,7 +111,8 @@ impl VirtualMachine {
             }
         }
     }
-    pub fn cycle_logic(&mut self) {
+    pub fn cycle_logic(&mut self) -> bool {
+        let mut decreased = false;
         // DO NOT increment cycle_count here
         self.cycles_since_check += 1;
 
@@ -115,23 +125,15 @@ impl VirtualMachine {
 
             // fix this one
             if nbr_lives >= NBR_LIVE {
-                let before = self.cycles_to_die;
                 self.cycles_to_die = self.cycles_to_die.saturating_sub(CYCLE_DELTA);
-                println!(
-                    "cycle {}: Cycles to die decreased: {} -> {}",
-                    self.cycle_count, before, self.cycles_to_die
-                );
+                decreased = true;
                 self.nbr_checks = 0;
             } else {
                 self.nbr_checks += 1;
                 // fix this one
                 if self.nbr_checks > MAX_CHECKS {
-                    let before = self.cycles_to_die;
                     self.cycles_to_die = self.cycles_to_die.saturating_sub(CYCLE_DELTA);
-                    println!(
-                        "cycle {}: Cycles to die decreased: {} -> {}",
-                        self.cycle_count, before, self.cycles_to_die
-                    );
+                    decreased = true;
                     self.nbr_checks = 0;
                 }
             }
@@ -141,6 +143,7 @@ impl VirtualMachine {
         // if self.cycles_to_die == 0 {
         //     os::exit(0);
         // }
+        return decreased;
     }
 
     fn debug1(&self) {

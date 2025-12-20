@@ -49,9 +49,9 @@ fn cycles_add() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
+            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
-            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
