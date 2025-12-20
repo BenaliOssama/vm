@@ -52,9 +52,9 @@ impl VirtualMachine {
             }
             //self.simple_debug();
             //self.debug1();
+            self.cycle_logic();
             self.cycle_count += 1;
             self.cycle();
-            self.cycle_logic();
             // debugging lines goew here
             //self.debug2();
         }
@@ -62,7 +62,8 @@ impl VirtualMachine {
             let winner = self.winners[0].clone(); //.unwrap();
             println!(
                 "cycle {}: The winner is player {}: {}!",
-                winner.live_status.last_live_cycle,
+                //winner.live_status.last_live_cycle,
+                self.cycle_count,
                 winner.live_status.player_id * -1,
                 winner.name
             );
@@ -112,6 +113,7 @@ impl VirtualMachine {
 
             let nbr_lives = self.read_nbr_lives();
 
+            // fix this one
             if nbr_lives >= NBR_LIVE {
                 let before = self.cycles_to_die;
                 self.cycles_to_die = self.cycles_to_die.saturating_sub(CYCLE_DELTA);
@@ -122,6 +124,7 @@ impl VirtualMachine {
                 self.nbr_checks = 0;
             } else {
                 self.nbr_checks += 1;
+                // fix this one
                 if self.nbr_checks > MAX_CHECKS {
                     let before = self.cycles_to_die;
                     self.cycles_to_die = self.cycles_to_die.saturating_sub(CYCLE_DELTA);
