@@ -4,7 +4,7 @@ mod common;
 use common::*;
 
 #[test]
-fn add_cycles() {
+fn cycles_add() {
     let mut vm = build_vm("pierino_add");
 
     // A list of checkpoints: (target_cycle, expected_cycles_to_die)
@@ -65,4 +65,215 @@ fn add_cycles() {
             target_cycle
         );
     }
+}
+
+#[test]
+#[ignore]
+fn cycles_crab() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_ldi_ind_reg() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_lldi_reg_reg_reg() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_sti_reg_reg_dir() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_empty_player() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_ldi_reg_dir() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_or_ind_ind() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_sti_reg_reg_reg() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_ldi_reg_reg() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_or_ind_reg() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_st_reg() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_and_ind_ind() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_ld() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_or_reg_ind() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_sub() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_and_ind_reg() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_lld_dir_reg() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_or_reg_reg() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_test() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_and_reg_ind() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_lldi_dir_dir_reg() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_pierino() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_xor_ind_ind() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_and_reg_reg() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_lldi_dir_reg_reg() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_st_ind() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_xor_ind_reg() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_fork() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_lldi_ind_dir_reg() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_sti_reg_dir_dir() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_xor_reg_ind() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_ldi_dir_dir() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_lldi_ind_reg_reg() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_sti_reg_dir_reg() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_xor_reg_reg() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_ldi_dir_reg() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_lld_ind_reg() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_sti_reg_ind_dir() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_zjmp() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_ldi_ind_dir() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_lldi_reg_dir_reg() {
+    todo!()
+}
+#[test]
+#[ignore]
+fn cycles_sti_reg_ind_reg() {
+    todo!()
 }

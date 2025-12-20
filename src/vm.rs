@@ -5,7 +5,7 @@ use crate::helper;
 use crate::player::Player;
 use crate::process::Process;
 use crate::*;
-use std::process as os;
+//use std::process as os;
 /*
 [X] create
 [ ] destroy
@@ -19,6 +19,7 @@ use std::process as os;
 pub struct VirtualMachine {
     pub arena: Arena,
     pub processes: Vec<Process>,
+    pub winners: Vec<Process>,
     pub cycle_count: usize,
     pub cycles_to_die: usize,
     nbr_checks: usize,
@@ -34,6 +35,7 @@ impl VirtualMachine {
             cycles_to_die: CYCLE_TO_DIE,
             nbr_checks: 0,
             cycles_since_check: 0,
+            winners: vec![],
         }
     }
 
@@ -55,6 +57,17 @@ impl VirtualMachine {
             self.cycle_logic();
             // debugging lines goew here
             //self.debug2();
+        }
+        if self.winners.len() == 1 {
+            let winner = self.winners[0].clone(); //.unwrap();
+            println!(
+                "cycle {}: The winner is player {}: {}!",
+                winner.live_status.last_live_cycle,
+                winner.live_status.player_id * -1,
+                winner.name
+            );
+        } else {
+            println!("cycle [{}]: draw ", self.cycle_count);
         }
     }
     pub fn cycle(&mut self) {
@@ -122,50 +135,51 @@ impl VirtualMachine {
 
             self.rest_nbr_lives();
         }
-        if self.cycles_to_die == 0 {
-            os::exit(0);
-        }
+        // if self.cycles_to_die == 0 {
+        //     os::exit(0);
+        // }
     }
 
     fn debug1(&self) {
-        // //println!(
-        //     "{} ",
-        //     green(
-        //         "------------------------------------------------------------------------------------"
-        //     )
-        // );
-        // println!(
-        //     "Cycle {} || Cycles before life check: {} || Cycles between checks: {}",
-        //     self.cycle_count,
-        //     0,
-        //     //self.cycle_to_die.checked_sub(self.cycle_count).unwrap_or(0),todo!
-        //     self.cycle_to_die
-        // );
+        println!(
+            "{} ",
+            green(
+                "------------------------------------------------------------------------------------"
+            )
+        );
+        println!(
+            "Cycle {} || Cycles before life check: {} || Cycles between checks: {}",
+            self.cycle_count + 1,
+            self.cycles_to_die
+                .checked_sub(self.cycle_count)
+                .unwrap_or(0),
+            self.cycles_to_die,
+        );
 
-        // //println!("Processes:");
-        // //println!("Id |Player Id |Pc   |Carry |Instr  |Wait |Registers");
-        // for p in self.processes.iter() {
-        //     let current_instruction_name: String = if p.state() == process::State::Ready {
-        //         "___".to_string()
-        //     } else {
-        //         p.current_instruction_name.clone()
-        //     };
-        //     //print!(
-        //         "{:>2} |{:>9} |{:>4} |{:5} |{:<6} |{:>4} | ",
-        //         p.id,
-        //         &p.player_id.to_string(),
-        //         &p.instction_pc.to_string(),
-        //         &p.carry.to_string(),
-        //         current_instruction_name,
-        //         &p.remaining_cycles.to_string()
-        //     );
+        //println!("Processes:");
+        //println!("Id |Player Id |Pc   |Carry |Instr  |Wait |Registers");
+        for p in self.processes.iter() {
+            let current_instruction_name: String = if p.state() == process::State::Ready {
+                "___".to_string()
+            } else {
+                p.current_instruction_name.clone()
+            };
+            print!(
+                "{:>2} |{:>9} |{:>4} |{:5} |{:<6} |{:>4} | ",
+                p.id,
+                &p.player_id.to_string(),
+                &p.instction_pc.to_string(),
+                &p.carry.to_string(),
+                current_instruction_name,
+                &p.remaining_cycles.to_string()
+            );
 
-        //     // Registers //print
-        //     for (i, reg) in p.registers.iter().enumerate() {
-        //         //print!("{}:{:x}  ", i + 1, reg);
-        //     }
-        //     //println!();
-        // }
+            // Registers //print
+            for (i, reg) in p.registers.iter().enumerate() {
+                print!("{}:{:x}  ", i + 1, reg);
+            }
+            println!();
+        }
     }
     fn debug2(&self) {
         //println!("Players:");
@@ -214,6 +228,7 @@ impl VirtualMachine {
     }
 
     fn check_lives(&mut self) {
+        self.winners = self.processes.clone();
         self.processes
             .retain(|process| process.live_status.executed);
         for process in &mut self.processes {
