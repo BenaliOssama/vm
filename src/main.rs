@@ -26,7 +26,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         );
     }
     let players_count = players.len();
-
+    println!("players_count : {}", players_count);
     // the loading process is done eagerly as old days
     // To understand how lazy loading of pieces of code and data works,
     // you’ll have to understand the machinery of paging and swapping,
@@ -35,19 +35,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         let process = Process::new(
             player.clone().id,
             player.name.clone(),
-            i + 1,
-            MEM_SIZE % players_count * i,
+            i,
+            (MEM_SIZE / players_count) * i,
         );
 
-        //println!("{}", players[i]);
-        ////println!("{}", process);
+        println!("{}", players[i]);
+        println!("{}", process);
         //////println!("{}", arena);
         processes.push(process)
     }
-
     let mut vm = VirtualMachine::create(arena.clone(), processes);
     for (i, player) in players.iter().enumerate() {
-        vm.load_player(player.clone(), MEM_SIZE % players_count * i);
+        vm.load_player(player.clone(), (MEM_SIZE / players_count) * i);
     }
     vm.run();
     Ok(())
