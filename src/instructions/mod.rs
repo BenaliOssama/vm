@@ -71,7 +71,7 @@ impl Instruction {
                 "Invalid parameter for live instruction {:?}",
                 self.parameters
             );
-        }
+        } 
         self.simple_debug(process, current_cyle);
         //println!("heeeey!!! i'm alive :) {}", process.live_status.player_id);
     }
@@ -160,19 +160,14 @@ impl Instruction {
                 return;
             }
         };
-        //println!("add : r{} ← r{} + r{}", reg3, reg1, reg2);
         let value = process.registers[reg1 - 1] + process.registers[reg2 - 1];
         process.registers[reg3 - 1] = value ;
-        ////println!("{}", process);
-        // --- Set the carry ---
         process.carry = value == 0;
     }
     fn sub(&self, process: &mut Process, _arena: &mut Arena) {
-        //println!("{}", blue("SUB"));
         let reg1 = match self.parameters[0] {
             Parameter::Register(r) => r,
             _ => {
-                //println!("Invalid second parameter for add");
                 return;
             }
         };
@@ -180,76 +175,52 @@ impl Instruction {
         let reg2 = match self.parameters[1] {
             Parameter::Register(r) => r,
             _ => {
-                //println!("Invalid second parameter for add");
                 return;
             }
         };
         let reg3 = match self.parameters[2] {
             Parameter::Register(r) => r,
             _ => {
-                //println!("Invalid second parameter for add");
                 return;
             }
         };
-        //println!("sub : r{} ← r{} - r{}", reg3, reg1, reg2);
         let value = process.registers[reg1 - 1] - process.registers[reg2 - 1];
         process.registers[reg3 - 1] = value ;
-        ////println!("{}", process);
-        // --- Set the carry ---
         process.carry = value == 0;
     }
 
     fn betwise(&self, process: &mut Process, arena: &mut Arena) {
-        let value1 = match self.parameters[0] {
-            Parameter::Direct(v) => v,
-            Parameter::Indirect(v) => helper::read_indirect(process, arena, self.opcode_addr, v),
-            Parameter::Register(v) => process.registers[v - 1],
+        
+        let p1 = &self.parameters[0];
+        let p2 = &self.parameters[1];
+        let p3 = &self.parameters[2];
+
+        // ---------- 1) Validate that the 3rd parameter is a register ----------
+        let reg = match p3 {
+            Parameter::Register(r) => *r,
             _ => {
-                //println!("Invalid first parameter for ld");
                 return;
             }
         };
-        let value2 = match self.parameters[1] {
-            Parameter::Direct(v) => v,
-            Parameter::Indirect(v) => helper::read_indirect(process, arena,self.opcode_addr, v),
-            Parameter::Register(v) => process.registers[v - 1],
-            _ => {
-                //println!("Invalid first parameter for ld");
-                return;
-            }
-        };
-        let reg = match self.parameters[2] {
-            Parameter::Register(r) => r,
-            _ => {
-                //println!("Invalid second parameter for ld");
-                return;
-            }
-        };
-        //println!("{} {} {} {}", red("debugging v1 v2 reg :"), value1,  value2 ,reg);
+        // ---------- 2) Resolve parameter values ----------
+        // ldi always applies IDX_MOD to its addressing
+        let value1 = helper::get_value(p1, process, arena, true); // apply IDX_MOD for INDIRECT
+        let value2 = helper::get_value(p2, process, arena, true);
+
         let result = match self.opcode {
             6 => {
-                //println!("{}", blue("AND"));
-                //println!("r{} <- {} AND {}", reg, value1, value2);
                 value1 & value2
             }
             7 => {
-                //println!("{}", blue("OR"));
-                //println!("r{} <- {} OR {}", reg, value1, value2);
                 value1 | value2
             }
             8 => {
-                //println!("{}", blue("XOR"));
-                //println!("values {} {}", value1, value2);
-                //println!("r{} <- {} XOR {}", reg, value1, value2);
-
                 value1 ^ value2
             }
             _ => return,
         };
-        ////println!("result of betwise {}", result);
         process.registers[reg - 1] = result;
         process.carry = result == 0;
-        ////println!("{}", process);
     }
 
     fn zjmp(&self, process: &mut Process, _arena: &mut Arena) {

@@ -49,9 +49,9 @@ fn cycles_add() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -72,12 +72,7 @@ fn cycles_crab() {
     let mut vm = build_vm("crab");
 
     // A list of checkpoints: (target_cycle, expected_cycles_to_die)
-    let checkpoints = vec![
-        (1, 1536),
-        (100, 1536),
-        (1000, 1536),
-        (3073, 1536),
-    ];
+    let checkpoints = vec![(1, 1536), (100, 1536), (1000, 1536), (3073, 1536)];
 
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
@@ -87,9 +82,9 @@ fn cycles_crab() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -150,9 +145,9 @@ fn cycles_ldi_ind_reg() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -213,9 +208,9 @@ fn cycles_lldi_reg_reg_reg() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -276,9 +271,9 @@ fn cycles_sti_reg_reg_dir() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -298,12 +293,7 @@ fn cycles_empty_player() {
     let mut vm = build_vm("empty_player");
 
     // A list of checkpoints: (target_cycle, expected_cycles_to_die)
-    let checkpoints = vec![
-        (1, 1536),
-        (100, 1536),
-        (1000, 1536),
-        (1536, 1536),
-    ];
+    let checkpoints = vec![(1, 1536), (100, 1536), (1000, 1536), (1536, 1536)];
 
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
@@ -313,9 +303,9 @@ fn cycles_empty_player() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -376,9 +366,9 @@ fn cycles_ldi_reg_dir() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -439,9 +429,9 @@ fn cycles_or_ind_ind() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -502,9 +492,9 @@ fn cycles_sti_reg_reg_reg() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -565,9 +555,9 @@ fn cycles_ldi_reg_reg() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -628,9 +618,9 @@ fn cycles_or_ind_reg() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -691,9 +681,9 @@ fn cycles_st_reg() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -754,9 +744,9 @@ fn cycles_and_ind_ind() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -817,9 +807,9 @@ fn cycles_ld() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -880,9 +870,9 @@ fn cycles_or_reg_ind() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -943,9 +933,9 @@ fn cycles_sub() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -1006,9 +996,9 @@ fn cycles_and_ind_reg() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -1069,9 +1059,9 @@ fn cycles_lld_dir_reg() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -1132,9 +1122,9 @@ fn cycles_or_reg_reg() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -1195,9 +1185,9 @@ fn cycles_test() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -1258,9 +1248,9 @@ fn cycles_and_reg_ind() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -1321,9 +1311,9 @@ fn cycles_lldi_dir_dir_reg() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -1343,6 +1333,7 @@ fn cycles_pierino() {
     let mut vm = build_vm("pierino");
 
     // A list of checkpoints: (target_cycle, expected_cycles_to_die)
+
     let checkpoints = vec![
         (1537, 1486),
         (3024, 1436),
@@ -1385,9 +1376,9 @@ fn cycles_pierino() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -1448,9 +1439,9 @@ fn cycles_xor_ind_ind() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -1511,9 +1502,9 @@ fn cycles_and_reg_reg() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -1574,9 +1565,9 @@ fn cycles_lldi_dir_reg_reg() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -1637,9 +1628,9 @@ fn cycles_st_ind() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -1700,9 +1691,9 @@ fn cycles_xor_ind_reg() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -1764,9 +1755,9 @@ fn cycles_fork() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -1827,9 +1818,9 @@ fn cycles_lldi_ind_dir_reg() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -1890,9 +1881,9 @@ fn cycles_sti_reg_dir_dir() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -1953,9 +1944,9 @@ fn cycles_xor_reg_ind() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -2016,9 +2007,9 @@ fn cycles_ldi_dir_dir() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -2079,9 +2070,9 @@ fn cycles_lldi_ind_reg_reg() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -2142,9 +2133,9 @@ fn cycles_sti_reg_dir_reg() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -2205,9 +2196,9 @@ fn cycles_xor_reg_reg() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -2268,9 +2259,9 @@ fn cycles_ldi_dir_reg() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -2331,9 +2322,9 @@ fn cycles_lld_ind_reg() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -2353,12 +2344,7 @@ fn cycles_sti_reg_ind_dir() {
     let mut vm = build_vm("pierino_sti_reg_ind_dir");
 
     // A list of checkpoints: (target_cycle, expected_cycles_to_die)
-    let checkpoints = vec![
-        (1, 1536),
-        (100, 1536),
-        (1000, 1536),
-        (3073, 1536),
-    ];
+    let checkpoints = vec![(1, 1536), (100, 1536), (1000, 1536), (3073, 1536)];
 
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
@@ -2368,9 +2354,9 @@ fn cycles_sti_reg_ind_dir() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -2390,12 +2376,7 @@ fn cycles_zjmp() {
     let mut vm = build_vm("zjmp");
 
     // A list of checkpoints: (target_cycle, expected_cycles_to_die)
-    let checkpoints = vec![
-        (1, 1536),
-        (100, 1536),
-        (1000, 1536),
-        (3073, 1536),
-    ];
+    let checkpoints = vec![(1, 1536), (100, 1536), (1000, 1536), (3073, 1536)];
 
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
@@ -2405,9 +2386,9 @@ fn cycles_zjmp() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -2468,9 +2449,9 @@ fn cycles_ldi_ind_dir() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -2531,9 +2512,9 @@ fn cycles_lldi_reg_dir_reg() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint
@@ -2553,12 +2534,7 @@ fn cycles_sti_reg_ind_reg() {
     let mut vm = build_vm("pierino_sti_reg_ind_reg");
 
     // A list of checkpoints: (target_cycle, expected_cycles_to_die)
-    let checkpoints = vec![
-        (1, 1536),
-        (100, 1536),
-        (1000, 1536),
-        (3073, 1536),
-    ];
+    let checkpoints = vec![(1, 1536), (100, 1536), (1000, 1536), (3073, 1536)];
 
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
@@ -2568,9 +2544,9 @@ fn cycles_sti_reg_ind_reg() {
                     process.fetch_decode(&mut vm.arena, vm.cycle_count);
                 }
             }
-            vm.cycle_logic();
             vm.cycle_count += 1;
             vm.cycle();
+            vm.cycle_logic();
         }
 
         // Assertions at the specific checkpoint

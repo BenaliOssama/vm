@@ -52,10 +52,10 @@ impl VirtualMachine {
             }
             //self.simple_debug();
             //self.debug1();
-            let before = self.cycles_to_die;
-            let decreased = self.cycle_logic();
             self.cycle_count += 1;
             self.cycle();
+            let before = self.cycles_to_die;
+            let decreased = self.cycle_logic();
             // this is for convinience to look exactly like the reference vm giving.
             // otherwise it is not important to do the printing before the cycle or after!
             if decreased {
@@ -123,14 +123,12 @@ impl VirtualMachine {
 
             let nbr_lives = self.read_nbr_lives();
 
-            // fix this one
             if nbr_lives >= NBR_LIVE {
                 self.cycles_to_die = self.cycles_to_die.saturating_sub(CYCLE_DELTA);
                 decreased = true;
                 self.nbr_checks = 0;
             } else {
                 self.nbr_checks += 1;
-                // fix this one
                 if self.nbr_checks > MAX_CHECKS {
                     self.cycles_to_die = self.cycles_to_die.saturating_sub(CYCLE_DELTA);
                     decreased = true;
@@ -219,7 +217,6 @@ impl VirtualMachine {
         let mut count = 0;
         for process in &mut self.processes {
             count += process.live_status.nbr_live;
-            //process.live_status.nbr_live = 0;
         }
         count
     }
