@@ -9,7 +9,7 @@ pub struct Player {
     pub comment: String,
     pub code: Vec<u8>,
     pub size: u32,
-    pub start_address: usize, // Where in the arena the player's code is loaded
+    //pub start_address: usize, // Where in the arena the player's code is loaded
 }
 
 impl Player {
@@ -27,7 +27,7 @@ impl Player {
             comment,
             code,
             size,
-            start_address,
+            //start_address,
         }
     }
 }
@@ -36,13 +36,13 @@ impl Display for Player {
     fn fmt(&self, _f: &mut Formatter<'_>) -> Result<(), std::fmt::Error> {
         // make a table
         let mut table = Table::new();
-        // add headers id, name, comment
+
         table.add_header("id");
         table.add_header("name");
         table.add_header("comment");
-        table.add_header("start address");
         table.add_header("size");
         table.add_header("code");
+
         // add rows
         let hex_string = self
             .code
@@ -54,11 +54,9 @@ impl Display for Player {
             self.id.to_string(),
             self.name.clone(),
             self.comment.clone(),
-            self.start_address.to_string(),
             self.size.to_string(),
             hex_string,
         ]);
-        ////println!("{table}");
 
         Ok(())
     }
