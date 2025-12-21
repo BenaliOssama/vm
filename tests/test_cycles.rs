@@ -50,8 +50,8 @@ fn cycles_add() {
                 }
             }
             vm.cycle_count += 1;
-            vm.cycle();
             vm.cycle_logic();
+            vm.cycle();
         }
 
         // Assertions at the specific checkpoint
@@ -65,6 +65,19 @@ fn cycles_add() {
             target_cycle
         );
     }
+    while vm.processes_alive() {
+        for process in &mut vm.processes {
+            if process.state() == process::State::NoInstruction {
+                process.fetch_decode(&mut vm.arena, vm.cycle_count);
+            }
+        }
+        vm.cycle_count += 1;
+        vm.cycle();
+        vm.cycle_logic();
+    }
+    assert_eq!(vm.cycle_count, 147778);
+    assert_eq!(vm.winners[0].live_status.player_id * -1, 1);
+    assert_eq!(vm.winners[0].name, "pierino");
 }
 
 #[test]

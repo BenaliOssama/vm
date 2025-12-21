@@ -53,9 +53,9 @@ impl VirtualMachine {
             //self.simple_debug();
             //self.debug1();
             self.cycle_count += 1;
+            let decreased = self.cycle_logic();
             self.cycle();
             let before = self.cycles_to_die;
-            let decreased = self.cycle_logic();
             // this is for convinience to look exactly like the reference vm giving.
             // otherwise it is not important to do the printing before the cycle or after!
             if decreased {
@@ -226,7 +226,7 @@ impl VirtualMachine {
             process.live_status.nbr_live = 0;
         }
     }
-    fn processes_alive(&self) -> bool {
+    pub fn processes_alive(&self) -> bool {
         self.processes.len() > 0
     }
 
