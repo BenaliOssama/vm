@@ -2,6 +2,7 @@
 use crate::arena::Arena;
 use crate::config::{CYCLE_DELTA, CYCLE_TO_DIE, MAX_CHECKS, NBR_LIVE};
 use crate::helper;
+use crate::instructions::VmAction;
 use crate::player::Player;
 use crate::process::Process;
 use crate::*;
@@ -19,7 +20,7 @@ use crate::*;
 pub struct VirtualMachine {
     pub arena: Arena,
     pub processes: Vec<Process>,
-    pub winners: Vec<Process>,
+    pub winners: Vec<i32>,
     pub cycle_count: usize,
     pub cycles_to_die: usize,
     nbr_checks: usize,
@@ -45,6 +46,14 @@ impl VirtualMachine {
         self.arena.write(i, &player.code);
     }
 
+    pub fn get_player(&self, id: i32) -> Option<String> {
+        for player in &self.players {
+            if player.id == id {
+                return Some(player.name.clone());
+            }
+        }
+        return None;
+    }
     pub fn run(&mut self) {
         while self.processes_alive() {
             for process in &mut self.processes {
@@ -55,9 +64,9 @@ impl VirtualMachine {
             //self.simple_debug();
             //self.debug1();
             self.cycle_count += 1;
+            let before = self.cycles_to_die;
             let decreased = self.cycle_logic();
             self.cycle();
-            let before = self.cycles_to_die;
             // this is for convinience to look exactly like the reference vm giving.
             // otherwise it is not important to do the printing before the cycle or after!
             if decreased {
@@ -69,49 +78,58 @@ impl VirtualMachine {
             // debugging lines goew here
             //self.debug2();
         }
-        if self.winners.len() == 1 {
-            let winner = self.winners[0].clone(); //.unwrap();
+
+        if self.winners.len() == 0 {
+            println!("cycle {}: Nobody wins!", self.cycle_count);
+        } else if self.winners.len() == 1 {
+            let winner = self.winners[0];
+            let name = match self.get_player(winner) {
+                Some(name) => name,
+                None => "___".into(),
+            };
             println!(
                 "cycle {}: The winner is player {}: {}!",
                 //winner.live_status.last_live_cycle,
                 self.cycle_count,
-                winner.live_status.player_id * -1,
-                winner.name
+                winner * -1,
+                name
             );
         } else {
             println!("cycle [{}]: draw ", self.cycle_count);
         }
     }
+    // fn simple_debug(&self, process: &mut Process, current_cyle: usize) {
+    // }
     pub fn cycle(&mut self) {
-        let mut child_process = vec![];
+        let mut new_processes = Vec::new();
         for process in &mut self.processes {
-            let ch = process.execute_cycle(&mut self.arena, self.cycle_count);
-            if ch.is_some() {
-                child_process.push(ch);
+            let action = process.execute_cycle(&mut self.arena, self.cycle_count);
+            match action {
+                VmAction::Fork { new_pc, use_idx } => {
+                    println!("12345");
+                    let mut new_process =
+                        process::Process::new(process.player_id, process.id, process.pc.get());
+                    new_process.pc.set(new_pc as usize, use_idx);
+                    new_process.current_instruction = None;
+                    new_processes.push(new_process);
+                }
+                VmAction::Live(id) => {
+                    let name = match get_playername(self.players.clone(), id) {
+                        Some(name) => name,
+                        None => "___".into(),
+                    };
+                    println!(
+                        "cycle {}: Player {} {} is alive",
+                        self.cycle_count,
+                        id * -1,
+                        name
+                    );
+                }
+                _ => {}
             }
         }
-
-        if !child_process.is_empty() {
-            for child in child_process {
-                let mut c = child.unwrap();
-                if c.current_instruction.is_none() {
-                    continue;
-                }
-                let value = helper::get_value(
-                    &c.current_instruction.clone().unwrap().parameters[0],
-                    &c,
-                    &self.arena,
-                    true,
-                );
-                if c.current_instruction.clone().unwrap().opcode == 15 {
-                    c.pc.set(value as usize, false);
-                } else {
-                    c.pc.set(value as usize, true);
-                }
-                c.current_instruction = None;
-                self.processes.push(c);
-            }
-        }
+        // Append all new processes at once after the loop
+        self.processes.extend(new_processes);
     }
     pub fn cycle_logic(&mut self) -> bool {
         let mut decreased = false;
@@ -233,19 +251,26 @@ impl VirtualMachine {
     }
 
     fn check_lives(&mut self) {
-        self.winners = self.processes.clone();
+        let mut winners = vec![];
+        for process in &self.processes {
+            if self.get_player(process.live_status.player_id).is_some() {
+                winners.push(process.live_status.player_id);
+            }
+        }
+        self.winners = winners;
         self.processes
             .retain(|process| process.live_status.executed);
         for process in &mut self.processes {
             process.live_status.executed = false;
         }
     }
-    pub fn get_player(&self, id: i32) -> Option<Player> {
-        for player in &self.players {
-            if player.id == id {
-                return Some(player.clone());
-            }
+}
+
+fn get_playername(players: Vec<Player>, id: i32) -> Option<String> {
+    for player in players {
+        if player.id == id {
+            return Some(player.name.clone());
         }
-        return None;
     }
+    return None;
 }

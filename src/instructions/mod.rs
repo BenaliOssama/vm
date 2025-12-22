@@ -17,6 +17,11 @@ pub enum Parameter {
     Indirect(i32),
     None,
 }
+pub  enum VmAction {
+    None,
+    Live(i32),
+    Fork  { new_pc: usize, use_idx: bool },
+}
 
 #[derive(Debug, Clone)]
 pub struct Instruction {
@@ -30,9 +35,12 @@ impl Instruction {
         Self { opcode, parameters, opcode_addr }
     }
 
-    pub fn execute(&self, process: &mut Process, arena: &mut Arena, current_cyle: usize) {
+    pub fn execute(&self, process: &mut Process, arena: &mut Arena, current_cyle: usize) -> VmAction {
         match self.opcode {
-            1 => self.live(process, arena, current_cyle),
+            1 => {
+                process.current_instruction = None;
+                return self.live(process, arena, current_cyle);
+            },
             2 => self.ld(process, arena),
             3 => self.st(process, arena),
             4 => self.add(process, arena),
@@ -41,22 +49,23 @@ impl Instruction {
             9 => self.zjmp(process, arena),
             10 => self.ldi(process, arena),
             11 => self.sti(process, arena),
-            12 => self.fork(process, arena),
+            12 => {
+                process.current_instruction = None;
+                return self.fork(process, arena);
+            }
             13 => self.lld(process, arena),
             14 => self.lldi(process, arena),
-            15 => self.lfork(process, arena),
+            15 => {
+                process.current_instruction = None;
+                return self.lfork(process, arena);
+            }
             16 => self.nop(process, arena),
             _ => panic!("Unknown instruction"),
         }
         process.current_instruction = None;
+        return VmAction::None;
     }
-    fn simple_debug(&self, process : &mut Process, current_cyle: usize) {
-            println!(
-                "cycle {}: Player {} {} is alive",
-                current_cyle, process.live_status.player_id * -1 , process.name
-            );
-    }
-    fn live(&self, process: &mut Process, _arena: &mut Arena,current_cyle: usize) {
+    fn live(&self, process: &mut Process, _arena: &mut Arena,current_cyle: usize) -> VmAction{
         //println!("{}", blue("LIVE"));
         // Implement live instruction
         process.live_status.executed = true;
@@ -64,14 +73,16 @@ impl Instruction {
         process.live_status.last_live_cycle = current_cyle;
         if let Parameter::Direct(player_id) = self.parameters[0] {
             process.live_status.player_id = player_id;
+            return VmAction::Live(player_id)
         } else {
             eprintln!(
                 "Invalid parameter for live instruction {:?}",
                 self.parameters
             );
         } 
-        self.simple_debug(process, current_cyle);
+        //self.simple_debug(process, current_cyle);
         //println!("heeeey!!! i'm alive :) {}", process.live_status.player_id);
+        return VmAction::None;
     }
     fn ld(&self, process: &mut Process, arena: &mut Arena) {
         //println!("{}", blue("LD"));
@@ -351,13 +362,13 @@ impl Instruction {
         ////println!("{}", arena);
     }
 
-    fn fork(&self, process: &mut Process, _arena: &mut Arena) {
+    fn fork(&self, process: &mut Process, _arena: &mut Arena) -> VmAction {
         // //println!("{}", blue("FORK"));
         // let mut new_process = process.clone();
         // new_process.pc.add(100);
         
         // // now edit this process
-        todo!()
+        return VmAction::Fork { new_pc: 0, use_idx: false };
     }
 
     fn lld(&self, process: &mut Process, arena: &mut Arena) {
@@ -442,9 +453,10 @@ impl Instruction {
         process.carry = if value == 0 { true } else { false }; // LDI updates carry!
     }
 
-    fn lfork(&self, _process: &mut Process, _arena: &mut Arena) {
+    fn lfork(&self, _process: &mut Process, _arena: &mut Arena) -> VmAction{
         // //println!("{}", blue("LFORK"));
         // todo!()
+        return VmAction::Fork { new_pc: 0, use_idx: false };
     }
 
     fn nop(&self, _process: &mut Process, _arena: &mut Arena) {

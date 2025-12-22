@@ -32,12 +32,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // you’ll have to understand the machinery of paging and swapping,
     let mut processes = vec![];
     for (i, player) in players.clone().iter().enumerate() {
-        let process = Process::new(
-            player.clone().id,
-            player.name.clone(),
-            i,
-            (MEM_SIZE / players_count) * i,
-        );
+        let process = Process::new(player.clone().id, i, (MEM_SIZE / players_count) * i);
 
         println!("{}", players[i]);
         println!("{}", process);

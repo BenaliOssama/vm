@@ -179,25 +179,7 @@ impl Process {
                 ////println!("executing...");
                 ////println!("instruction {:?}", self.current_instruction);
                 let current_inst = self.current_instruction.clone().take().unwrap();
-                child = match current_inst.opcode {
-                    // 12 | 15 => {
-                    //     //println!("{}", red("FORK"));
-
-                    //     // in this case we should for the process
-                    //     // use v
-                    //     // //println!("the process we are forking should have {:?}", self);
-                    //     let save = self.clone();
-                    //     self.current_instruction = None;
-                    //     //Some(save)
-                    //     instructions::VmAction::Fork {
-                    //         new_pc: self.pc.get(),
-                    //     }
-                    // }
-                    _ => {
-                        current_inst.execute(self, arena, current_cycle);
-                        instructions::VmAction::None
-                    }
-                };
+                return current_inst.execute(self, arena, current_cycle);
             }
             State::NoInstruction => {
                 //println!("should not try to execute an process with empty instruction");
