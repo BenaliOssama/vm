@@ -20,7 +20,7 @@ pub enum Parameter {
 pub  enum VmAction {
     None,
     Live(i32),
-    Fork  { new_pc: usize, use_idx: bool },
+    Fork  { new_pc: i32 , use_idx: bool },
 }
 
 #[derive(Debug, Clone)]
@@ -362,13 +362,24 @@ impl Instruction {
         ////println!("{}", arena);
     }
 
-    fn fork(&self, process: &mut Process, _arena: &mut Arena) -> VmAction {
+    fn fork(&self, process: &mut Process, arena: &mut Arena) -> VmAction {
         // //println!("{}", blue("FORK"));
         // let mut new_process = process.clone();
         // new_process.pc.add(100);
-        
+                // //println!("{}", blue("FORK"));
+        // let mut new_process = process.clone();
+        // new_process.pc.add(100);
+
+        let p1 = &self.parameters[0];
+
+                       let value = helper::get_value(
+                        p1,
+                    &process,
+                    arena,
+                    true,
+                ); 
         // // now edit this process
-        return VmAction::Fork { new_pc: 0, use_idx: false };
+        return VmAction::Fork { new_pc: value, use_idx: true };
     }
 
     fn lld(&self, process: &mut Process, arena: &mut Arena) {
@@ -453,10 +464,18 @@ impl Instruction {
         process.carry = if value == 0 { true } else { false }; // LDI updates carry!
     }
 
-    fn lfork(&self, _process: &mut Process, _arena: &mut Arena) -> VmAction{
-        // //println!("{}", blue("LFORK"));
-        // todo!()
-        return VmAction::Fork { new_pc: 0, use_idx: false };
+    fn lfork(&self, process: &mut Process, arena: &mut Arena) -> VmAction{ // //println!("{}", blue("LFORK")); // todo!() let p1 = &self.parameters[0];
+        let p1 = &self.parameters[0];
+
+
+                       let value = helper::get_value(
+                        p1,
+                    &process,
+                    arena,
+                    true,
+                ); 
+        // // now edit this process
+        return VmAction::Fork { new_pc: value, use_idx: false };
     }
 
     fn nop(&self, _process: &mut Process, _arena: &mut Arena) {

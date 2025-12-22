@@ -6,6 +6,8 @@ use crate::instructions::VmAction;
 use crate::player::Player;
 use crate::process::Process;
 use crate::*;
+use std::collections::HashSet;
+use std::hash::Hash;
 //use std::process as os;
 /*
 [X] create
@@ -20,7 +22,7 @@ use crate::*;
 pub struct VirtualMachine {
     pub arena: Arena,
     pub processes: Vec<Process>,
-    pub winners: Vec<i32>,
+    pub winners: HashSet<i32>,
     pub cycle_count: usize,
     pub cycles_to_die: usize,
     nbr_checks: usize,
@@ -37,7 +39,7 @@ impl VirtualMachine {
             cycles_to_die: CYCLE_TO_DIE,
             nbr_checks: 0,
             cycles_since_check: 0,
-            winners: vec![],
+            winners: HashSet::new(),
             players: players,
         }
     }
@@ -79,10 +81,11 @@ impl VirtualMachine {
             //self.debug2();
         }
 
-        if self.winners.len() == 0 {
+        if self.winners.len() != 1 {
             println!("cycle {}: Nobody wins!", self.cycle_count);
-        } else if self.winners.len() == 1 {
-            let winner = self.winners[0];
+        } else {
+            let winner = *self.winners.iter().next().unwrap();
+
             let name = match self.get_player(winner) {
                 Some(name) => name,
                 None => "___".into(),
@@ -94,8 +97,6 @@ impl VirtualMachine {
                 winner * -1,
                 name
             );
-        } else {
-            println!("cycle [{}]: draw ", self.cycle_count);
         }
     }
     // fn simple_debug(&self, process: &mut Process, current_cyle: usize) {
@@ -106,7 +107,6 @@ impl VirtualMachine {
             let action = process.execute_cycle(&mut self.arena, self.cycle_count);
             match action {
                 VmAction::Fork { new_pc, use_idx } => {
-                    println!("12345");
                     let mut new_process =
                         process::Process::new(process.player_id, process.id, process.pc.get());
                     new_process.pc.set(new_pc as usize, use_idx);
@@ -251,10 +251,10 @@ impl VirtualMachine {
     }
 
     fn check_lives(&mut self) {
-        let mut winners = vec![];
+        let mut winners = HashSet::new();
         for process in &self.processes {
             if self.get_player(process.live_status.player_id).is_some() {
-                winners.push(process.live_status.player_id);
+                winners.insert(process.live_status.player_id);
             }
         }
         self.winners = winners;

@@ -72,12 +72,15 @@ fn cycles_add() {
             }
         }
         vm.cycle_count += 1;
-        vm.cycle();
         vm.cycle_logic();
+        vm.cycle();
     }
     assert_eq!(vm.cycle_count, 147778);
-    assert_eq!(vm.winners[0] * -1, 1);
-    assert_eq!(&vm.get_player(vm.winners[0]).unwrap(), "pierino add");
+    assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
+    assert_eq!(
+        &vm.get_player(*vm.winners.iter().next().unwrap()).unwrap(),
+        "pierino add"
+    );
 }
 
 #[test]
@@ -118,12 +121,15 @@ fn cycles_crab() {
             }
         }
         vm.cycle_count += 1;
-        vm.cycle();
         vm.cycle_logic();
+        vm.cycle();
     }
     assert_eq!(vm.cycle_count, 3074);
-    assert_eq!(vm.winners[0] * -1, 1);
-    assert_eq!(&vm.get_player(vm.winners[0]).unwrap(), "walker");
+    assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
+    assert_eq!(
+        &vm.get_player(*vm.winners.iter().next().unwrap()).unwrap(),
+        "walker"
+    );
 }
 #[test]
 fn cycles_ldi_ind_reg() {
@@ -194,12 +200,15 @@ fn cycles_ldi_ind_reg() {
             }
         }
         vm.cycle_count += 1;
-        vm.cycle();
         vm.cycle_logic();
+        vm.cycle();
     }
     assert_eq!(vm.cycle_count, 196221);
-    assert_eq!(vm.winners[0] * -1, 1);
-    assert_eq!(&vm.get_player(vm.winners[0]).unwrap(), "pierino");
+    assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
+    assert_eq!(
+        &vm.get_player(*vm.winners.iter().next().unwrap()).unwrap(),
+        "pierino"
+    );
 }
 #[test]
 fn cycles_lldi_reg_reg_reg() {
@@ -270,12 +279,15 @@ fn cycles_lldi_reg_reg_reg() {
             }
         }
         vm.cycle_count += 1;
-        vm.cycle();
         vm.cycle_logic();
+        vm.cycle();
     }
     assert_eq!(vm.cycle_count, 267997);
-    assert_eq!(vm.winners[0] * -1, 1);
-    assert_eq!(&vm.get_player(vm.winners[0]).unwrap(), "pierino");
+    assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
+    assert_eq!(
+        &vm.get_player(*vm.winners.iter().next().unwrap()).unwrap(),
+        "pierino"
+    );
 }
 #[test]
 fn cycles_sti_reg_reg_dir() {
@@ -346,12 +358,15 @@ fn cycles_sti_reg_reg_dir() {
             }
         }
         vm.cycle_count += 1;
-        vm.cycle();
         vm.cycle_logic();
+        vm.cycle();
     }
     assert_eq!(vm.cycle_count, 196221);
-    assert_eq!(vm.winners[0] * -1, 1);
-    assert_eq!(&vm.get_player(vm.winners[0]).unwrap(), "pierino");
+    assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
+    assert_eq!(
+        &vm.get_player(*vm.winners.iter().next().unwrap()).unwrap(),
+        "pierino"
+    );
 }
 #[test]
 fn cycles_empty_player() {
@@ -391,8 +406,8 @@ fn cycles_empty_player() {
             }
         }
         vm.cycle_count += 1;
-        vm.cycle();
         vm.cycle_logic();
+        vm.cycle();
     }
     assert_eq!(vm.cycle_count, 1537);
     assert!(vm.winners.is_empty());
@@ -466,12 +481,15 @@ fn cycles_ldi_reg_dir() {
             }
         }
         vm.cycle_count += 1;
-        vm.cycle();
         vm.cycle_logic();
+        vm.cycle();
     }
     assert_eq!(vm.cycle_count, 196221);
-    assert_eq!(vm.winners[0] * -1, 1);
-    assert_eq!(&vm.get_player(vm.winners[0]).unwrap(), "pierino");
+    assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
+    assert_eq!(
+        &vm.get_player(*vm.winners.iter().next().unwrap()).unwrap(),
+        "pierino"
+    );
 }
 #[test]
 fn cycles_or_ind_ind() {
@@ -542,12 +560,15 @@ fn cycles_or_ind_ind() {
             }
         }
         vm.cycle_count += 1;
-        vm.cycle();
         vm.cycle_logic();
+        vm.cycle();
     }
     assert_eq!(vm.cycle_count, 90169);
-    assert_eq!(vm.winners[0] * -1, 1);
-    assert_eq!(&vm.get_player(vm.winners[0]).unwrap(), "pierino");
+    assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
+    assert_eq!(
+        &vm.get_player(*vm.winners.iter().next().unwrap()).unwrap(),
+        "pierino"
+    );
 }
 #[test]
 fn cycles_sti_reg_reg_reg() {
@@ -618,12 +639,15 @@ fn cycles_sti_reg_reg_reg() {
             }
         }
         vm.cycle_count += 1;
-        vm.cycle();
         vm.cycle_logic();
+        vm.cycle();
     }
     assert_eq!(vm.cycle_count, 196221);
-    assert_eq!(vm.winners[0] * -1, 1);
-    assert_eq!(&vm.get_player(vm.winners[0]).unwrap(), "pierino");
+    assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
+    assert_eq!(
+        &vm.get_player(*vm.winners.iter().next().unwrap()).unwrap(),
+        "pierino"
+    );
 }
 #[test]
 fn cycles_ldi_reg_reg() {
@@ -2083,12 +2107,15 @@ fn cycles_xor_reg_ind() {
             }
         }
         vm.cycle_count += 1;
-        vm.cycle();
         vm.cycle_logic();
+        vm.cycle();
     }
     assert_eq!(vm.cycle_count, 90169);
-    assert_eq!(vm.winners[0] * -1, 1);
-    assert_eq!(&vm.get_player(vm.winners[0]).unwrap(), "pierino");
+    assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
+    assert_eq!(
+        &vm.get_player(*vm.winners.iter().next().unwrap()).unwrap(),
+        "pierino"
+    );
 }
 #[test]
 fn cycles_ldi_dir_dir() {
@@ -2159,12 +2186,15 @@ fn cycles_ldi_dir_dir() {
             }
         }
         vm.cycle_count += 1;
-        vm.cycle();
         vm.cycle_logic();
+        vm.cycle();
     }
     assert_eq!(vm.cycle_count, 172144);
-    assert_eq!(vm.winners[0] * -1, 1);
-    assert_eq!(&vm.get_player(vm.winners[0]).unwrap(), "pierino");
+    assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
+    assert_eq!(
+        &vm.get_player(*vm.winners.iter().next().unwrap()).unwrap(),
+        "pierino"
+    );
 }
 #[test]
 fn cycles_lldi_ind_reg_reg() {
@@ -2235,12 +2265,15 @@ fn cycles_lldi_ind_reg_reg() {
             }
         }
         vm.cycle_count += 1;
-        vm.cycle();
         vm.cycle_logic();
+        vm.cycle();
     }
     assert_eq!(vm.cycle_count, 267997);
-    assert_eq!(vm.winners[0] * -1, 1);
-    assert_eq!(&vm.get_player(vm.winners[0]).unwrap(), "pierino");
+    assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
+    assert_eq!(
+        &vm.get_player(*vm.winners.iter().next().unwrap()).unwrap(),
+        "pierino"
+    );
 }
 #[test]
 fn cycles_sti_reg_dir_reg() {
@@ -2311,12 +2344,15 @@ fn cycles_sti_reg_dir_reg() {
             }
         }
         vm.cycle_count += 1;
-        vm.cycle();
         vm.cycle_logic();
+        vm.cycle();
     }
     assert_eq!(vm.cycle_count, 196221);
-    assert_eq!(vm.winners[0] * -1, 1);
-    assert_eq!(&vm.get_player(vm.winners[0]).unwrap(), "pierino");
+    assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
+    assert_eq!(
+        &vm.get_player(*vm.winners.iter().next().unwrap()).unwrap(),
+        "pierino"
+    );
 }
 #[test]
 fn cycles_xor_reg_reg() {
