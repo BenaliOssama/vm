@@ -1,4 +1,4 @@
-.name "pierino"
+.name "pierino add"
 .description "stay alive"
 
 a:	live %-1

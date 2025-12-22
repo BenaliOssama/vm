@@ -77,7 +77,7 @@ fn cycles_add() {
     }
     assert_eq!(vm.cycle_count, 147778);
     assert_eq!(vm.winners[0].live_status.player_id * -1, 1);
-    assert_eq!(vm.winners[0].name, "pierino");
+    assert_eq!(vm.winners[0].name, "pierino add");
 }
 
 #[test]

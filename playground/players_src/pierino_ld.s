@@ -1,7 +1,7 @@
-.name "pierino"
-.description "stay alive"
+.name "pierino ld"
+.description "stay alive ld"
 
-a:	live %-1
+a:	live %-2
     ld %517, r2
     
     # after this instruciton, r2 should be 290 in hex notation

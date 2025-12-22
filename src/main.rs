@@ -44,7 +44,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         //////println!("{}", arena);
         processes.push(process)
     }
-    let mut vm = VirtualMachine::create(arena.clone(), processes);
+    let mut vm = VirtualMachine::create(arena.clone(), processes, players.clone());
     for (i, player) in players.iter().enumerate() {
         vm.load_player(player.clone(), (MEM_SIZE / players_count) * i);
     }

@@ -33,8 +33,6 @@ impl Instruction {
     pub fn execute(&self, process: &mut Process, arena: &mut Arena, current_cyle: usize) {
         match self.opcode {
             1 => self.live(process, arena, current_cyle),
-            // 0x02 => self.ld(process, arena),
-            // // ... other instructions
             2 => self.ld(process, arena),
             3 => self.st(process, arena),
             4 => self.add(process, arena),
@@ -55,7 +53,7 @@ impl Instruction {
     fn simple_debug(&self, process : &mut Process, current_cyle: usize) {
             println!(
                 "cycle {}: Player {} {} is alive",
-                current_cyle, process.id + 1, process.name
+                current_cyle, process.live_status.player_id * -1 , process.name
             );
     }
     fn live(&self, process: &mut Process, _arena: &mut Arena,current_cyle: usize) {

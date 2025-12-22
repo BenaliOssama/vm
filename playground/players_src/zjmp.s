@@ -1,4 +1,4 @@
-.name "zjmp_test"
+.name "zjmp_test hahahahaha"
 .description "tests forward and backward zjmp"
 
 # Start with some initial instructions

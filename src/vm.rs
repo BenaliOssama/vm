@@ -24,10 +24,11 @@ pub struct VirtualMachine {
     pub cycles_to_die: usize,
     nbr_checks: usize,
     cycles_since_check: usize,
+    pub players: Vec<Player>,
 }
 
 impl VirtualMachine {
-    pub fn create(arena: Arena, processes: Vec<Process>) -> Self {
+    pub fn create(arena: Arena, processes: Vec<Process>, players: Vec<Player>) -> Self {
         Self {
             arena,
             processes,
@@ -36,6 +37,7 @@ impl VirtualMachine {
             nbr_checks: 0,
             cycles_since_check: 0,
             winners: vec![],
+            players: players,
         }
     }
 
@@ -237,5 +239,13 @@ impl VirtualMachine {
         for process in &mut self.processes {
             process.live_status.executed = false;
         }
+    }
+    pub fn get_player(&self, id: i32) -> Option<Player> {
+        for player in &self.players {
+            if player.id == id {
+                return Some(player.clone());
+            }
+        }
+        return None;
     }
 }
