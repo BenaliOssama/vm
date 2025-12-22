@@ -7,8 +7,6 @@ use crate::counter::PC;
 use crate::instructions::*;
 use crate::*;
 
-use std::{thread, time::Duration};
-
 // process.rs
 // https://www.geeksforgeeks.org/operating-systems/process-in-operating-system/
 // https://www.geeksforgeeks.org/operating-systems/process-control-block-in-os/
@@ -94,7 +92,7 @@ struct trapframe *tf;
 };*/
 #[derive(Debug, Clone)]
 pub struct Process {
-    pub name: String,
+    //pub name: String,
     pub id: usize,
     pub player_id: i32,
     pub pc: PC, // Program Counter
@@ -108,9 +106,9 @@ pub struct Process {
 }
 
 impl Process {
-    pub fn new(player_id: i32, name: String, id: usize, pc: usize) -> Self {
+    pub fn new(player_id: i32, id: usize, pc: usize) -> Self {
         let mut pro = Self {
-            name: name,
+            //name: name,
             id: id,
             player_id: player_id * -1,
             pc: PC::new(pc),
@@ -166,8 +164,12 @@ impl Process {
     // https://corewar-docs.readthedocs.io/en/latest/redcode/parser/
     // work on decoding an instruction
     // [Opcode] [Pcode?] [Param1] [Param2] [Param3]
-    pub fn execute_cycle(&mut self, arena: &mut Arena, current_cycle: usize) -> Option<Process> {
-        let mut child: Option<Process> = None;
+    pub fn execute_cycle(
+        &mut self,
+        arena: &mut Arena,
+        current_cycle: usize,
+    ) -> instructions::VmAction /*Option<Process>*/ {
+        let mut child: instructions::VmAction = instructions::VmAction::None;
         match self.state() {
             State::Waiting => {
                 ////println!("waiting...");
@@ -178,19 +180,22 @@ impl Process {
                 ////println!("instruction {:?}", self.current_instruction);
                 let current_inst = self.current_instruction.clone().take().unwrap();
                 child = match current_inst.opcode {
-                    12 | 15 => {
-                        //println!("{}", red("FORK"));
+                    // 12 | 15 => {
+                    //     //println!("{}", red("FORK"));
 
-                        // in this case we should for the process
-                        // use v
-                        // //println!("the process we are forking should have {:?}", self);
-                        let save = self.clone();
-                        self.current_instruction = None;
-                        Some(save)
-                    }
+                    //     // in this case we should for the process
+                    //     // use v
+                    //     // //println!("the process we are forking should have {:?}", self);
+                    //     let save = self.clone();
+                    //     self.current_instruction = None;
+                    //     //Some(save)
+                    //     instructions::VmAction::Fork {
+                    //         new_pc: self.pc.get(),
+                    //     }
+                    // }
                     _ => {
                         current_inst.execute(self, arena, current_cycle);
-                        None
+                        instructions::VmAction::None
                     }
                 };
             }
