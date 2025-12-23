@@ -59,7 +59,7 @@ pub fn build_vm(file_name: &str) -> VirtualMachine {
 
     let args = vec!["vm".to_string(), path];
 
-    let players = parse_arguments(args).expect("parse failed");
+    let (players, _, _) = parse_arguments(args).expect("parse failed");
     let player = players[0].clone();
 
     let arena = Arena::new();
@@ -85,7 +85,7 @@ pub fn build_vm_more(file_names: Vec<&str>) -> VirtualMachine {
         .collect();
 
     // Parse players from arguments
-    let players = parse_arguments(args).expect("parse failed");
+    let (players, _, _) = parse_arguments(args).expect("parse failed");
     let players_count = players.len();
     // Create arena
     let arena = Arena::new();

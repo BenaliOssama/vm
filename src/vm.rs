@@ -57,14 +57,19 @@ impl VirtualMachine {
         return None;
     }
     pub fn run(&mut self) {
+        // let mut c = 0;
         while self.processes_alive() {
+            // if c == 1 {
+            //     break;
+            // }
+            // c += 1;
             for process in &mut self.processes {
                 if process.state() == process::State::NoInstruction {
                     process.fetch_decode(&mut self.arena, self.cycle_count);
                 }
             }
             //self.simple_debug();
-            //self.debug1();
+            self.debug1();
             self.cycle_count += 1;
             let before = self.cycles_to_die;
             let decreased = self.cycle_logic();
@@ -91,7 +96,7 @@ impl VirtualMachine {
                 None => "___".into(),
             };
             println!(
-                "cycle {}: The winner is player {}: {}!",
+                "cycle {}: The winner is player ({}): {}!",
                 //winner.live_status.last_live_cycle,
                 self.cycle_count,
                 winner * -1,
@@ -181,8 +186,8 @@ impl VirtualMachine {
         println!(
             "Cycle {} || Cycles before life check: {} || Cycles between checks: {}",
             self.cycle_count + 1,
-            self.cycles_to_die
-                .checked_sub(self.cycle_count)
+            self.cycles_since_check
+                .checked_sub(self.cycles_to_die)
                 .unwrap_or(0),
             self.cycles_to_die,
         );

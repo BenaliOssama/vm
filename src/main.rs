@@ -13,7 +13,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let arena = Arena::new();
 
-    let players = parse_arguments(args)?;
+    let (players, cycles_to_stop, verbos) = parse_arguments(args)?;
 
     println!("For this match the players will be:");
     for (i, player) in players.iter().enumerate() {
@@ -26,7 +26,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         );
     }
     let players_count = players.len();
-    println!("players_count : {}", players_count);
     // the loading process is done eagerly as old days
     // To understand how lazy loading of pieces of code and data works,
     // you’ll have to understand the machinery of paging and swapping,
@@ -34,8 +33,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     for (i, player) in players.clone().iter().enumerate() {
         let process = Process::new(player.clone().id, i, (MEM_SIZE / players_count) * i);
 
-        println!("{}", players[i]);
-        println!("{}", process);
+        // println!("{}", players[i]);
+        // println!("{}", process);
         //////println!("{}", arena);
         processes.push(process)
     }
