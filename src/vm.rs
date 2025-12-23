@@ -72,6 +72,7 @@ impl VirtualMachine {
             for process in &mut self.processes {
                 if process.state() == process::State::NoInstruction {
                     process.fetch_decode(&mut self.arena, self.cycle_count);
+                    
                 }
             }
             //self.simple_debug();
@@ -88,7 +89,7 @@ impl VirtualMachine {
                 );
             }
             // debugging lines goew here
-            //self.debug2();
+            self.debug2();
         }
 
         if self.winners.len() != 1 {
@@ -191,8 +192,8 @@ impl VirtualMachine {
         println!(
             "Cycle {} || Cycles before life check: {} || Cycles between checks: {}",
             self.cycle_count,
+            self.cycles_to_die - self.cycle_count,
             self.cycles_to_die,
-            before - self.cycles_to_die,
         );
 
         //println!("Processes:");
