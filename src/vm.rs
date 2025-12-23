@@ -28,10 +28,16 @@ pub struct VirtualMachine {
     nbr_checks: usize,
     cycles_since_check: usize,
     pub players: Vec<Player>,
+    cycles_to_stop: i32,
 }
 
 impl VirtualMachine {
-    pub fn create(arena: Arena, processes: Vec<Process>, players: Vec<Player>) -> Self {
+    pub fn create(
+        arena: Arena,
+        processes: Vec<Process>,
+        players: Vec<Player>,
+        cycles_to_stop: i32,
+    ) -> Self {
         Self {
             arena,
             processes,
@@ -41,6 +47,7 @@ impl VirtualMachine {
             cycles_since_check: 0,
             winners: HashSet::new(),
             players: players,
+            cycles_to_stop: cycles_to_stop,
         }
     }
 
@@ -57,22 +64,20 @@ impl VirtualMachine {
         return None;
     }
     pub fn run(&mut self) {
-        // let mut c = 0;
         while self.processes_alive() {
-            // if c == 1 {
-            //     break;
-            // }
-            // c += 1;
+            self.cycle_count += 1;
+            if self.cycle_count as i32 >= self.cycles_to_stop {
+                break;
+            }
             for process in &mut self.processes {
                 if process.state() == process::State::NoInstruction {
                     process.fetch_decode(&mut self.arena, self.cycle_count);
                 }
             }
             //self.simple_debug();
-            self.debug1();
-            self.cycle_count += 1;
             let before = self.cycles_to_die;
             let decreased = self.cycle_logic();
+            self.debug1(before);
             self.cycle();
             // this is for convinience to look exactly like the reference vm giving.
             // otherwise it is not important to do the printing before the cycle or after!
@@ -176,7 +181,7 @@ impl VirtualMachine {
         return decreased;
     }
 
-    fn debug1(&self) {
+    fn debug1(&self, before: usize) {
         println!(
             "{} ",
             green(
@@ -185,11 +190,9 @@ impl VirtualMachine {
         );
         println!(
             "Cycle {} || Cycles before life check: {} || Cycles between checks: {}",
-            self.cycle_count + 1,
-            self.cycles_since_check
-                .checked_sub(self.cycles_to_die)
-                .unwrap_or(0),
+            self.cycle_count,
             self.cycles_to_die,
+            before - self.cycles_to_die,
         );
 
         //println!("Processes:");
