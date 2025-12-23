@@ -67,8 +67,8 @@ impl VirtualMachine {
             //self.debug1();
             self.cycle_count += 1;
             let before = self.cycles_to_die;
-            self.cycle();
             let decreased = self.cycle_logic();
+            self.cycle();
             // this is for convinience to look exactly like the reference vm giving.
             // otherwise it is not important to do the printing before the cycle or after!
             if decreased {
