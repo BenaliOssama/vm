@@ -205,15 +205,15 @@ impl Instruction {
 
         // ---------- 1) Validate that the 3rd parameter is a register ----------
         let reg = match p3 {
-            Parameter::Register(r) => *r,
+            Parameter::Register(r) => *r -1 ,
             _ => {
                 return;
             }
         };
         // ---------- 2) Resolve parameter values ----------
         // ldi always applies IDX_MOD to its addressing
-        let value1 = helper::get_value(p1, process, arena, true); // apply IDX_MOD for INDIRECT
-        let value2 = helper::get_value(p2, process, arena, true);
+        let value1 = helper::get_value(p1, process, arena, false);
+        let value2 = helper::get_value(p2, process, arena, false);
 
         let result = match self.opcode {
             6 => {
@@ -227,7 +227,7 @@ impl Instruction {
             }
             _ => return,
         };
-        process.registers[reg - 1] = result;
+        process.registers[reg] = result;
         process.carry = result == 0;
     }
 
@@ -281,8 +281,8 @@ impl Instruction {
         };
         // ---------- 2) Resolve parameter values ----------
         // ldi always applies IDX_MOD to its addressing
-        let val1 = helper::get_value(p1, process, arena, true); // apply IDX_MOD for INDIRECT
-        let val2 = helper::get_value(p2, process, arena, true);
+        let val1 = helper::get_value(p1, process, arena,false); // apply IDX_MOD for INDIRECT
+        let val2 = helper::get_value(p2, process, arena, false);
 
         // ---------- 3) Compute address offset ----------
         let sum = val1 + val2;

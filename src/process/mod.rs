@@ -120,7 +120,7 @@ impl Process {
             carry: false,
             live_status: LiveStatus {
                 executed: false,
-                player_id: 0,
+                player_id: player_id * -1, // Initialize with the process's actual player_id
                 nbr_live: 0,
                 last_live_cycle: 0,
             },

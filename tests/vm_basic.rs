@@ -782,6 +782,36 @@ fn xor_reg_reg() {
     run_inst(&mut vm, Zjmp);
     assert_eq!(vm.processes[0].registers[2 - 1], 0);
     assert_eq!(vm.processes[0].pc.get(), 0);
+
+    run_inst(&mut vm, Live);
+    assert_eq!(vm.processes[0].live_status.executed, true);
+    assert_eq!(vm.processes[0].live_status.player_id, -1);
+    assert_eq!(vm.processes[0].live_status.nbr_live, 1);
+    // ld
+    run_inst(&mut vm, Ld);
+    //xor 6
+    run_inst(&mut vm, Xor);
+    assert_eq!(vm.processes[0].registers[3 - 1], -17);
+    run_inst(&mut vm, Ld);
+    //ld 5 zjmp 20
+    run_inst(&mut vm, Zjmp);
+    assert_eq!(vm.processes[0].registers[2 - 1], 0);
+    assert_eq!(vm.processes[0].pc.get(), 0);
+
+    run_inst(&mut vm, Live);
+    assert_eq!(vm.processes[0].live_status.executed, true);
+    assert_eq!(vm.processes[0].live_status.player_id, -1);
+    assert_eq!(vm.processes[0].live_status.nbr_live, 1);
+    // ld
+    run_inst(&mut vm, Ld);
+    //xor 6
+    run_inst(&mut vm, Xor);
+    assert_eq!(vm.processes[0].registers[3 - 1], -17);
+    run_inst(&mut vm, Ld);
+    //ld 5 zjmp 20
+    run_inst(&mut vm, Zjmp);
+    assert_eq!(vm.processes[0].registers[2 - 1], 0);
+    assert_eq!(vm.processes[0].pc.get(), 0);
 }
 
 #[test]

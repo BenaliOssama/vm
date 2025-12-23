@@ -74,7 +74,7 @@ impl Process {
                 ParamType::Register => {
                     let reg = arena.read(self.pc.get(), 1)[0] as usize;
                     self.pc.inc();
-                    if reg == 0 || reg > 16 {
+                    if reg < 1 || reg > 16 {
                         // Invalid register number, return None or handle error appropriately
                         // For now, returning None will cause the instruction to be skipped
                         Parameter::None

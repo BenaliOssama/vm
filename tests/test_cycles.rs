@@ -1,7 +1,18 @@
-use vm::process;
+use vm::{VirtualMachine, process};
 
 mod common;
 use common::*;
+
+fn running_vm(vm: &mut VirtualMachine) {
+    for process in &mut vm.processes {
+        if process.state() == process::State::NoInstruction {
+            process.fetch_decode(&mut vm.arena, vm.cycle_count);
+        }
+    }
+    vm.cycle_count += 1;
+    vm.cycle_logic();
+    vm.cycle();
+}
 
 #[test]
 fn cycles_add() {
@@ -44,14 +55,7 @@ fn cycles_add() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -66,14 +70,7 @@ fn cycles_add() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 147778);
     assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
@@ -93,14 +90,7 @@ fn cycles_crab() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -115,14 +105,7 @@ fn cycles_crab() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 3074);
     assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
@@ -172,14 +155,7 @@ fn cycles_ldi_ind_reg() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -194,14 +170,7 @@ fn cycles_ldi_ind_reg() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 196221);
     assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
@@ -251,14 +220,7 @@ fn cycles_lldi_reg_reg_reg() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -273,14 +235,7 @@ fn cycles_lldi_reg_reg_reg() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 267997);
     assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
@@ -330,14 +285,7 @@ fn cycles_sti_reg_reg_dir() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -352,14 +300,7 @@ fn cycles_sti_reg_reg_dir() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 196221);
     assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
@@ -378,14 +319,7 @@ fn cycles_empty_player() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -400,14 +334,7 @@ fn cycles_empty_player() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 1537);
     assert!(vm.winners.is_empty());
@@ -453,14 +380,7 @@ fn cycles_ldi_reg_dir() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -475,14 +395,7 @@ fn cycles_ldi_reg_dir() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 196221);
     assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
@@ -532,14 +445,7 @@ fn cycles_or_ind_ind() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -554,14 +460,7 @@ fn cycles_or_ind_ind() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 90169);
     assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
@@ -611,14 +510,7 @@ fn cycles_sti_reg_reg_reg() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -633,14 +525,7 @@ fn cycles_sti_reg_reg_reg() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 196221);
     assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
@@ -690,14 +575,7 @@ fn cycles_ldi_reg_reg() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -712,14 +590,7 @@ fn cycles_ldi_reg_reg() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 196221);
     assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
@@ -769,14 +640,7 @@ fn cycles_or_ind_reg() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -791,14 +655,7 @@ fn cycles_or_ind_reg() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 90169);
     assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
@@ -848,14 +705,7 @@ fn cycles_st_reg() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -870,14 +720,7 @@ fn cycles_st_reg() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 90169);
     assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
@@ -927,14 +770,7 @@ fn cycles_and_ind_ind() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -949,14 +785,7 @@ fn cycles_and_ind_ind() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 90169);
     assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
@@ -970,14 +799,7 @@ fn cycles_ld() {
     let mut vm = build_vm("pierino_ld");
 
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 1537);
     assert!(vm.winners.is_empty());
@@ -1023,14 +845,7 @@ fn cycles_or_reg_ind() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -1045,14 +860,7 @@ fn cycles_or_reg_ind() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 90169);
     assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
@@ -1102,14 +910,7 @@ fn cycles_sub() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -1124,14 +925,7 @@ fn cycles_sub() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 147778);
     assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
@@ -1181,14 +975,7 @@ fn cycles_and_ind_reg() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -1244,14 +1031,7 @@ fn cycles_lld_dir_reg() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -1266,14 +1046,7 @@ fn cycles_lld_dir_reg() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 107335);
     assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
@@ -1323,14 +1096,7 @@ fn cycles_or_reg_reg() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -1345,14 +1111,7 @@ fn cycles_or_reg_reg() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 109209);
     assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
@@ -1402,14 +1161,7 @@ fn cycles_test() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -1424,14 +1176,7 @@ fn cycles_test() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 239244);
     assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
@@ -1481,14 +1226,7 @@ fn cycles_and_reg_ind() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -1503,14 +1241,7 @@ fn cycles_and_reg_ind() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 90169);
     assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
@@ -1560,14 +1291,7 @@ fn cycles_lldi_dir_dir_reg() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -1582,14 +1306,7 @@ fn cycles_lldi_dir_dir_reg() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 267997);
     assert_eq!(*vm.winners.iter().next().unwrap() * -1, 1);
@@ -1641,14 +1358,7 @@ fn cycles_pierino() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -1663,14 +1373,7 @@ fn cycles_pierino() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 75078);
     assert_eq!(*vm.winners.iter().next().unwrap() * -1, 1);
@@ -1720,14 +1423,7 @@ fn cycles_xor_ind_ind() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -1742,14 +1438,7 @@ fn cycles_xor_ind_ind() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 90169);
     assert_eq!(*vm.winners.iter().next().unwrap() * -1, 1);
@@ -1799,14 +1488,7 @@ fn cycles_and_reg_reg() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -1821,14 +1503,7 @@ fn cycles_and_reg_reg() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 109209);
     assert_eq!(*vm.winners.iter().next().unwrap() * -1, 1);
@@ -1878,14 +1553,7 @@ fn cycles_lldi_dir_reg_reg() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -1900,14 +1568,7 @@ fn cycles_lldi_dir_reg_reg() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 267997);
     assert_eq!(*vm.winners.iter().next().unwrap() * -1, 1);
@@ -1957,14 +1618,7 @@ fn cycles_st_ind() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -1979,14 +1633,7 @@ fn cycles_st_ind() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 90169);
     assert_eq!(*vm.winners.iter().next().unwrap() * -1, 1);
@@ -2036,14 +1683,7 @@ fn cycles_xor_ind_reg() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -2058,14 +1698,7 @@ fn cycles_xor_ind_reg() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 90169);
     assert_eq!(*vm.winners.iter().next().unwrap() * -1, 1);
@@ -2116,14 +1749,7 @@ fn cycles_fork() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -2138,14 +1764,7 @@ fn cycles_fork() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 37488);
     assert_eq!(*vm.winners.iter().next().unwrap() * -1, 1);
@@ -2195,14 +1814,7 @@ fn cycles_lldi_ind_dir_reg() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -2217,14 +1829,7 @@ fn cycles_lldi_ind_dir_reg() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 267997);
     assert_eq!(*vm.winners.iter().next().unwrap() * -1, 1);
@@ -2274,14 +1879,7 @@ fn cycles_sti_reg_dir_dir() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -2296,14 +1894,7 @@ fn cycles_sti_reg_dir_dir() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 196221);
     assert_eq!(*vm.winners.iter().next().unwrap() * -1, 1);
@@ -2353,14 +1944,7 @@ fn cycles_xor_reg_ind() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -2375,14 +1959,7 @@ fn cycles_xor_reg_ind() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 90169);
     assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
@@ -2432,14 +2009,7 @@ fn cycles_ldi_dir_dir() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -2454,14 +2024,7 @@ fn cycles_ldi_dir_dir() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 172144);
     assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
@@ -2511,14 +2074,7 @@ fn cycles_lldi_ind_reg_reg() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -2533,14 +2089,7 @@ fn cycles_lldi_ind_reg_reg() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 267997);
     assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
@@ -2590,14 +2139,7 @@ fn cycles_sti_reg_dir_reg() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -2612,14 +2154,7 @@ fn cycles_sti_reg_dir_reg() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 196221);
     assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
@@ -2669,14 +2204,7 @@ fn cycles_xor_reg_reg() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -2691,14 +2219,7 @@ fn cycles_xor_reg_reg() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 109209);
     assert_eq!(*vm.winners.iter().next().unwrap() * -1, 1);
@@ -2748,14 +2269,7 @@ fn cycles_ldi_dir_reg() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -2770,14 +2284,7 @@ fn cycles_ldi_dir_reg() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 196221);
     assert_eq!(*vm.winners.iter().next().unwrap() * -1, 1);
@@ -2827,14 +2334,7 @@ fn cycles_lld_ind_reg() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -2849,14 +2349,7 @@ fn cycles_lld_ind_reg() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 107335);
     assert_eq!(*vm.winners.iter().next().unwrap() * -1, 1);
@@ -2870,19 +2363,12 @@ fn cycles_sti_reg_ind_dir() {
     let mut vm = build_vm("pierino_sti_reg_ind_dir");
 
     // A list of checkpoints: (target_cycle, expected_cycles_to_die)
-    let checkpoints = vec![(1537, 1486), (3024, 1436)];
+    let checkpoints = vec![(1537, 1536), (3024, 1536)];
 
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -2897,14 +2383,7 @@ fn cycles_sti_reg_ind_dir() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 3074);
     assert_eq!(*vm.winners.iter().next().unwrap() * -1, 1);
@@ -2923,14 +2402,7 @@ fn cycles_zjmp() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -2945,14 +2417,7 @@ fn cycles_zjmp() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 1537);
     assert!(vm.winners.is_empty());
@@ -2998,14 +2463,7 @@ fn cycles_ldi_ind_dir() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -3020,14 +2478,7 @@ fn cycles_ldi_ind_dir() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 172144);
     assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
@@ -3077,14 +2528,7 @@ fn cycles_lldi_reg_dir_reg() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -3099,14 +2543,7 @@ fn cycles_lldi_reg_dir_reg() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 267997);
     assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
@@ -3125,14 +2562,7 @@ fn cycles_sti_reg_ind_reg() {
     for (target_cycle, expected_die) in checkpoints {
         // Run the VM until we reach the target cycle
         while vm.cycle_count < target_cycle {
-            for process in &mut vm.processes {
-                if process.state() == process::State::NoInstruction {
-                    process.fetch_decode(&mut vm.arena, vm.cycle_count);
-                }
-            }
-            vm.cycle_count += 1;
-            vm.cycle_logic();
-            vm.cycle();
+            running_vm(&mut vm);
         }
 
         // Assertions at the specific checkpoint
@@ -3147,14 +2577,7 @@ fn cycles_sti_reg_ind_reg() {
         );
     }
     while vm.processes_alive() {
-        for process in &mut vm.processes {
-            if process.state() == process::State::NoInstruction {
-                process.fetch_decode(&mut vm.arena, vm.cycle_count);
-            }
-        }
-        vm.cycle_count += 1;
-        vm.cycle_logic();
-        vm.cycle();
+        running_vm(&mut vm);
     }
     assert_eq!(vm.cycle_count, 3074);
     assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
