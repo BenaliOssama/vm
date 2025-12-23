@@ -114,16 +114,23 @@ impl VirtualMachine {
                     new_processes.push(new_process);
                 }
                 VmAction::Live(id) => {
-                    let name = match get_playername(self.players.clone(), id) {
-                        Some(name) => name,
-                        None => "___".into(),
+                    match get_playername(self.players.clone(), id) {
+                        Some(name) => {
+                            process.live_status.executed = true;
+                            process.live_status.nbr_live += 1;
+                            process.live_status.last_live_cycle = self.cycle_count;
+                            process.live_status.player_id = id;
+                            println!(
+                                "cycle {}: Player {} {} is alive",
+                                self.cycle_count,
+                                id * -1,
+                                name
+                            );
+                        }
+                        None => {
+                            println!("cycle {}: live: Invalid argument: {}", self.cycle_count, id);
+                        }
                     };
-                    println!(
-                        "cycle {}: Player {} {} is alive",
-                        self.cycle_count,
-                        id * -1,
-                        name
-                    );
                 }
                 _ => {}
             }

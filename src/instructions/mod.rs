@@ -68,17 +68,16 @@ impl Instruction {
     fn live(&self, process: &mut Process, _arena: &mut Arena,current_cyle: usize) -> VmAction{
         //println!("{}", blue("LIVE"));
         // Implement live instruction
-        process.live_status.executed = true;
-        process.live_status.nbr_live += 1;
-        process.live_status.last_live_cycle = current_cyle;
+        // process.live_status.executed = true;
+        // process.live_status.nbr_live += 1;
+        // process.live_status.last_live_cycle = current_cyle;
+        let mut pid  = 0  ;
         if let Parameter::Direct(player_id) = self.parameters[0] {
-            process.live_status.player_id = player_id;
+            // process.live_status.player_id = player_id;
+            pid = player_id;
             return VmAction::Live(player_id)
         } else {
-            eprintln!(
-                "Invalid parameter for live instruction {:?}",
-                self.parameters
-            );
+            println!("cycle {}: live: Invalid argument: {}", current_cyle, pid);
         } 
         //self.simple_debug(process, current_cyle);
         //println!("heeeey!!! i'm alive :) {}", process.live_status.player_id);
