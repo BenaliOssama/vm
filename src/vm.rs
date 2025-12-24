@@ -177,6 +177,9 @@ impl VirtualMachine {
             self.rest_nbr_lives();
         }
 
+        if self.cycles_to_die == 0 {
+            self.check_lives();
+        }
         decreased
     }
 

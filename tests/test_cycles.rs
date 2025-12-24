@@ -1411,7 +1411,6 @@ fn cycles_lldi_dir_dir_reg() {
     );
 }
 #[test]
-#[ignore]
 fn cycles_pierino() {
     let mut vm = build_vm("pierino");
 
@@ -1815,7 +1814,6 @@ fn cycles_xor_ind_reg() {
     );
 }
 #[test]
-#[ignore]
 fn cycles_fork() {
     let mut vm = build_vm("pierino_fork");
 
