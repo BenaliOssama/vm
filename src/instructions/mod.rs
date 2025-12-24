@@ -238,8 +238,6 @@ impl Instruction {
         if let Parameter::Direct(offset) = self.parameters[0] {
             if process.carry {
                 //println!("{} {}", yellow("carry true jump by :"), offset);
-                let offset = offset % IDX_MOD as i32;
-                // Step 2: calculate new PC as signed i32
                 let mut new_pc = self.opcode_addr as i32 + offset ; 
 
                 // Step 3: wrap around circular memory
