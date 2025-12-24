@@ -74,20 +74,20 @@ impl VirtualMachine {
                 }
             }
             //self.simple_debug();
-            self.debug1();
-            let before = self.cycles_to_die;
-            let decreased = self.cycle_logic();
             self.cycle();
             // this is for convinience to look exactly like the reference vm giving.
             // otherwise it is not important to do the printing before the cycle or after!
+            // debugging lines goew here
+            // self.debug1();
+            // self.debug2();
+            let before = self.cycles_to_die;
+            let decreased = self.cycle_logic();
             if decreased {
                 println!(
                     "cycle {}: Cycles to die decreased: {} -> {}",
                     self.cycle_count, before, self.cycles_to_die
                 );
             }
-            // debugging lines goew here
-            self.debug2();
             self.cycle_count += 1;
         }
 
@@ -136,6 +136,7 @@ impl VirtualMachine {
                                 id * -1,
                                 name
                             );
+                            process.current_instruction = None;
                         }
                         None => {
                             println!("cycle {}: live: Invalid argument: {}", self.cycle_count, id);
@@ -153,10 +154,12 @@ impl VirtualMachine {
 
         self.cycles_since_check += 1;
 
+        if self.cycles_since_check == self.cycles_to_die {
+            self.check_lives();
+        }
         if self.cycles_since_check > self.cycles_to_die {
             self.cycles_since_check = 0;
 
-            self.check_lives();
             let nbr_lives = self.read_nbr_lives();
 
             // MAX_CHECKS logic
@@ -227,7 +230,7 @@ impl VirtualMachine {
         println!("Processes:");
         println!("Id |Player Id |Pc   |Carry |Instr  |Wait |Registers");
         for p in self.processes.iter() {
-            let current_instruction_name: String = if p.state() == process::State::Ready {
+            let current_instruction_name: String = if p.state() == process::State::NoInstruction {
                 "___".to_string()
             } else {
                 p.current_instruction_name.clone()

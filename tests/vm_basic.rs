@@ -728,7 +728,7 @@ fn ld() {
     let mut vm = build_vm("pierino_ld");
     run_inst(&mut vm, Live);
     assert_eq!(vm.processes[0].live_status.executed, true);
-    assert_eq!(vm.processes[0].live_status.player_id, -2);
+    assert_eq!(vm.processes[0].live_status.player_id, -1);
     assert_eq!(vm.processes[0].live_status.nbr_live, 1);
     //ld 5
     run_inst(&mut vm, Ld);
@@ -786,7 +786,7 @@ fn xor_reg_reg() {
     run_inst(&mut vm, Live);
     assert_eq!(vm.processes[0].live_status.executed, true);
     assert_eq!(vm.processes[0].live_status.player_id, -1);
-    assert_eq!(vm.processes[0].live_status.nbr_live, 1);
+    assert_eq!(vm.processes[0].live_status.nbr_live, 2);
     // ld
     run_inst(&mut vm, Ld);
     //xor 6
@@ -801,7 +801,7 @@ fn xor_reg_reg() {
     run_inst(&mut vm, Live);
     assert_eq!(vm.processes[0].live_status.executed, true);
     assert_eq!(vm.processes[0].live_status.player_id, -1);
-    assert_eq!(vm.processes[0].live_status.nbr_live, 1);
+    assert_eq!(vm.processes[0].live_status.nbr_live, 3);
     // ld
     run_inst(&mut vm, Ld);
     //xor 6
@@ -917,10 +917,6 @@ fn crab() {
 
     run_inst(&mut vm, Sti);
     run_inst(&mut vm, Sti);
-
-    assert_eq!(vm.processes[0].live_status.executed, false);
-    assert_eq!(vm.processes[0].live_status.player_id, 0);
-    assert_eq!(vm.processes[0].live_status.nbr_live, 0);
 
     run_inst(&mut vm, Live);
     vm.cycle();

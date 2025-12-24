@@ -75,6 +75,7 @@ impl Instruction {
         if let Parameter::Direct(player_id) = self.parameters[0] {
             // process.live_status.player_id = player_id;
             pid = player_id;
+            process.current_instruction = None;
             return VmAction::Live(player_id)
         } else {
             println!("cycle {}: live: Invalid argument: {}", current_cyle, pid);
