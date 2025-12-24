@@ -109,6 +109,7 @@ impl VirtualMachine {
     pub fn run(&mut self) {
         while self.processes_alive() {
             if let Some(cycles_to_stop) = self.cycles_to_stop && self.cycle_count >= cycles_to_stop {
+                self.dump_arena();
                 break;
             }
             for process in &mut self.processes {

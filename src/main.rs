@@ -14,17 +14,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let arena = Arena::new();
 
     let (players, cycles_to_stop, verbos) = parse_arguments(args)?;
-
-    println!("For this match the players will be:");
-    for (i, player) in players.iter().enumerate() {
-        println!(
-            "Player {} ({} bytes): {} ({})",
-            i + 1,
-            player.size,
-            player.name,
-            player.comment
-        );
-    }
     let players_count = players.len();
     // the loading process is done eagerly as old days
     // To understand how lazy loading of pieces of code and data works,
@@ -32,13 +21,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut processes = vec![];
     for (i, player) in players.clone().iter().enumerate() {
         let process = Process::new(player.clone().id, i, ((MEM_SIZE + 1) / players_count) * i);
-
+        
         // println!("{}", players[i]);
         // println!("{}", process);
         //////println!("{}", arena);
         processes.push(process)
     }
     let mut vm = VirtualMachine::create(arena.clone(), processes, players.clone(), cycles_to_stop, verbos);
+    vm.print_match_intro(&players);
     for (i, player) in players.iter().enumerate() {
         vm.load_player(player.clone(), ((MEM_SIZE + 1) / players_count) * i);
     }
