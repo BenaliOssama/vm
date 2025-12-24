@@ -69,7 +69,7 @@ pub fn build_vm(file_name: &str) -> VirtualMachine {
     ////println!("{}", process);
     //////println!("{}", arena);
 
-    let mut vm = VirtualMachine::create(arena.clone(), vec![process], players.clone(), 0);
+    let mut vm = VirtualMachine::create(arena.clone(), vec![process], players.clone(), None, false);
 
     vm.load_player(player, 0);
     vm
@@ -109,7 +109,7 @@ pub fn build_vm_more(file_names: Vec<&str>) -> VirtualMachine {
     // }
 
     // Create the VM with arena and processes
-    let mut vm = VirtualMachine::create(arena.clone(), processes, players.clone(), 0);
+    let mut vm = VirtualMachine::create(arena.clone(), processes, players.clone(), None, false);
 
     // Load each player into the arena
     for (i, player) in players.iter().enumerate() {

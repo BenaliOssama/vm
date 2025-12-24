@@ -1,6 +1,6 @@
 //use vm::{blue, red};
 use crate::arena::Arena;
-use crate::config::{CYCLE_DELTA, CYCLE_TO_DIE, MAX_CHECKS, NBR_LIVE};
+use crate::config::{ CYCLE_DELTA, CYCLE_TO_DIE, MAX_CHECKS, NBR_LIVE };
 use crate::helper;
 use crate::instructions::VmAction;
 use crate::player::Player;
@@ -29,6 +29,7 @@ pub struct VirtualMachine {
     cycles_since_check: usize,
     pub players: Vec<Player>,
     cycles_to_stop: Option<usize>,
+    verbos: bool,
 }
 
 impl VirtualMachine {
@@ -37,6 +38,7 @@ impl VirtualMachine {
         processes: Vec<Process>,
         players: Vec<Player>,
         cycles_to_stop: Option<usize>,
+        verbos: bool
     ) -> Self {
         Self {
             arena,
@@ -48,6 +50,7 @@ impl VirtualMachine {
             winners: HashSet::new(),
             players: players,
             cycles_to_stop: cycles_to_stop,
+            verbos,
         }
     }
 
@@ -78,14 +81,18 @@ impl VirtualMachine {
             // this is for convinience to look exactly like the reference vm giving.
             // otherwise it is not important to do the printing before the cycle or after!
             // debugging lines goew here
-            // self.debug1();
-            // self.debug2();
+            if self.verbos {
+                self.debug1();
+                self.debug2();
+            }
             let before = self.cycles_to_die;
             let decreased = self.cycle_logic();
             if decreased {
                 println!(
                     "cycle {}: Cycles to die decreased: {} -> {}",
-                    self.cycle_count, before, self.cycles_to_die
+                    self.cycle_count,
+                    before,
+                    self.cycles_to_die
                 );
             }
             self.cycle_count += 1;
@@ -117,8 +124,11 @@ impl VirtualMachine {
             let action = process.execute_cycle(&mut self.arena, self.cycle_count);
             match action {
                 VmAction::Fork { new_pc, use_idx } => {
-                    let mut new_process =
-                        process::Process::new(process.player_id, process.id, process.pc.get());
+                    let mut new_process = process::Process::new(
+                        process.player_id,
+                        process.id,
+                        process.pc.get()
+                    );
                     new_process.pc.set(new_pc as usize, use_idx);
                     new_process.current_instruction = None;
                     new_processes.push(new_process);
@@ -227,7 +237,7 @@ impl VirtualMachine {
             "Cycle {} || Cycles before life check: {} || Cycles between checks: {}",
             self.cycle_count,
             self.cycles_to_die - self.cycles_since_check,
-            self.cycles_to_die,
+            self.cycles_to_die
         );
 
         println!("Processes:");
@@ -261,7 +271,9 @@ impl VirtualMachine {
         for pl in self.processes.iter() {
             println!(
                 "{:>2} |{:>9} |{:>3}",
-                pl.live_status.player_id, pl.live_status.last_live_cycle, pl.live_status.nbr_live
+                pl.live_status.player_id,
+                pl.live_status.last_live_cycle,
+                pl.live_status.nbr_live
             );
         }
 
@@ -308,8 +320,7 @@ impl VirtualMachine {
             }
         }
         self.winners = winners;
-        self.processes
-            .retain(|process| process.live_status.executed);
+        self.processes.retain(|process| process.live_status.executed);
         for process in &mut self.processes {
             process.live_status.executed = false;
         }
