@@ -41,7 +41,7 @@ impl VirtualMachine {
         Self {
             arena,
             processes,
-            cycle_count: 0,
+            cycle_count: 1, // fix this
             cycles_to_die: CYCLE_TO_DIE,
             nbr_checks: 0,
             cycles_since_check: 0,
@@ -65,21 +65,20 @@ impl VirtualMachine {
     }
     pub fn run(&mut self) {
         while self.processes_alive() {
-            self.cycle_count += 1;
-            if self.cycle_count as i32 >= self.cycles_to_stop {
+            if self.cycles_to_stop > -1 && self.cycle_count as i32 >= self.cycles_to_stop {
                 break;
             }
             for process in &mut self.processes {
                 if process.state() == process::State::NoInstruction {
                     process.fetch_decode(&mut self.arena, self.cycle_count);
-                    
                 }
             }
             //self.simple_debug();
+            self.debug1();
             let before = self.cycles_to_die;
             let decreased = self.cycle_logic();
-            self.debug1(before);
             self.cycle();
+            self.cycle_count += 1;
             // this is for convinience to look exactly like the reference vm giving.
             // otherwise it is not important to do the printing before the cycle or after!
             if decreased {
@@ -182,7 +181,7 @@ impl VirtualMachine {
         return decreased;
     }
 
-    fn debug1(&self, before: usize) {
+    fn debug1(&self) {
         println!(
             "{} ",
             green(
@@ -192,12 +191,12 @@ impl VirtualMachine {
         println!(
             "Cycle {} || Cycles before life check: {} || Cycles between checks: {}",
             self.cycle_count,
-            self.cycles_to_die - self.cycle_count,
+            self.cycles_to_die - self.cycles_since_check,
             self.cycles_to_die,
         );
 
-        //println!("Processes:");
-        //println!("Id |Player Id |Pc   |Carry |Instr  |Wait |Registers");
+        println!("Processes:");
+        println!("Id |Player Id |Pc   |Carry |Instr  |Wait |Registers");
         for p in self.processes.iter() {
             let current_instruction_name: String = if p.state() == process::State::Ready {
                 "___".to_string()
@@ -222,8 +221,8 @@ impl VirtualMachine {
         }
     }
     fn debug2(&self) {
-        //println!("Players:");
-        //println!("Id |Last Live |Nb Live since last check");
+        println!("Players:");
+        println!("Id |Last Live |Nb Live since last check");
         for pl in self.processes.iter() {
             println!(
                 "{:>2} |{:>9} |{:>3}",
@@ -231,15 +230,15 @@ impl VirtualMachine {
             );
         }
 
-        //println!("Arena:");
+        println!("Arena:");
         let mut count = 0;
         for (i, byte) in self.arena.memory.iter().enumerate() {
             if i % 32 == 0 {
-                //print!("{:08x}  ", i);
+                print!("{:08x}  ", i);
             }
-            //print!("{:02x} ", byte);
+            print!("{:02x} ", byte);
             if i % 32 == 31 {
-                //println!("");
+                println!("");
             }
 
             if count == 31 {
@@ -247,7 +246,7 @@ impl VirtualMachine {
             }
             count += 1;
         }
-        //println!();
+        println!();
     }
     fn read_nbr_lives(&mut self) -> usize {
         let mut count = 0;
