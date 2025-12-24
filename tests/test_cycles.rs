@@ -816,19 +816,75 @@ fn cycles_and_ind_ind() {
         "pierino"
     );
 }
-#[test]
 
+#[test]
 fn cycles_ld() {
     let mut vm = build_vm("pierino_ld");
 
+    // A list of checkpoints: (target_cycle, expected_cycles_to_die)
+    let checkpoints = vec![
+        (1537, 1486),
+        (3024, 1436),
+        (4461, 1386),
+        (5848, 1336),
+        (7185, 1286),
+        (8472, 1236),
+        (9709, 1186),
+        (10896, 1136),
+        (12033, 1086),
+        (13120, 1036),
+        (14157, 986),
+        (15144, 936),
+        (16081, 886),
+        (16968, 836),
+        (17805, 786),
+        (26462, 736),
+        (34569, 686),
+        (42126, 636),
+        (49133, 586),
+        (55590, 536),
+        (61497, 486),
+        (66854, 436),
+        (71661, 386),
+        (75918, 336),
+        (79625, 286),
+        (82782, 236),
+        (85389, 186),
+        (87446, 136),
+        (88953, 86),
+        (89910, 36),
+    ];
+
+    for (target_cycle, expected_die) in checkpoints {
+        // Run the VM until we reach the target cycle
+        while vm.cycle_count < target_cycle {
+            running_vm(&mut vm);
+        }
+
+        // Assertions at the specific checkpoint
+        assert_eq!(
+            vm.cycle_count, target_cycle,
+            "Cycle count mismatch at checkpoint"
+        );
+        running_vm(&mut vm);
+        assert_eq!(
+            vm.cycles_to_die, expected_die,
+            "cycles_to_die mismatch at cycle {}",
+            target_cycle
+        );
+    }
     while vm.processes_alive() {
         running_vm(&mut vm);
     }
-    assert_eq!(vm.cycle_count, 1537);
-    assert!(vm.winners.is_empty());
+    assert_eq!(vm.cycle_count, 90169);
+    assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
+    assert_eq!(
+        &vm.get_player(*vm.winners.iter().next().unwrap()).unwrap(),
+        "pierino ld"
+    );
 }
-#[test]
 
+#[test]
 fn cycles_or_reg_ind() {
     let mut vm = build_vm("pierino_or_reg_ind");
 
