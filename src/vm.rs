@@ -28,7 +28,7 @@ pub struct VirtualMachine {
     nbr_checks: usize,
     cycles_since_check: usize,
     pub players: Vec<Player>,
-    cycles_to_stop: i32,
+    cycles_to_stop: Option<usize>,
 }
 
 impl VirtualMachine {
@@ -36,7 +36,7 @@ impl VirtualMachine {
         arena: Arena,
         processes: Vec<Process>,
         players: Vec<Player>,
-        cycles_to_stop: i32,
+        cycles_to_stop: Option<usize>,
     ) -> Self {
         Self {
             arena,
@@ -65,7 +65,7 @@ impl VirtualMachine {
     }
     pub fn run(&mut self) {
         while self.processes_alive() {
-            if self.cycles_to_stop > -1 && self.cycle_count as i32 >= self.cycles_to_stop {
+            if let Some(cycles_to_stop) = self.cycles_to_stop && self.cycle_count >= cycles_to_stop {
                 break;
             }
             for process in &mut self.processes {
