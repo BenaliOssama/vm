@@ -58,6 +58,46 @@ impl VirtualMachine {
         self.arena.write(i, &player.code);
     }
 
+    pub fn dump_arena(&self) {
+        println!("\n{}", green("=== MEMORY DUMP ==="));
+
+        for (i, chunk) in self.arena.memory.chunks(32).enumerate() {
+            // Address in hex (8 digits)
+            print!("{:08x}  ", i * 32);
+
+            // Hex bytes (32 per line)
+            for byte in chunk {
+                print!("{:02x} ", byte);
+            }
+
+            println!();
+        }
+
+        println!("{}", green("=== END DUMP ==="));
+    }
+
+    pub fn print_match_intro(&self, players: &[Player]) {
+        println!("{}", green(&"=".repeat(80)));
+        println!("{}", green("                           COREWAR MATCH"));
+        println!("{}", green(&"=".repeat(80)));
+        println!();
+        println!("For this match the players will be:");
+
+        for (i, player) in players.iter().enumerate() {
+            println!(
+                "Player {} ({} bytes): {} ({})",
+                i + 1,
+                player.code.len(),
+                player.name,
+                player.comment
+            );
+        }
+
+        println!();
+        println!("{}", green(&"=".repeat(80)));
+        println!();
+    }
+
     pub fn get_player(&self, id: i32) -> Option<String> {
         for player in &self.players {
             if player.id == id {
