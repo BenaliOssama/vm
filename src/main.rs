@@ -31,7 +31,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // you’ll have to understand the machinery of paging and swapping,
     let mut processes = vec![];
     for (i, player) in players.clone().iter().enumerate() {
-        let process = Process::new(player.clone().id, i, (MEM_SIZE / players_count) * i);
+        let process = Process::new(player.clone().id, i, ((MEM_SIZE + 1) / players_count) * i);
 
         // println!("{}", players[i]);
         // println!("{}", process);
@@ -40,7 +40,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
     let mut vm = VirtualMachine::create(arena.clone(), processes, players.clone(), cycles_to_stop);
     for (i, player) in players.iter().enumerate() {
-        vm.load_player(player.clone(), (MEM_SIZE / players_count) * i);
+        vm.load_player(player.clone(), ((MEM_SIZE + 1) / players_count) * i);
     }
     vm.run();
     Ok(())

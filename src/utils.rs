@@ -114,7 +114,7 @@ pub fn parse_arguments(args: Vec<String>) -> Result<(Vec<Player>, i32, bool), St
         return Err(red("Invalid number of players. Must be between 1 and 4."));
     }
 
-    players.reverse();
+    // players.reverse();
 
     // --- CHANGED: Return the flags as well ---
     return Ok((players, dump_cycles, visual_mode));
