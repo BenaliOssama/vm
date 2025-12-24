@@ -150,36 +150,65 @@ impl VirtualMachine {
     }
     pub fn cycle_logic(&mut self) -> bool {
         let mut decreased = false;
-        // DO NOT increment cycle_count here
+
         self.cycles_since_check += 1;
 
         if self.cycles_since_check > self.cycles_to_die {
             self.cycles_since_check = 0;
 
             self.check_lives();
-
             let nbr_lives = self.read_nbr_lives();
 
-            if nbr_lives >= NBR_LIVE {
-                self.cycles_to_die = self.cycles_to_die.saturating_sub(CYCLE_DELTA);
-                decreased = true;
-                self.nbr_checks = 0;
-            } else {
+            // MAX_CHECKS logic
+            if nbr_lives < NBR_LIVE {
                 self.nbr_checks += 1;
-                if self.nbr_checks > MAX_CHECKS {
-                    self.cycles_to_die = self.cycles_to_die.saturating_sub(CYCLE_DELTA);
-                    decreased = true;
-                    self.nbr_checks = 0;
-                }
+            }
+
+            // CTD decrease conditions
+            if nbr_lives >= NBR_LIVE || self.nbr_checks > MAX_CHECKS {
+                self.cycles_to_die = self.cycles_to_die.saturating_sub(CYCLE_DELTA);
+                self.nbr_checks = 0;
+                decreased = true;
             }
 
             self.rest_nbr_lives();
         }
-        // if self.cycles_to_die == 0 {
-        //     os::exit(0);
-        // }
-        return decreased;
+
+        decreased
     }
+
+    // pub fn cycle_logic(&mut self) -> bool {
+    //     let mut decreased = false;
+    //     // DO NOT increment cycle_count here
+    //     self.cycles_since_check += 1;
+
+    //     if self.cycles_since_check > self.cycles_to_die {
+    //         self.cycles_since_check = 0;
+
+    //         self.check_lives();
+
+    //         let nbr_lives = self.read_nbr_lives();
+
+    //         if nbr_lives >= NBR_LIVE {
+    //             self.cycles_to_die = self.cycles_to_die.saturating_sub(CYCLE_DELTA);
+    //             decreased = true;
+    //             self.nbr_checks = 0;
+    //         } else {
+    //             self.nbr_checks += 1;
+    //             if self.nbr_checks > MAX_CHECKS {
+    //                 self.cycles_to_die = self.cycles_to_die.saturating_sub(CYCLE_DELTA);
+    //                 decreased = true;
+    //                 self.nbr_checks = 0;
+    //             }
+    //         }
+
+    //         self.rest_nbr_lives();
+    //     }
+    //     // if self.cycles_to_die == 0 {
+    //     //     os::exit(0);
+    //     // }
+    //     return decreased;
+    // }
 
     fn debug1(&self) {
         println!(

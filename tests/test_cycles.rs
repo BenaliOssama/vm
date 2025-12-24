@@ -9,9 +9,9 @@ fn running_vm(vm: &mut VirtualMachine) {
             process.fetch_decode(&mut vm.arena, vm.cycle_count);
         }
     }
-    vm.cycle_count += 1;
     vm.cycle_logic();
     vm.cycle();
+    vm.cycle_count += 1;
 }
 
 #[test]
