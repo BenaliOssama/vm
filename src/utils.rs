@@ -29,6 +29,8 @@ pub fn parse_arguments(args: Vec<String>) -> Result<(Vec<Player>, Option<usize>,
         }
         if args[cursor] == "-v" {
             verbos = true;
+            cursor+= 1;
+            continue;
         }
         let d = parse_file(&args[cursor])?;
         warriors_data.push(d);
