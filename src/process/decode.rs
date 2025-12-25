@@ -1,7 +1,5 @@
 use super::Process;
-use crate::arena;
 use crate::arena::*;
-use crate::config::MEM_SIZE;
 use crate::helper;
 use crate::instructions;
 use crate::instructions::*;
@@ -41,6 +39,7 @@ impl Process {
             ////println!("the value we fetched bytes is {:?}", bytes);
             self.pc.add(size);
             let value = helper::bytes_to_i32(&bytes); // sign-extend 2-byte or 4-byte to i32
+
             ////println!("the value we fetched is {}", value);
             return Some(Instruction::new(
                 opcode,

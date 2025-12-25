@@ -1,13 +1,12 @@
 //use super::Process;
-use crate::*;
 pub mod instruction_info;
 //use vm::{blue, yellow};
-use crate::process::*;
 use crate::arena::*;
 use crate::config::IDX_MOD;
 use crate::config::MEM_SIZE;
 use crate::helper::{self, bytes_to_i32};
 use crate::instructions::instruction_info::INSTRUCTION_TABLE;
+use crate::process::*;
 
 // instruction.rs
 #[derive(Debug, Clone, Copy)]
@@ -17,10 +16,10 @@ pub enum Parameter {
     Indirect(i32),
     None,
 }
-pub  enum VmAction {
+pub enum VmAction {
     None,
     Live(i32),
-    Fork  { new_pc: i32 , use_idx: bool },
+    Fork { new_pc: i32, use_idx: bool },
 }
 
 #[derive(Debug, Clone)]
@@ -32,15 +31,24 @@ pub struct Instruction {
 
 impl Instruction {
     pub fn new(opcode: u8, parameters: Vec<Parameter>, opcode_addr: usize) -> Self {
-        Self { opcode, parameters, opcode_addr }
+        Self {
+            opcode,
+            parameters,
+            opcode_addr,
+        }
     }
 
-    pub fn execute(&self, process: &mut Process, arena: &mut Arena, current_cyle: usize) -> VmAction {
+    pub fn execute(
+        &self,
+        process: &mut Process,
+        arena: &mut Arena,
+        current_cyle: usize,
+    ) -> VmAction {
         match self.opcode {
             1 => {
                 process.current_instruction = None;
                 return self.live(process, arena, current_cyle);
-            },
+            }
             2 => self.ld(process, arena),
             3 => self.st(process, arena),
             4 => self.add(process, arena),
@@ -65,31 +73,30 @@ impl Instruction {
         process.current_instruction = None;
         return VmAction::None;
     }
-    fn live(&self, process: &mut Process, _arena: &mut Arena,current_cyle: usize) -> VmAction{
+
+    fn live(&self, process: &mut Process, _arena: &mut Arena, current_cyle: usize) -> VmAction {
         //println!("{}", blue("LIVE"));
-        // Implement live instruction
-        // process.live_status.executed = true;
-        // process.live_status.nbr_live += 1;
-        // process.live_status.last_live_cycle = current_cyle;
-        let mut pid  = 0  ;
-        if let Parameter::Direct(player_id) = self.parameters[0] {
-            // process.live_status.player_id = player_id;
-            pid = player_id;
-            process.current_instruction = None;
-            return VmAction::Live(player_id)
-        } else {
-            println!("cycle {}: live: Invalid argument: {}", current_cyle, pid);
-        } 
-        //self.simple_debug(process, current_cyle);
-        //println!("heeeey!!! i'm alive :) {}", process.live_status.player_id);
-        return VmAction::None;
+        match self.parameters[0] {
+            Parameter::Direct(player_id) => {
+                process.current_instruction = None;
+                return VmAction::Live(player_id);
+            }
+            ref param => {
+                println!(
+                    "cycle {}: live: Invalid argument: {:?}",
+                    current_cyle, param
+                );
+                return VmAction::None;
+            }
+        }
     }
+
     fn ld(&self, process: &mut Process, arena: &mut Arena) {
         //println!("{}", blue("LD"));
 
         let value = match self.parameters[0] {
             Parameter::Direct(v) => v,
-            Parameter::Indirect(v) => helper::read_indirect(process, arena,self.opcode_addr, v),
+            Parameter::Indirect(v) => helper::read_indirect(process, arena, self.opcode_addr, v),
             _ => {
                 //println!("Invalid first parameter for ld");
                 return;
@@ -132,7 +139,7 @@ impl Instruction {
             Parameter::Indirect(dist_memory) => {
                 // pub fn write(&mut self, pos: usize, data: &[u8]) {
                 arena.write(
-                    ( self.opcode_addr + dist_memory as usize) % MEM_SIZE,
+                    (self.opcode_addr + dist_memory as usize) % MEM_SIZE,
                     &process.registers[source_reg - 1].to_be_bytes(),
                 );
                 ////println!("{}", process);
@@ -170,7 +177,7 @@ impl Instruction {
             }
         };
         let value = process.registers[reg1 - 1] + process.registers[reg2 - 1];
-        process.registers[reg3 - 1] = value ;
+        process.registers[reg3 - 1] = value;
         process.carry = value == 0;
     }
     fn sub(&self, process: &mut Process, _arena: &mut Arena) {
@@ -194,19 +201,18 @@ impl Instruction {
             }
         };
         let value = process.registers[reg1 - 1] - process.registers[reg2 - 1];
-        process.registers[reg3 - 1] = value ;
+        process.registers[reg3 - 1] = value;
         process.carry = value == 0;
     }
 
     fn betwise(&self, process: &mut Process, arena: &mut Arena) {
-        
         let p1 = &self.parameters[0];
         let p2 = &self.parameters[1];
         let p3 = &self.parameters[2];
 
         // ---------- 1) Validate that the 3rd parameter is a register ----------
         let reg = match p3 {
-            Parameter::Register(r) => *r -1 ,
+            Parameter::Register(r) => *r - 1,
             _ => {
                 return;
             }
@@ -217,15 +223,9 @@ impl Instruction {
         let value2 = helper::get_value(p2, process, arena, false);
 
         let result = match self.opcode {
-            6 => {
-                value1 & value2
-            }
-            7 => {
-                value1 | value2
-            }
-            8 => {
-                value1 ^ value2
-            }
+            6 => value1 & value2,
+            7 => value1 | value2,
+            8 => value1 ^ value2,
             _ => return,
         };
         process.registers[reg] = result;
@@ -235,11 +235,11 @@ impl Instruction {
     fn zjmp(&self, process: &mut Process, _arena: &mut Arena) {
         //println!("{}", blue("ZJMP"));
         ////println!("{} {}", yellow("befor jump :"), self.opcode_addr);
-       // todo!()
+        // todo!()
         if let Parameter::Direct(offset) = self.parameters[0] {
             if process.carry {
                 //println!("{} {}", yellow("carry true jump by :"), offset);
-                let mut new_pc = self.opcode_addr as i32 + offset ; 
+                let mut new_pc = self.opcode_addr as i32 + offset;
 
                 // Step 3: wrap around circular memory
                 new_pc %= MEM_SIZE as i32;
@@ -247,7 +247,8 @@ impl Instruction {
                     new_pc += MEM_SIZE as i32;
                 }
                 process.pc.set(new_pc as usize, false); // offset relative to PC, handled in set
-            } else { // currupted instruction should just pass it// there is always direct regarding this
+            } else {
+                // currupted instruction should just pass it// there is always direct regarding this
                 process
                     .pc
                     .add(INSTRUCTION_TABLE[(self.opcode - 1) as usize].direct_size);
@@ -280,7 +281,7 @@ impl Instruction {
         };
         // ---------- 2) Resolve parameter values ----------
         // ldi always applies IDX_MOD to its addressing
-        let val1 = helper::get_value(p1, process, arena,false); // apply IDX_MOD for INDIRECT
+        let val1 = helper::get_value(p1, process, arena, false); // apply IDX_MOD for INDIRECT
         let val2 = helper::get_value(p2, process, arena, false);
 
         // ---------- 3) Compute address offset ----------
@@ -288,7 +289,7 @@ impl Instruction {
         let addr_offset = sum % IDX_MOD as i32;
         ////println!("addr offset {}", addr_offset);
         //---
-        let mut new_pc = process.instction_pc as i32 + addr_offset ; 
+        let mut new_pc = process.instction_pc as i32 + addr_offset;
 
         ////println!("new addr {}", new_pc);
         // Step 3: wrap around circular memory
@@ -327,8 +328,8 @@ impl Instruction {
                 return;
             }
         };
-        //01 ff ff ff ff 02 90 00 00 00 7b 02 ff ff ff ff f5 00 01 02 90 00 00 00 00 02 09 ff e6 00 00 
-        //01 FF FF FF FF 02 90 00 00 00 7B 02 FF FF FF FF 
+        //01 ff ff ff ff 02 90 00 00 00 7b 02 ff ff ff ff f5 00 01 02 90 00 00 00 00 02 09 ff e6 00 00
+        //01 FF FF FF FF 02 90 00 00 00 7B 02 FF FF FF FF
         // ---------- 2) Resolve parameter values ----------
         // ldi always applies IDX_MOD to its addressing
         let val1 = helper::get_value(p2, process, arena, false); // apply IDX_MOD for INDIRECT
@@ -339,6 +340,7 @@ impl Instruction {
         let sum = val1 + val2;
         //---
         let mut new_pc = self.opcode_addr as i32 + sum; // cont for the paramiter size
+
         //+ INSTRUCTION_TABLE[self.opcode as usize - 1].direct_size as i32;
 
         // Step 3: wrap around circular memory
@@ -351,7 +353,7 @@ impl Instruction {
         // Final effective address is PC + offset (wrapped)
 
         // ---------- 4) Read 4 bytes from arena ----------
-        let value = process.registers[from_reg-1];
+        let value = process.registers[from_reg - 1];
         arena.write(new_pc as usize, &(value).to_be_bytes());
         //println!("m{} <- {}",new_pc,  value);
 
@@ -364,46 +366,35 @@ impl Instruction {
         // //println!("{}", blue("FORK"));
         // let mut new_process = process.clone();
         // new_process.pc.add(100);
-                // //println!("{}", blue("FORK"));
+        // //println!("{}", blue("FORK"));
         // let mut new_process = process.clone();
         // new_process.pc.add(100);
 
         let p1 = &self.parameters[0];
 
-                       let value = helper::get_value(
-                        p1,
-                    &process,
-                    arena,
-                    true,
-                ); 
+        let value = helper::get_value(p1, &process, arena, true);
         // // now edit this process
-        return VmAction::Fork { new_pc: value, use_idx: true };
+        return VmAction::Fork {
+            new_pc: value,
+            use_idx: true,
+        };
     }
 
     fn lld(&self, process: &mut Process, arena: &mut Arena) {
         //println!("{}", blue("LLD"));
         let p1 = &self.parameters[0];
-        let p2 = &self.parameters[1];
-
-        let value = match self.parameters[0] {
-            Parameter::Direct(v) => v,
-            Parameter::Indirect(v) => helper::get_value( p1, process, arena, false),
-            _ => {
-                //println!("Invalid first parameter for ld");
-                return;
-            }
-        };
+        let value = helper::get_value(p1, process, arena, false);
 
         let reg = match self.parameters[1] {
-            Parameter::Register(r) => r,
+            Parameter::Register(r) => r - 1,
             _ => {
-                //println!("Invalid second parameter for lld");
+                println!("Invalid second parameter for lld");
                 return;
             }
         };
 
         //println!("ld: r{} ← {}", reg, value);
-        process.registers[reg - 1] = value;
+        process.registers[reg] = value;
 
         // --- Set the carry ---
         process.carry = value == 0;
@@ -429,16 +420,16 @@ impl Instruction {
 
         // ---------- 2) Resolve parameter values ----------
         // ldi always applies IDX_MOD to its addressing
-        let val1 = helper::get_value(p1, process, arena, false); 
+        let val1 = helper::get_value(p1, process, arena, false);
         let val2 = helper::get_value(p2, process, arena, false);
         // //println!("val1 {}", val1);
         // //println!("val2 {}", val2);
         // ---------- 3) Compute address offset ----------
         let sum = val1 + val2;
-        let addr_offset = sum ;//% IDX_MOD as i32;
+        let addr_offset = sum; //% IDX_MOD as i32;
         // //println!("addr offset {}", addr_offset);
         //---
-        let mut new_pc = process.instction_pc as i32 + addr_offset ; 
+        let mut new_pc = process.instction_pc as i32 + addr_offset;
 
         // Step 3: wrap around circular memory
         new_pc %= MEM_SIZE as i32;
@@ -450,7 +441,7 @@ impl Instruction {
         // Final effective address is PC + offset (wrapped)
 
         // ---------- 4) Read 4 bytes from arena ----------
-        let value = arena.read(new_pc as usize   , 4);
+        let value = arena.read(new_pc as usize, 4);
         // //println!("bytes read {:?}", value);
         let value = bytes_to_i32(&value);
         // //println!("r{} <- {}", dest_reg, value);
@@ -462,18 +453,16 @@ impl Instruction {
         process.carry = if value == 0 { true } else { false }; // LDI updates carry!
     }
 
-    fn lfork(&self, process: &mut Process, arena: &mut Arena) -> VmAction{ // //println!("{}", blue("LFORK")); // todo!() let p1 = &self.parameters[0];
+    fn lfork(&self, process: &mut Process, arena: &mut Arena) -> VmAction {
+        // //println!("{}", blue("LFORK")); // todo!() let p1 = &self.parameters[0];
         let p1 = &self.parameters[0];
 
-
-                       let value = helper::get_value(
-                        p1,
-                    &process,
-                    arena,
-                    true,
-                ); 
+        let value = helper::get_value(p1, &process, arena, true);
         // // now edit this process
-        return VmAction::Fork { new_pc: value, use_idx: false };
+        return VmAction::Fork {
+            new_pc: value,
+            use_idx: false,
+        };
     }
 
     fn nop(&self, _process: &mut Process, _arena: &mut Arena) {

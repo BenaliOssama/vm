@@ -1,12 +1,17 @@
 use crate::config::MEM_SIZE;
 
-use crate::arena::{self, *};
+use crate::arena::*;
 use crate::config::IDX_MOD;
 use crate::instructions::Parameter;
 use crate::process::*;
 
 // [ ]  account for the case of negative indirect
-pub fn read_indirect(process: &mut Process, arena: &mut Arena, opcode_addr: usize, at: i32) -> i32 {
+pub fn read_indirect(
+    _process: &mut Process,
+    arena: &mut Arena,
+    opcode_addr: usize,
+    at: i32,
+) -> i32 {
     let read_from = wrap_address(opcode_addr, at as i16);
     //println!("reading value from address: {}", read_from);
     bytes_to_i32(&arena.read(read_from, 2).clone())

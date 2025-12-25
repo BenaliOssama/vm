@@ -1,3 +1,5 @@
+#![allow(dead_code, unused_imports)]
+
 use vm::*;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -99,14 +101,6 @@ pub fn build_vm_more(file_names: Vec<&str>) -> VirtualMachine {
             Process::new(player.id, i, MEM_SIZE / players_count * i)
         })
         .collect();
-
-    // //print players and processes for debugging
-    // for player in &players {
-    //     //println!("{player}");
-    // }
-    // for process in &processes {
-    //     ////println!("{}", process);
-    // }
 
     // Create the VM with arena and processes
     let mut vm = VirtualMachine::create(arena.clone(), processes, players.clone(), None, false);

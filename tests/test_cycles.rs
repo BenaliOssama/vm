@@ -1,6 +1,7 @@
+mod common;
+
 use vm::{VirtualMachine, process};
 
-mod common;
 use common::*;
 
 fn running_vm(vm: &mut VirtualMachine) {

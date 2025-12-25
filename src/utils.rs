@@ -6,11 +6,9 @@ pub fn parse_arguments(args: Vec<String>) -> Result<(Vec<Player>, Option<usize>,
     /*_____________read arguments___________________ */
     if args.len() < 2 {
         // panic!("USAGE: assembler [arguments..]\nyou should atleast enter one argument.");
-        return Err(
-            format!(
-                "USAGE: ./vm first_file second_file ... Optional::(-d number_of_cycles_to_dumb)"
-            )
-        );
+        return Err(format!(
+            "USAGE: ./vm first_file second_file ... Optional::(-d number_of_cycles_to_dumb)"
+        ));
     }
     let mut verbos = false;
 
@@ -29,7 +27,7 @@ pub fn parse_arguments(args: Vec<String>) -> Result<(Vec<Player>, Option<usize>,
         }
         if args[cursor] == "-v" {
             verbos = true;
-            cursor+= 1;
+            cursor += 1;
             continue;
         }
         let d = parse_file(&args[cursor])?;
@@ -45,10 +43,12 @@ fn parse_file(file_name: &str) -> Result<Player, String> {
         panic!("{}", red("bad file extention!"));
     }
 
-    let mut file = File::open(file_name).map_err(|e| red(&format!("Error Opening the file, {e}")))?;
+    let mut file =
+        File::open(file_name).map_err(|e| red(&format!("Error Opening the file, {e}")))?;
 
     let mut buffer = Vec::new();
-    file.read_to_end(&mut buffer).map_err(|e| red(&format!("Error reading the file, {e}")))?;
+    file.read_to_end(&mut buffer)
+        .map_err(|e| red(&format!("Error reading the file, {e}")))?;
 
     // if buffer.len() < config::HEADERS_SIZE {
     //     return Err(red("the file are too smaaaaal"));
@@ -66,13 +66,9 @@ fn parse_file(file_name: &str) -> Result<Player, String> {
     prev = next;
     next = next + 128;
 
-    let name = std::str
-        ::from_utf8(&buffer[prev..next])
-        .map_err(|e| red(&format!("small file {e}")))?;
-    let name: String = name
-        .chars()
-        .filter(|&c| c != '\0')
-        .collect();
+    let name =
+        std::str::from_utf8(&buffer[prev..next]).map_err(|e| red(&format!("small file {e}")))?;
+    let name: String = name.chars().filter(|&c| c != '\0').collect();
 
     prev = next + 4; // skip 4 bytes
     next = prev + 4;
@@ -86,14 +82,10 @@ fn parse_file(file_name: &str) -> Result<Player, String> {
     prev = next; // skip 4 bytes
     next = prev + 2048;
 
-    let disc = std::str
-        ::from_utf8(&buffer[prev..next])
+    let disc = std::str::from_utf8(&buffer[prev..next])
         .map_err(|e| red(&format!("small file {e}")))?
         .trim();
-    let disc: String = disc
-        .chars()
-        .filter(|&c| c != '\0')
-        .collect();
+    let disc: String = disc.chars().filter(|&c| c != '\0').collect();
 
     prev = next + 4; // skip 4 bytes
     next = prev + (size as usize);
@@ -108,7 +100,6 @@ fn parse_file(file_name: &str) -> Result<Player, String> {
         disc.to_string(),
         program.to_vec(),
         size,
-        0
     );
     Ok(player)
 }

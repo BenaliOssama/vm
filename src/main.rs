@@ -1,9 +1,6 @@
-// use process::*;
 use std::env;
 use vm::config::*;
 use vm::*;
-// use utils::*;
-// use vm::VirtualMachine;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // The OS initialize the stack with arguments;
@@ -21,13 +18,19 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut processes = vec![];
     for (i, player) in players.clone().iter().enumerate() {
         let process = Process::new(player.clone().id, i, ((MEM_SIZE + 1) / players_count) * i);
-        
+
         // println!("{}", players[i]);
         // println!("{}", process);
         //////println!("{}", arena);
         processes.push(process)
     }
-    let mut vm = VirtualMachine::create(arena.clone(), processes, players.clone(), cycles_to_stop, verbos);
+    let mut vm = VirtualMachine::create(
+        arena.clone(),
+        processes,
+        players.clone(),
+        cycles_to_stop,
+        verbos,
+    );
     vm.print_match_intro(&players);
     for (i, player) in players.iter().enumerate() {
         vm.load_player(player.clone(), ((MEM_SIZE + 1) / players_count) * i);

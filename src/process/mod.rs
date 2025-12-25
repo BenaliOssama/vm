@@ -169,7 +169,7 @@ impl Process {
         arena: &mut Arena,
         current_cycle: usize,
     ) -> instructions::VmAction /*Option<Process>*/ {
-        let mut child: instructions::VmAction = instructions::VmAction::None;
+        let child: instructions::VmAction = instructions::VmAction::None;
         match self.state() {
             State::Waiting => {
                 ////println!("waiting...");

@@ -1,13 +1,12 @@
 //use vm::{blue, red};
 use crate::arena::Arena;
 use crate::config::{CYCLE_DELTA, CYCLE_TO_DIE, MAX_CHECKS, NBR_LIVE};
-use crate::helper;
 use crate::instructions::VmAction;
 use crate::player::Player;
 use crate::process::Process;
 use crate::*;
 use std::collections::HashSet;
-use std::hash::Hash;
+
 //use std::process as os;
 /*
 [X] create
@@ -25,9 +24,9 @@ pub struct VirtualMachine {
     pub winners: HashSet<i32>,
     pub cycle_count: usize,
     pub cycles_to_die: usize,
+    pub players: Vec<Player>,
     nbr_checks: usize,
     cycles_since_check: usize,
-    pub players: Vec<Player>,
     cycles_to_stop: Option<usize>,
     verbos: bool,
 }
@@ -235,39 +234,6 @@ impl VirtualMachine {
         }
         decreased
     }
-
-    // pub fn cycle_logic(&mut self) -> bool {
-    //     let mut decreased = false;
-    //     // DO NOT increment cycle_count here
-    //     self.cycles_since_check += 1;
-
-    //     if self.cycles_since_check > self.cycles_to_die {
-    //         self.cycles_since_check = 0;
-
-    //         self.check_lives();
-
-    //         let nbr_lives = self.read_nbr_lives();
-
-    //         if nbr_lives >= NBR_LIVE {
-    //             self.cycles_to_die = self.cycles_to_die.saturating_sub(CYCLE_DELTA);
-    //             decreased = true;
-    //             self.nbr_checks = 0;
-    //         } else {
-    //             self.nbr_checks += 1;
-    //             if self.nbr_checks > MAX_CHECKS {
-    //                 self.cycles_to_die = self.cycles_to_die.saturating_sub(CYCLE_DELTA);
-    //                 decreased = true;
-    //                 self.nbr_checks = 0;
-    //             }
-    //         }
-
-    //         self.rest_nbr_lives();
-    //     }
-    //     // if self.cycles_to_die == 0 {
-    //     //     os::exit(0);
-    //     // }
-    //     return decreased;
-    // }
 
     fn debug1(&self) {
         println!(

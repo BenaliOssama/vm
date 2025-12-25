@@ -13,21 +13,13 @@ pub struct Player {
 }
 
 impl Player {
-    pub fn new(
-        id: i32,
-        name: String,
-        comment: String,
-        code: Vec<u8>,
-        size: u32,
-        start_address: usize,
-    ) -> Self {
+    pub fn new(id: i32, name: String, comment: String, code: Vec<u8>, size: u32) -> Self {
         Self {
             id,
             name,
             comment,
             code,
             size,
-            //start_address,
         }
     }
 }

@@ -32,7 +32,7 @@ impl PC {
     }
 
     pub fn relative_jump(&mut self, offset: i32, use_idx_mod: bool) {
-        let mut offset = if use_idx_mod {
+        let offset = if use_idx_mod {
             offset % IDX_MOD as i32
         } else {
             offset
