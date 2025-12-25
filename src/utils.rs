@@ -15,6 +15,7 @@ pub fn parse_arguments(args: Vec<String>) -> Result<(Vec<Player>, Option<usize>,
     let mut warriors_data = Vec::new();
     let mut dump_cycles: Option<usize> = None;
     let mut cursor = 1;
+    let mut jid = 1;
     while cursor < args.len() {
         if args[cursor] == "-d" && cursor + 1 < args.len() {
             if let Ok(cycles) = args[cursor + 1].parse::<usize>() {
@@ -30,7 +31,8 @@ pub fn parse_arguments(args: Vec<String>) -> Result<(Vec<Player>, Option<usize>,
             cursor += 1;
             continue;
         }
-        let d = parse_file(&args[cursor])?;
+        let d = parse_file(&args[cursor], jid)?;
+        jid += 1;
         warriors_data.push(d);
         cursor += 1;
     }
@@ -38,7 +40,7 @@ pub fn parse_arguments(args: Vec<String>) -> Result<(Vec<Player>, Option<usize>,
     return Ok((warriors_data, dump_cycles, verbos));
 }
 
-fn parse_file(file_name: &str) -> Result<Player, String> {
+fn parse_file(file_name: &str, jid: usize) -> Result<Player, String> {
     if !file_name.ends_with(".cor") {
         panic!("{}", red("bad file extention!"));
     }
@@ -50,6 +52,7 @@ fn parse_file(file_name: &str) -> Result<Player, String> {
     file.read_to_end(&mut buffer)
         .map_err(|e| red(&format!("Error reading the file, {e}")))?;
 
+    //todo!
     // if buffer.len() < config::HEADERS_SIZE {
     //     return Err(red("the file are too smaaaaal"));
     // }
@@ -95,7 +98,7 @@ fn parse_file(file_name: &str) -> Result<Player, String> {
         return Err(red("the size is the header not the actual program size "));
     }
     let player = Player::new(
-        -1, //todo!()
+        -1 * jid as i32, //todo!()
         name.to_string(),
         disc.to_string(),
         program.to_vec(),

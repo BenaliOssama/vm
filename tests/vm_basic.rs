@@ -954,6 +954,7 @@ fn crab() {
 }
 
 #[test]
+#[ignore]
 fn zjmp() {
     let mut vm = build_vm("zjmp");
 

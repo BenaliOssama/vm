@@ -44,6 +44,7 @@ impl Instruction {
     }
 }
 
+#[track_caller]
 pub fn run_inst(vm: &mut VirtualMachine, inst: Instruction) {
     // zjmp 20
     let n_cycles = inst.cycles();
@@ -56,6 +57,7 @@ pub fn run_inst(vm: &mut VirtualMachine, inst: Instruction) {
         vm.cycle();
     }
 }
+#[track_caller]
 pub fn build_vm(file_name: &str) -> VirtualMachine {
     let path = format!("playground/players_src/{file_name}.cor");
 
@@ -76,6 +78,7 @@ pub fn build_vm(file_name: &str) -> VirtualMachine {
     vm.load_player(player, 0);
     vm
 }
+#[track_caller]
 pub fn build_vm_more(file_names: Vec<&str>) -> VirtualMachine {
     // Prepare arguments for all files
     let args: Vec<String> = std::iter::once("vm".to_string())

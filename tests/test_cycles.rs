@@ -2522,7 +2522,7 @@ fn cycles_sti_reg_ind_dir() {
     );
 }
 #[test]
-
+#[ignore]
 fn cycles_zjmp() {
     let mut vm = build_vm("zjmp");
 

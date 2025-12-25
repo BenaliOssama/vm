@@ -111,18 +111,14 @@ impl Instruction {
             }
         };
 
-        //println!("ld: r{} ← {}", reg, value);
         process.registers[reg - 1] = value;
 
         // --- Set the carry ---
         process.carry = value == 0;
-
-        ////println!("{}", process);
     }
 
     fn st(&self, process: &mut Process, arena: &mut Arena) {
         //println!("{}", blue("ST"));
-        // //println!("{:?}", self.parameters);
         let source_reg = match self.parameters[0] {
             Parameter::Register(r) => r,
             _ => {
@@ -137,12 +133,10 @@ impl Instruction {
                 process.registers[dist_reg - 1] = process.registers[source_reg - 1];
             }
             Parameter::Indirect(dist_memory) => {
-                // pub fn write(&mut self, pos: usize, data: &[u8]) {
                 arena.write(
                     (self.opcode_addr + dist_memory as usize) % MEM_SIZE,
                     &process.registers[source_reg - 1].to_be_bytes(),
                 );
-                ////println!("{}", process);
             }
             _ => {
                 //println!("Invalid first parameter for st");
