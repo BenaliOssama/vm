@@ -7,6 +7,7 @@ mod player;
 pub mod process;
 mod utils;
 mod vm;
+pub mod visualization;
 pub use arena::*;
 pub use config::*;
 pub use helper::*;

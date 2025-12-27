@@ -1,12 +1,12 @@
 //use vm::{blue, red};
 use crate::arena::Arena;
-use crate::config::{CYCLE_DELTA, CYCLE_TO_DIE, MAX_CHECKS, NBR_LIVE};
+use crate::config::{ CYCLE_DELTA, CYCLE_TO_DIE, MAX_CHECKS, NBR_LIVE };
 use crate::instructions::VmAction;
 use crate::player::Player;
 use crate::process::Process;
 use crate::*;
 use std::collections::HashSet;
-
+use std::sync::mpsc::Sender;
 //use std::process as os;
 /*
 [X] create
@@ -16,6 +16,13 @@ use std::collections::HashSet;
 [ ] control (suspend)
 [ ] status
  */
+pub struct VmSnapshot {
+    pub cycle: usize,
+    pub arena: Arena,
+    pub processes: Vec<Process>,
+    pub winners: HashSet<i32>,
+    pub game_over: bool,
+}
 
 // vm.rs
 pub struct VirtualMachine {
@@ -29,6 +36,7 @@ pub struct VirtualMachine {
     cycles_since_check: usize,
     cycles_to_stop: Option<usize>,
     verbos: bool,
+    sender: Option<Sender<VmSnapshot>>,
 }
 
 impl VirtualMachine {
@@ -37,7 +45,7 @@ impl VirtualMachine {
         processes: Vec<Process>,
         players: Vec<Player>,
         cycles_to_stop: Option<usize>,
-        verbos: bool,
+        verbos: bool
     ) -> Self {
         Self {
             arena,
@@ -50,6 +58,26 @@ impl VirtualMachine {
             players: players,
             cycles_to_stop: cycles_to_stop,
             verbos,
+            sender: None,
+        }
+    }
+    pub fn set_sender(&mut self, sender: Sender<VmSnapshot>) {
+        self.sender = Some(sender);
+    }
+
+    fn emit(&self) {
+        let game_over =
+            !self.processes_alive() ||
+            (self.cycles_to_stop.is_some() && self.cycle_count >= self.cycles_to_stop.unwrap());
+        if let Some(sender) = &self.sender {
+            let snapshot = VmSnapshot {
+                cycle: self.cycle_count,
+                arena: self.arena.clone(),
+                processes: self.processes.clone(),
+                winners: self.winners.clone(),
+                game_over,
+            };
+            let _ = sender.send(snapshot);
         }
     }
 
@@ -112,9 +140,7 @@ impl VirtualMachine {
     }
     pub fn run(&mut self) {
         while self.processes_alive() {
-            if let Some(cycles_to_stop) = self.cycles_to_stop
-                && self.cycle_count >= cycles_to_stop
-            {
+            if let Some(cycles_to_stop) = self.cycles_to_stop && self.cycle_count >= cycles_to_stop {
                 self.dump_arena();
                 break;
             }
@@ -137,10 +163,16 @@ impl VirtualMachine {
             if decreased {
                 println!(
                     "cycle {}: Cycles to die decreased: {} -> {}",
-                    self.cycle_count, before, self.cycles_to_die
+                    self.cycle_count,
+                    before,
+                    self.cycles_to_die
                 );
             }
             self.cycle_count += 1;
+            if self.verbos {
+                self.emit();
+                std::thread::sleep(std::time::Duration::from_millis(1));
+            }
         }
 
         if self.winners.len() != 1 {
@@ -160,6 +192,9 @@ impl VirtualMachine {
                 name
             );
         }
+        if self.verbos {
+            self.emit();
+        }
     }
     // fn simple_debug(&self, process: &mut Process, current_cyle: usize) {
     // }
@@ -169,8 +204,11 @@ impl VirtualMachine {
             let action = process.execute_cycle(&mut self.arena, self.cycle_count);
             match action {
                 VmAction::Fork { new_pc, use_idx } => {
-                    let mut new_process =
-                        process::Process::new(process.player_id, process.id, process.pc.get());
+                    let mut new_process = process::Process::new(
+                        process.player_id,
+                        process.id,
+                        process.pc.get()
+                    );
                     new_process.pc.set(new_pc as usize, use_idx);
                     new_process.current_instruction = None;
                     new_processes.push(new_process);
@@ -280,7 +318,9 @@ impl VirtualMachine {
         for pl in self.processes.iter() {
             println!(
                 "{:>2} |{:>9} |{:>3}",
-                pl.live_status.player_id, pl.live_status.last_live_cycle, pl.live_status.nbr_live
+                pl.live_status.player_id,
+                pl.live_status.last_live_cycle,
+                pl.live_status.nbr_live
             );
         }
 
@@ -327,8 +367,7 @@ impl VirtualMachine {
             }
         }
         self.winners = winners;
-        self.processes
-            .retain(|process| process.live_status.executed);
+        self.processes.retain(|process| process.live_status.executed);
         for process in &mut self.processes {
             process.live_status.executed = false;
         }
