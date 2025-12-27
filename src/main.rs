@@ -24,6 +24,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         //////println!("{}", arena);
         processes.push(process)
     }
+    processes.reverse();
     let mut vm = VirtualMachine::create(
         arena.clone(),
         processes,

@@ -58,13 +58,13 @@ impl Instruction {
             10 => self.ldi(process, arena),
             11 => self.sti(process, arena),
             12 => {
-                process.current_instruction = None;
+                //process.current_instruction = None;
                 return self.fork(process, arena);
             }
             13 => self.lld(process, arena),
             14 => self.lldi(process, arena),
             15 => {
-                process.current_instruction = None;
+                //process.current_instruction = None;
                 return self.lfork(process, arena);
             }
             16 => self.nop(process, arena),
@@ -355,24 +355,52 @@ impl Instruction {
         // LDI does NOT change carry
         ////println!("{}", arena);
     }
-
-    fn fork(&self, process: &mut Process, arena: &mut Arena) -> VmAction {
-        // //println!("{}", blue("FORK"));
-        // let mut new_process = process.clone();
-        // new_process.pc.add(100);
-        // //println!("{}", blue("FORK"));
-        // let mut new_process = process.clone();
-        // new_process.pc.add(100);
-
+    fn fork(&self, process: &Process, arena: &Arena) -> VmAction {
         let p1 = &self.parameters[0];
 
         let value = helper::get_value(p1, &process, arena, true);
+
+        let mut new_pc = self.opcode_addr as i32 + value;
+
+        // circular memory
+        new_pc %= MEM_SIZE as i32;
+        if new_pc < 0 {
+            new_pc += MEM_SIZE as i32;
+        }
+
         // // now edit this process
         return VmAction::Fork {
-            new_pc: value,
+            new_pc: new_pc as i32,
             use_idx: true,
         };
     }
+
+    // fn fork(&self, process: &mut Process, arena: &mut Arena) -> VmAction {
+    //     // //println!("{}", blue("FORK"));
+    //     // let mut new_process = process.clone();
+    //     // new_process.pc.add(100);
+    //     // //println!("{}", blue("FORK"));
+    //     // let mut new_process = process.clone();
+    //     // new_process.pc.add(100);
+
+    //     let p1 = &self.parameters[0];
+
+    //     let value = helper::get_value(p1, &process, arena, false);
+
+    //     //println!("{} {}", yellow("carry true jump by :"), offset);
+    //     let mut new_pc = self.opcode_addr as i32 + value; // % IDX_MOD as i32;
+
+    //     // Step 3: wrap around circular memory
+    //     new_pc %= MEM_SIZE as i32;
+    //     if new_pc < 0 {
+    //         new_pc += MEM_SIZE as i32;
+    //     }
+    //     // // now edit this process
+    //     return VmAction::Fork {
+    //         new_pc: new_pc % IDX_MOD as i32,
+    //         use_idx: true,
+    //     };
+    // }
 
     fn lld(&self, process: &mut Process, arena: &mut Arena) {
         //println!("{}", blue("LLD"));

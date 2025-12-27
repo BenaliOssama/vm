@@ -165,14 +165,22 @@ impl VirtualMachine {
     // }
     pub fn cycle(&mut self) {
         let mut new_processes = Vec::new();
+        let mut plen = self.processes.len();
         for process in &mut self.processes {
             let action = process.execute_cycle(&mut self.arena, self.cycle_count);
             match action {
                 VmAction::Fork { new_pc, use_idx } => {
                     let mut new_process = process.clone();
-                    new_process.pc.set(new_pc as usize, use_idx);
+                    new_process.pid = plen;
+                    println!("fork at this address: {}", new_pc);
+                    new_process.pc.set(new_pc as usize, false);
                     new_process.current_instruction = None;
+                    new_process.live_status.executed = false;
+                    new_process.live_status.nbr_live = 0;
+                    new_process.live_status.player_id = 0;
                     new_processes.insert(0, new_process);
+                    plen += 1;
+                    process.current_instruction = None;
                 }
                 VmAction::Live(id) => {
                     match get_playername(self.players.clone(), id) {
@@ -198,7 +206,8 @@ impl VirtualMachine {
             }
         }
         // Append all new processes at once after the loop
-        self.processes.extend(new_processes);
+        new_processes.extend(self.processes.clone());
+        self.processes = new_processes;
     }
     pub fn cycle_logic(&mut self) -> bool {
         let mut decreased = false;
@@ -258,7 +267,7 @@ impl VirtualMachine {
             };
             print!(
                 "{:>2} |{:>9} |{:>4} |{:5} |{:<6} |{:>4} | ",
-                p.id,
+                p.pid,
                 &p.player_id.to_string(),
                 &p.instction_pc.to_string(),
                 &p.carry.to_string(),

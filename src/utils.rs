@@ -36,7 +36,6 @@ pub fn parse_arguments(args: Vec<String>) -> Result<(Vec<Player>, Option<usize>,
         warriors_data.push(d);
         cursor += 1;
     }
-    warriors_data.reverse();
     return Ok((warriors_data, dump_cycles, verbos));
 }
 

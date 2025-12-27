@@ -137,19 +137,19 @@ fn add_sub_ld() {
     run_inst(&mut vm, Live);
 
     assert_eq!(vm.processes[3].live_status.executed, true);
-    assert_eq!(vm.processes[3].live_status.player_id, -1);
+    assert_eq!(vm.processes[3].live_status.player_id, -4);
     assert_eq!(vm.processes[3].live_status.nbr_live, 1);
 
     assert_eq!(vm.processes[2].live_status.executed, true);
-    assert_eq!(vm.processes[2].live_status.player_id, -2);
+    assert_eq!(vm.processes[2].live_status.player_id, -3);
     assert_eq!(vm.processes[2].live_status.nbr_live, 1);
 
     assert_eq!(vm.processes[1].live_status.executed, true);
-    assert_eq!(vm.processes[1].live_status.player_id, -3);
+    assert_eq!(vm.processes[1].live_status.player_id, -2);
     assert_eq!(vm.processes[1].live_status.nbr_live, 1);
 
     assert_eq!(vm.processes[0].live_status.executed, true);
-    assert_eq!(vm.processes[0].live_status.player_id, -4);
+    assert_eq!(vm.processes[0].live_status.player_id, -1);
     assert_eq!(vm.processes[0].live_status.nbr_live, 1);
 
     // live 10

@@ -93,7 +93,7 @@ struct trapframe *tf;
 #[derive(Debug, Clone)]
 pub struct Process {
     //pub name: String,
-    pub id: usize,
+    pub pid: usize,
     pub player_id: i32,
     pub pc: PC, // Program Counter
     pub registers: [i32; REG_NUMBER],
@@ -106,10 +106,10 @@ pub struct Process {
 }
 
 impl Process {
-    pub fn new(player_id: i32, id: usize, pc: usize) -> Self {
+    pub fn new(player_id: i32, pid: usize, pc: usize) -> Self {
         let mut pro = Self {
             //name: name,
-            id: id,
+            pid: pid,
             player_id: player_id * -1,
             pc: PC::new(pc),
             registers: [0; REG_NUMBER],
