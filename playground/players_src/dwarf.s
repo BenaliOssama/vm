@@ -4,7 +4,7 @@
         sti r1, %:live, %1
         and r1, %0, r1
 
-live:   live %-2
+live:   live %2
         ld %2, r2
         ld %4, r3
         fork %:live

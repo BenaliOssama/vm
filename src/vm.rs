@@ -169,8 +169,7 @@ impl VirtualMachine {
             let action = process.execute_cycle(&mut self.arena, self.cycle_count);
             match action {
                 VmAction::Fork { new_pc, use_idx } => {
-                    let mut new_process =
-                        process::Process::new(process.player_id, process.id, process.pc.get());
+                    let mut new_process = process.clone();
                     new_process.pc.set(new_pc as usize, use_idx);
                     new_process.current_instruction = None;
                     new_processes.insert(0, new_process);

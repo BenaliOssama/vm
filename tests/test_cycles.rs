@@ -1,19 +1,6 @@
 mod common;
 
-use vm::{VirtualMachine, process};
-
 use common::*;
-
-fn running_vm(vm: &mut VirtualMachine) {
-    for process in &mut vm.processes {
-        if process.state() == process::State::NoInstruction {
-            process.fetch_decode(&mut vm.arena, vm.cycle_count);
-        }
-    }
-    vm.cycle();
-    vm.cycle_logic();
-    vm.cycle_count += 1;
-}
 
 #[test]
 fn cycles_add() {

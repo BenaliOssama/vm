@@ -952,3 +952,107 @@ fn crab() {
         17432565
     );
 }
+
+#[test]
+fn dwarf() {
+    let mut vm = build_vm("dwarf");
+
+    run_inst(&mut vm, Sti);
+    does_reg(&vm, 8, -1);
+
+    run_inst(&mut vm, Ld);
+    does_reg(&vm, 2, 111411200);
+    run_inst(&mut vm, Ld);
+    does_reg(&vm, 3, 1);
+    run_inst(&mut vm, Ld);
+    does_reg(&vm, 4, 17432565);
+
+    run_inst(&mut vm, Sti);
+    run_inst(&mut vm, Sti);
+
+    run_inst(&mut vm, Live);
+    vm.cycle();
+
+    assert_eq!(vm.processes[0].live_status.executed, true);
+    assert_eq!(vm.processes[0].live_status.player_id, -1);
+    assert_eq!(vm.processes[0].live_status.nbr_live, 1);
+
+    vm.cycle(); // no instruction
+
+    run_inst(&mut vm, Sti); // sti r2,%28,%0
+
+    assert_eq!(
+        bytes_to_i32(&vm.arena.read(vm.processes[0].instction_pc + 28, 4)),
+        111411200
+    );
+
+    run_inst(&mut vm, Sti); // sti r16,%25,%0
+    assert_eq!(
+        bytes_to_i32(&vm.arena.read(vm.processes[0].instction_pc + 25, 4)),
+        0
+    );
+
+    run_inst(&mut vm, Sti); // sti r16,%22,%0
+    assert_eq!(
+        bytes_to_i32(&vm.arena.read(vm.processes[0].instction_pc + 22, 4)),
+        0
+    );
+
+    run_inst(&mut vm, Sti); // sti r4,%17,%0
+    assert_eq!(
+        bytes_to_i32(&vm.arena.read(vm.processes[0].instction_pc + 17, 4)),
+        17432565
+    );
+}
+
+#[test]
+fn ameba() {
+    let mut vm = build_vm("ameba");
+
+    run_inst(&mut vm, St);
+    does_reg(&vm, 8, -1);
+
+    run_inst(&mut vm, Ld);
+    does_reg(&vm, 2, 111411200);
+    run_inst(&mut vm, Ld);
+    does_reg(&vm, 3, 1);
+    run_inst(&mut vm, Ld);
+    does_reg(&vm, 4, 17432565);
+
+    run_inst(&mut vm, Sti);
+    run_inst(&mut vm, Sti);
+
+    run_inst(&mut vm, Live);
+    vm.cycle();
+
+    assert_eq!(vm.processes[0].live_status.executed, true);
+    assert_eq!(vm.processes[0].live_status.player_id, -1);
+    assert_eq!(vm.processes[0].live_status.nbr_live, 1);
+
+    vm.cycle(); // no instruction
+
+    run_inst(&mut vm, Sti); // sti r2,%28,%0
+
+    assert_eq!(
+        bytes_to_i32(&vm.arena.read(vm.processes[0].instction_pc + 28, 4)),
+        111411200
+    );
+
+    run_inst(&mut vm, Sti); // sti r16,%25,%0
+    assert_eq!(
+        bytes_to_i32(&vm.arena.read(vm.processes[0].instction_pc + 25, 4)),
+        0
+    );
+
+    run_inst(&mut vm, Sti); // sti r16,%22,%0
+    assert_eq!(
+        bytes_to_i32(&vm.arena.read(vm.processes[0].instction_pc + 22, 4)),
+        0
+    );
+
+    run_inst(&mut vm, Sti); // sti r4,%17,%0
+    assert_eq!(
+        bytes_to_i32(&vm.arena.read(vm.processes[0].instction_pc + 17, 4)),
+        17432565
+    );
+}

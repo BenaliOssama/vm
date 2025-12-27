@@ -1,6 +1,7 @@
 #![allow(dead_code, unused_imports)]
 
 use vm::*;
+use vm::{VirtualMachine, process};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Instruction {
@@ -119,4 +120,14 @@ pub fn build_vm_more(file_names: Vec<&str>) -> VirtualMachine {
 #[track_caller]
 pub fn does_reg(vm: &VirtualMachine, n: usize, has: i32) {
     assert_eq!(vm.processes[0].registers[n - 1], has);
+}
+pub fn running_vm(vm: &mut VirtualMachine) {
+    for process in &mut vm.processes {
+        if process.state() == process::State::NoInstruction {
+            process.fetch_decode(&mut vm.arena, vm.cycle_count);
+        }
+    }
+    vm.cycle();
+    vm.cycle_logic();
+    vm.cycle_count += 1;
 }
