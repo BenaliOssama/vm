@@ -36,7 +36,7 @@ pub fn parse_arguments(args: Vec<String>) -> Result<(Vec<Player>, Option<usize>,
         warriors_data.push(d);
         cursor += 1;
     }
-
+    warriors_data.reverse();
     return Ok((warriors_data, dump_cycles, verbos));
 }
 
@@ -51,11 +51,6 @@ fn parse_file(file_name: &str, jid: usize) -> Result<Player, String> {
     let mut buffer = Vec::new();
     file.read_to_end(&mut buffer)
         .map_err(|e| red(&format!("Error reading the file, {e}")))?;
-
-    //todo!
-    // if buffer.len() < config::HEADERS_SIZE {
-    //     return Err(red("the file are too smaaaaal"));
-    // }
 
     let mut prev = 0;
     let mut next = 4;

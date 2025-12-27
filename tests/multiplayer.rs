@@ -129,3 +129,21 @@ fn four() {
     assert_eq!(vm.processes[0].registers[3 - 1], 0);
     assert_eq!(vm.processes[0].pc.get(), 0);
 }
+
+#[test]
+fn add_sub_ld() {
+    let mut vm = build_vm_more(vec!["add", "sub", "ld"]);
+    // live 10
+    run_inst(&mut vm, Live);
+    assert_eq!(vm.processes[2].live_status.executed, true);
+    assert_eq!(vm.processes[2].live_status.player_id, -1);
+    assert_eq!(vm.processes[2].live_status.nbr_live, 1);
+
+    assert_eq!(vm.processes[1].live_status.executed, true);
+    assert_eq!(vm.processes[1].live_status.player_id, -2);
+    assert_eq!(vm.processes[1].live_status.nbr_live, 1);
+
+    assert_eq!(vm.processes[0].live_status.executed, true);
+    assert_eq!(vm.processes[0].live_status.player_id, -3);
+    assert_eq!(vm.processes[0].live_status.nbr_live, 1);
+}

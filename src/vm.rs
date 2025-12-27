@@ -173,7 +173,7 @@ impl VirtualMachine {
                         process::Process::new(process.player_id, process.id, process.pc.get());
                     new_process.pc.set(new_pc as usize, use_idx);
                     new_process.current_instruction = None;
-                    new_processes.push(new_process);
+                    new_processes.insert(0, new_process);
                 }
                 VmAction::Live(id) => {
                     match get_playername(self.players.clone(), id) {

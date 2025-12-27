@@ -6,16 +6,7 @@
 
 # The virtual machine
 
-* [ ] If one of the `.cor` files is corrupted, the VM should exit with an error code, //print a message on stderr, and do not execute the programs.
-* [ ] Those are the cases where a file is considered corrupted:
-  * Wrong signature code.
-  * Declared size of the program not matching the actual size.
-  * The size of the program is bigger than the maximum allowed size.
-  * The total file size is smaller than the minimum size.
-* [ ] At the start of the battle the VM will //print a welcome message as shown in the example:
 
-
-* [ ] The last program passed will be the first one executed during the cycle.
 
 * [ ] When a new process is forked, it will be placed at the end of the processes and start execution at the start of the next cycle (it will be first executed on the next cycle).
 
