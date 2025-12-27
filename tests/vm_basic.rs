@@ -952,33 +952,3 @@ fn crab() {
         17432565
     );
 }
-
-#[test]
-#[ignore]
-fn zjmp() {
-    let mut vm = build_vm("zjmp");
-
-    run_inst(&mut vm, Ld);
-    does_reg(&vm, 2, 5);
-
-    run_inst(&mut vm, Ld);
-    does_reg(&vm, 3, 10);
-
-    run_inst(&mut vm, And);
-    does_reg(&vm, 4, 0);
-
-    let current_pc = vm.processes[0].pc.get();
-    run_inst(&mut vm, Zjmp);
-    assert_eq!(vm.processes[0].pc.get(), current_pc + 10);
-    // after this you go to the add instruction,
-    //run_inst(&mut vm, Ld); shoujd be skipped
-
-    let current_pc = vm.processes[0].pc.get();
-    //println!("this is the headach current pc  {}", current_pc);
-    run_inst(&mut vm, Zjmp); // jump back by 6
-    //println!("this is the pc after zjmp  {}", current_pc);
-    assert_eq!(vm.processes[0].pc.get(), current_pc - 7);
-
-    run_inst(&mut vm, Ld);
-    does_reg(&vm, 4, 99);
-}

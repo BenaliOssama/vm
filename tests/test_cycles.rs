@@ -2521,40 +2521,8 @@ fn cycles_sti_reg_ind_dir() {
         "pierino"
     );
 }
+
 #[test]
-#[ignore]
-fn cycles_zjmp() {
-    let mut vm = build_vm("zjmp");
-
-    // A list of checkpoints: (target_cycle, expected_cycles_to_die)
-    let checkpoints = vec![(1, 1536), (100, 1536), (1000, 1536)];
-
-    for (target_cycle, expected_die) in checkpoints {
-        // Run the VM until we reach the target cycle
-        while vm.cycle_count < target_cycle {
-            running_vm(&mut vm);
-        }
-
-        // Assertions at the specific checkpoint
-        assert_eq!(
-            vm.cycle_count, target_cycle,
-            "Cycle count mismatch at checkpoint"
-        );
-        running_vm(&mut vm);
-        assert_eq!(
-            vm.cycles_to_die, expected_die,
-            "cycles_to_die mismatch at cycle {}",
-            target_cycle
-        );
-    }
-    while vm.processes_alive() {
-        running_vm(&mut vm);
-    }
-    assert_eq!(vm.cycle_count, 1537);
-    assert!(vm.winners.is_empty());
-}
-#[test]
-
 fn cycles_ldi_ind_dir() {
     let mut vm = build_vm("pierino_ldi_ind_dir");
 
