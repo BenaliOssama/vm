@@ -239,7 +239,6 @@ fn pierino_or_reg_reg_pierino_and_ind_ind_pierino_lldi_reg_reg_reg() {
 }
 
 #[test]
-#[ignore]
 fn pierino_ldi_ind_dir_empty_player_add_pierino_or_reg_reg() {
     let mut vm = build_vm_more(vec![
         "pierino_ldi_ind_dir",
@@ -333,7 +332,6 @@ fn pierino_xor_reg_ind_pierino_xor_ind_ind_pierino_st_ind() {
 }
 
 #[test]
-#[ignore]
 fn pierino_pierino_or_reg_ind_pierino_lldi_ind_dir_reg_pierino_ldi_reg_dir() {
     let mut vm = build_vm_more(vec![
         "pierino",
@@ -386,7 +384,6 @@ fn pierino_lld_ind_reg_pierino_or_reg_reg_sub() {
 }
 
 #[test]
-#[ignore]
 fn pierino_ldi_reg_reg_pierino_sti_reg_ind_dir_pierino_lldi_reg_dir_reg() {
     let mut vm = build_vm_more(vec![
         "pierino_lldi_reg_dir_reg",
@@ -406,14 +403,13 @@ fn pierino_ldi_reg_reg_pierino_sti_reg_ind_dir_pierino_lldi_reg_dir_reg() {
 }
 
 #[test]
-#[ignore = "should be applied after basic vm pass"]
 fn dwarf_ameba() {
     let mut vm = build_vm_more(vec!["dwarf", "ameba"]);
     while vm.processes_alive() {
         running_vm(&mut vm);
     }
     println!("winner: {:?}", vm.winners);
-    assert_eq!(vm.cycle_count, 50764);
+    assert_eq!(vm.cycle_count, 24379);
     assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
     assert_eq!(
         &vm.get_player(*vm.winners.iter().next().unwrap()).unwrap(),
@@ -422,17 +418,16 @@ fn dwarf_ameba() {
 }
 
 #[test]
-#[ignore = "should be applied after basic vm pass"]
 fn ameba_dwarf() {
     let mut vm = build_vm_more(vec!["ameba", "dwarf"]);
     while vm.processes_alive() {
         running_vm(&mut vm);
     }
     println!("winner: {:?}", vm.winners);
-    assert_eq!(vm.cycle_count, 50764);
-    assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
+    assert_eq!(vm.cycle_count, 24379);
+    assert_eq!(vm.winners.iter().next().unwrap() * -1, 2);
     assert_eq!(
         &vm.get_player(*vm.winners.iter().next().unwrap()).unwrap(),
-        "pierino"
+        "dwarf"
     );
 }
