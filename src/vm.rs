@@ -327,20 +327,20 @@ impl VirtualMachine {
         }
 
         println!("Arena:");
-        let mut count = 1;
+        let mut count = 0;
         for (i, byte) in self.arena.memory.iter().enumerate() {
             if i % 32 == 0 {
                 print!("{:08x}  ", i);
             }
             print!("{:02x} ", byte);
             if i % 32 == 31 {
+                count += 1;
                 println!("");
             }
 
-            if count == 32 * 2 + (MEM_SIZE / self.players.len()) * (self.players.len() - 1) {
+            if count == 3 + ((MEM_SIZE / self.players.len()) * (self.players.len() - 1)) / 32 {
                 break;
             }
-            count += 1;
         }
         println!();
     }
