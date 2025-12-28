@@ -409,7 +409,7 @@ fn dwarf_ameba() {
         running_vm(&mut vm);
     }
     println!("winner: {:?}", vm.winners);
-    assert_eq!(vm.cycle_count, 24379);
+    assert_eq!(vm.cycle_count, 24379); // 24379
     assert_eq!(vm.winners.iter().next().unwrap() * -1, 1);
     assert_eq!(
         &vm.get_player(*vm.winners.iter().next().unwrap()).unwrap(),
