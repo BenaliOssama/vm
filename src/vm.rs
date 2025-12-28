@@ -6,7 +6,7 @@ use crate::player::Player;
 use crate::process::Process;
 use crate::*;
 use std::collections::HashSet;
-
+use std::sync::mpsc::Sender;
 //use std::process as os;
 /*
 [X] create
@@ -16,6 +16,13 @@ use std::collections::HashSet;
 [ ] control (suspend)
 [ ] status
  */
+pub struct VmSnapshot {
+    pub cycle: usize,
+    pub arena: Arena,
+    pub processes: Vec<Process>,
+    pub winners: HashSet<i32>,
+    pub game_over: bool,
+}
 
 // vm.rs
 pub struct VirtualMachine {
@@ -29,6 +36,7 @@ pub struct VirtualMachine {
     cycles_since_check: usize,
     cycles_to_stop: Option<usize>,
     verbos: bool,
+    sender: Option<Sender<VmSnapshot>>,
 }
 
 impl VirtualMachine {
@@ -50,6 +58,25 @@ impl VirtualMachine {
             players: players,
             cycles_to_stop: cycles_to_stop,
             verbos,
+            sender: None,
+        }
+    }
+    pub fn set_sender(&mut self, sender: Sender<VmSnapshot>) {
+        self.sender = Some(sender);
+    }
+
+    fn emit(&self) {
+        let game_over = !self.processes_alive()
+            || (self.cycles_to_stop.is_some() && self.cycle_count >= self.cycles_to_stop.unwrap());
+        if let Some(sender) = &self.sender {
+            let snapshot = VmSnapshot {
+                cycle: self.cycle_count,
+                arena: self.arena.clone(),
+                processes: self.processes.clone(),
+                winners: self.winners.clone(),
+                game_over,
+            };
+            let _ = sender.send(snapshot);
         }
     }
 
@@ -141,6 +168,10 @@ impl VirtualMachine {
                 );
             }
             self.cycle_count += 1;
+            if self.verbos {
+                self.emit();
+                std::thread::sleep(std::time::Duration::from_millis(1));
+            }
         }
 
         if self.winners.len() != 1 {
@@ -160,6 +191,9 @@ impl VirtualMachine {
                 name
             );
         }
+        if self.verbos {
+            self.emit();
+        }
     }
     // fn simple_debug(&self, process: &mut Process, current_cyle: usize) {
     // }
@@ -169,7 +203,7 @@ impl VirtualMachine {
         for process in &mut self.processes {
             let action = process.execute_cycle(&mut self.arena, self.cycle_count);
             match action {
-                VmAction::Fork { new_pc, use_idx } => {
+                VmAction::Fork { new_pc, .. } => {
                     let mut new_process = process.clone();
                     new_process.pid = plen;
                     println!("fork at this address: {}", new_pc);

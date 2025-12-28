@@ -1,0 +1,22 @@
+use crate::VmSnapshot;
+use eframe::{NativeOptions, egui};
+use std::sync::mpsc::Receiver;
+
+use crate::visualization::corewar_visualizer::CorewarVisualizer;
+
+pub fn run_gui(rx: Receiver<VmSnapshot>) {
+    let options = NativeOptions {
+        viewport: egui::ViewportBuilder::default()
+            .with_inner_size([1400.0, 900.0])
+            .with_min_inner_size([800.0, 600.0])
+            .with_resizable(true)
+            .with_title("Corewar woriers"),
+        ..Default::default()
+    };
+
+    let _ = eframe::run_native(
+        "Corewar Visualization",
+        options,
+        Box::new(|_| Ok(Box::new(CorewarVisualizer::new(rx)))),
+    );
+}
