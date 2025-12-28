@@ -327,7 +327,7 @@ impl VirtualMachine {
         }
 
         println!("Arena:");
-        let mut count = 0;
+        let mut count = 1;
         for (i, byte) in self.arena.memory.iter().enumerate() {
             if i % 32 == 0 {
                 print!("{:08x}  ", i);
@@ -337,7 +337,7 @@ impl VirtualMachine {
                 println!("");
             }
 
-            if count == 62 {
+            if count == 32 * 2 + (MEM_SIZE / self.players.len()) * (self.players.len() - 1) {
                 break;
             }
             count += 1;
