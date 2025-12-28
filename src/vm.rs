@@ -337,7 +337,7 @@ impl VirtualMachine {
                 println!("");
             }
 
-            if count == 31 {
+            if count == 62 {
                 break;
             }
             count += 1;

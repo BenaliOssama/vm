@@ -348,6 +348,7 @@ impl Instruction {
 
         // ---------- 4) Read 4 bytes from arena ----------
         let value = process.registers[from_reg - 1];
+        println!("sti writting at address: {}", new_pc);
         arena.write(new_pc as usize, &(value).to_be_bytes());
         //println!("m{} <- {}",new_pc,  value);
 
